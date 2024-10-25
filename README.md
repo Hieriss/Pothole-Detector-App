@@ -1,1 +1,0 @@
-# Pothole-Detector-App
