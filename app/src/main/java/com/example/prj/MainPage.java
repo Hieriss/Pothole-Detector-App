@@ -14,6 +14,7 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.example.prj.Session.SessionManager;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.zxing.integration.android.IntentIntegrator;
@@ -21,6 +22,7 @@ import com.google.zxing.integration.android.IntentResult;
 
 public class MainPage extends AppCompatActivity {
 
+    SessionManager sessionManager;
     private Button logoutButton, scanButton, settingButton, achievementButton, notificationButton, historyButton, profileButton, mapButton;
 
     @Override
@@ -28,6 +30,9 @@ public class MainPage extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main_page);
+
+        sessionManager = new SessionManager(this);
+        sessionManager.checkLogin();
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
