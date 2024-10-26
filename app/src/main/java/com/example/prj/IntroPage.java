@@ -76,7 +76,7 @@ public class IntroPage extends AppCompatActivity {
                 fadeOut.start();
 
                 // Schedule the next text change
-                handler.postDelayed(this, 2000); // delay in milliseconds
+                handler.postDelayed(this, 4000); // delay in milliseconds
             }
         });
     }

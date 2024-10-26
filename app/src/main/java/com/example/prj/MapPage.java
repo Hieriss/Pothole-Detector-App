@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -48,12 +49,21 @@ public class MapPage extends AppCompatActivity implements OnMapReadyCallback {
     private Marker currentLocationMarker;
     FusedLocationProviderClient fusedLocationProviderClient;
     LocationCallback locationCallback;
+    Button searchButton, returnButton, searchbarButton;
+    RelativeLayout returnLayout, searchLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_map_page);
+
+        returnButton = findViewById(R.id.return_button);
+        searchButton = findViewById(R.id.search_button);
+
+        returnLayout = findViewById(R.id.return_button_layout);
+        searchLayout = findViewById(R.id.search_button_layout);
+
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
@@ -65,7 +75,6 @@ public class MapPage extends AppCompatActivity implements OnMapReadyCallback {
         PlacesClient placesClient = Places.createClient(this);
 
         AutoCompleteTextView searchAddress = findViewById(R.id.search_address);
-        Button searchButton = findViewById(R.id.search_button);
 
         searchAddress.setAdapter(new PlaceAutoSuggestAdapter(this, android.R.layout.simple_list_item_1));
         searchAddress.setOnItemClickListener((parent, view, position, id) -> {
@@ -73,11 +82,18 @@ public class MapPage extends AppCompatActivity implements OnMapReadyCallback {
             searchLocation(address);
         });
 
+        searchAddress.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                searchLayout.setVisibility(View.VISIBLE);
+                returnLayout.setVisibility(View.VISIBLE);
+            }
+        });
+
         searchAddress.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if (actionId == EditorInfo.IME_ACTION_SEARCH || actionId == EditorInfo.IME_ACTION_DONE ||
-                        (event != null && event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) {
+                if (actionId == EditorInfo.IME_ACTION_SEARCH || actionId == EditorInfo.IME_ACTION_DONE || (event != null && event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) {
                     String address = searchAddress.getText().toString();
                     searchLocation(address);
                     return true;
@@ -86,13 +102,25 @@ public class MapPage extends AppCompatActivity implements OnMapReadyCallback {
             }
         });
 
+        returnButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                searchLayout.setVisibility(View.GONE);
+                returnLayout.setVisibility(View.GONE);
+            }
+        });
+
         searchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String address = searchAddress.getText().toString();
                 searchLocation(address);
+
+                searchLayout.setVisibility(View.GONE);
+                returnLayout.setVisibility(View.GONE);
             }
         });
+
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.id_map);
         mapFragment.getMapAsync(this);
