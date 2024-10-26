@@ -59,6 +59,7 @@ dependencies {
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
     implementation("com.google.android.libraries.places:places:4.0.0")
+    implementation("com.google.android.gms:play-services:12.0.1")
 }
 
 apply(plugin = "com.google.gms.google-services")

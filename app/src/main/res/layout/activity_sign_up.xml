@@ -57,10 +57,12 @@
 
                         <EditText
                             android:id="@+id/signup_username"
-                            android:layout_width="330dp"
+                            android:layout_width="match_parent"
                             android:layout_height="50dp"
-                            android:layout_margin="10dp"
+                            android:layout_marginTop="10dp"
                             android:layout_marginBottom="10dp"
+                            android:layout_marginStart="40dp"
+                            android:layout_marginEnd="40dp"
                             android:drawableStart="@drawable/user"
                             android:drawablePadding="16dp"
                             android:ems="10"
@@ -74,9 +76,12 @@
 
                         <EditText
                             android:id="@+id/signup_password"
-                            android:layout_width="330dp"
+                            android:layout_width="match_parent"
                             android:layout_height="50dp"
-                            android:layout_margin="10dp"
+                            android:layout_marginTop="10dp"
+                            android:layout_marginBottom="10dp"
+                            android:layout_marginStart="40dp"
+                            android:layout_marginEnd="40dp"
                             android:drawableStart="@drawable/padlock"
                             android:drawablePadding="16dp"
                             android:ems="10"
@@ -90,9 +95,12 @@
 
                         <EditText
                             android:id="@+id/signup_confirmpassword"
-                            android:layout_width="330dp"
+                            android:layout_width="match_parent"
                             android:layout_height="50dp"
-                            android:layout_margin="10dp"
+                            android:layout_marginTop="10dp"
+                            android:layout_marginBottom="10dp"
+                            android:layout_marginStart="40dp"
+                            android:layout_marginEnd="40dp"
                             android:drawableStart="@drawable/key"
                             android:drawablePadding="16dp"
                             android:ems="10"
@@ -106,9 +114,12 @@
 
                         <EditText
                             android:id="@+id/signup_email"
-                            android:layout_width="330dp"
+                            android:layout_width="match_parent"
                             android:layout_height="50dp"
-                            android:layout_margin="10dp"
+                            android:layout_marginTop="10dp"
+                            android:layout_marginBottom="10dp"
+                            android:layout_marginStart="40dp"
+                            android:layout_marginEnd="40dp"
                             android:drawableStart="@drawable/email"
                             android:drawablePadding="16dp"
                             android:ems="10"
@@ -122,9 +133,12 @@
 
                         <EditText
                             android:id="@+id/signup_phone"
-                            android:layout_width="330dp"
+                            android:layout_width="match_parent"
                             android:layout_height="50dp"
-                            android:layout_margin="10dp"
+                            android:layout_marginTop="10dp"
+                            android:layout_marginBottom="10dp"
+                            android:layout_marginStart="40dp"
+                            android:layout_marginEnd="40dp"
                             android:drawableStart="@drawable/phone"
                             android:drawablePadding="16dp"
                             android:ems="10"
@@ -138,8 +152,10 @@
 
                         <androidx.appcompat.widget.AppCompatButton
                             android:id="@+id/signup_button"
-                            android:layout_width="230dp"
+                            android:layout_width="match_parent"
                             android:layout_height="50dp"
+                            android:layout_marginStart="90dp"
+                            android:layout_marginEnd="90dp"
                             android:layout_marginTop="70dp"
                             android:background="@drawable/signin_button_background"
                             android:text="Sign Up"

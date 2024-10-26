@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.se.omapi.Session;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -11,9 +12,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.prj.Session.SessionManager;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -29,19 +32,25 @@ import java.util.Objects;
 import java.util.UUID;
 
 public class SignIn extends AppCompatActivity {
-
     // UI components
     EditText signinUsername, signinPassword;
     Button signinButton, usernameForm, qrcodeForm;
     ImageView qrCodeImageView;
-    TextView switchToSignUpText;
+    TextView switchToSignUpText, forgotPasswordText;
 
     DatabaseReference databaseReference;
+
+    SessionManager sessionManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        EdgeToEdge.enable(this);
         setContentView(R.layout.activity_sign_in);
+
+        sessionManager = new SessionManager(getApplicationContext());
+        sessionManager = new SessionManager(this);
+        sessionManager.checkPassIntro();
 
         // Initialize Firebase Database reference
         databaseReference = FirebaseDatabase.getInstance().getReference("qrCodes");
@@ -54,6 +63,7 @@ public class SignIn extends AppCompatActivity {
         qrcodeForm = findViewById(R.id.qrcode_button);
         usernameForm = findViewById(R.id.username_button);
         switchToSignUpText = findViewById(R.id.signin_text3);
+        forgotPasswordText = findViewById(R.id.forgot_password);
 
         // QR Code Button Handler (Generate QR Code)
         qrcodeForm.setOnClickListener(new View.OnClickListener() {
@@ -141,6 +151,14 @@ public class SignIn extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+        forgotPasswordText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(SignIn.this, ForgotPassword.class);
+                startActivity(intent);
+            }
+        });
     }
 
     // QR Code Generation Function
@@ -204,6 +222,8 @@ public class SignIn extends AppCompatActivity {
                     String passwordFromDB = snapshot.child(userUsername).child("password").getValue(String.class);
 
                     if (Objects.equals(passwordFromDB, hashedPassword)) {
+                        sessionManager.createLoginSession(userUsername, userPassword);
+
                         signinUsername.setError(null);
                         Intent intent = new Intent(SignIn.this, MainPage.class);
                         intent.putExtra("USERNAME", userUsername);
