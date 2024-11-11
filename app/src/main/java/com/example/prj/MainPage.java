@@ -20,6 +20,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
+import java.util.HashMap;
+
 public class MainPage extends AppCompatActivity {
 
     SessionManager sessionManager;
@@ -33,15 +35,14 @@ public class MainPage extends AppCompatActivity {
 
         sessionManager = new SessionManager(this);
         sessionManager.checkLogin();
+        HashMap<String, String> userDetails = sessionManager.getUserDetails();
+        String username = userDetails.get(SessionManager.KEY_NAME);
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-
-        // Retrieve the username from the Intent
-        String username = getIntent().getStringExtra("USERNAME");
 
         if (username != null ) {
             // Set the username to the name_text TextView

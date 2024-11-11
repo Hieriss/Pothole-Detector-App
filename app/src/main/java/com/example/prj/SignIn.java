@@ -1,10 +1,9 @@
 package com.example.prj;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.se.omapi.Session;
+import android.os.Handler;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -41,6 +40,8 @@ public class SignIn extends AppCompatActivity {
     DatabaseReference databaseReference;
 
     SessionManager sessionManager;
+    Handler handler = new Handler();
+    String sessionId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,13 +79,15 @@ public class SignIn extends AppCompatActivity {
                 qrcodeForm.setBackgroundResource(R.drawable.qr_username_choosen_background);
                 usernameForm.setBackgroundResource(R.drawable.qr_username_not_choosen_background);
 
-                // Generate a session ID
-                String sessionId = UUID.randomUUID().toString();
+                // Generate a session ID if it doesn't exist
+                if (sessionId == null) {
+                    sessionId = UUID.randomUUID().toString();
+                    long timestamp = System.currentTimeMillis();
+                    databaseReference.child(sessionId).setValue(new Session("waiting_for_login", timestamp));
+                }
+
                 Bitmap qrCodeBitmap = generateQRCode(sessionId);
                 qrCodeImageView.setImageBitmap(qrCodeBitmap);
-
-                // Save the session ID to Firebase
-                databaseReference.child(sessionId).setValue("waiting_for_login");
 
                 // Listen for changes in the session ID status
                 databaseReference.child(sessionId).addValueEventListener(new ValueEventListener() {
@@ -94,12 +97,6 @@ public class SignIn extends AppCompatActivity {
                         if ("logged_in".equals(status)) {
                             // Retrieve the user credentials
                             String usernameqr = snapshot.child("username").getValue(String.class);
-
-                            // Save the credentials in SharedPreferences
-                            /*SharedPreferences preferences = getSharedPreferences("user_session", MODE_PRIVATE);
-                            SharedPreferences.Editor editor = preferences.edit();
-                            editor.putString("username", username);
-                            editor.apply();*/
 
                             // Login successful
                             Intent intent = new Intent(SignIn.this, MainPage.class);
@@ -114,6 +111,20 @@ public class SignIn extends AppCompatActivity {
                         Toast.makeText(SignIn.this, "Database Error", Toast.LENGTH_SHORT).show();
                     }
                 });
+
+                // Hide the QR code after 5 minutes
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        qrCodeImageView.setVisibility(View.GONE);
+                        signinUsername.setVisibility(View.VISIBLE);
+                        signinPassword.setVisibility(View.VISIBLE);
+                        signinButton.setVisibility(View.VISIBLE);
+
+                        usernameForm.setBackgroundResource(R.drawable.qr_username_choosen_background);
+                        qrcodeForm.setBackgroundResource(R.drawable.qr_username_not_choosen_background);
+                    }
+                }, 300000); // 300,000 milliseconds = 5 minutes
             }
         });
 
@@ -199,10 +210,8 @@ public class SignIn extends AppCompatActivity {
         if (val.isEmpty()) {
             signinPassword.setError("Password can't be empty");
             return false;
-        } else if (val.length() < 8) {
-            signinPassword.setError("Password must be at least 8 characters long");
-            return false;
-        } else {
+        }
+        else {
             signinPassword.setError(null);
             return true;
         }
@@ -246,5 +255,15 @@ public class SignIn extends AppCompatActivity {
                 Toast.makeText(SignIn.this, "Database Error", Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    public class Session {
+        public String status;
+        public long timestamp;
+
+        public Session(String status, long timestamp) {
+            this.status = status;
+            this.timestamp = timestamp;
+        }
     }
 }

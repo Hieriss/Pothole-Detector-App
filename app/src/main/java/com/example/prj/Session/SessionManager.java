@@ -59,7 +59,6 @@ public class SessionManager {
             Intent intent = new Intent(context, SignIn.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-
             context.startActivity(intent);
         }
     }
