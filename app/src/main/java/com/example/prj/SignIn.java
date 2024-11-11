@@ -199,6 +199,9 @@ public class SignIn extends AppCompatActivity {
         if (val.isEmpty()) {
             signinPassword.setError("Password can't be empty");
             return false;
+        } else if (val.length() < 8) {
+            signinPassword.setError("Password must be at least 8 characters long");
+            return false;
         } else {
             signinPassword.setError(null);
             return true;

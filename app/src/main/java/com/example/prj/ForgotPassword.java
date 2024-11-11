@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -24,8 +25,9 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.Objects;
 
 public class ForgotPassword extends AppCompatActivity {
-    Button back_button, verify_button;
-    EditText forgot_password_email, forgot_password_username;
+    Button back_button, verify_button, change_password_button;
+    EditText forgot_password_email, forgot_password_username, forgot_password_newpw, forgot_password_confirmpw;
+    TextView forgot_password_description;
 
     DatabaseReference databaseReference;
 
@@ -37,8 +39,12 @@ public class ForgotPassword extends AppCompatActivity {
 
         back_button = findViewById(R.id.back_button);
         verify_button = findViewById(R.id.verify_button);
+        change_password_button = findViewById(R.id.change_password_button);
         forgot_password_username = findViewById(R.id.forgot_password_username);
         forgot_password_email = findViewById(R.id.forgot_password_email);
+        forgot_password_newpw = findViewById(R.id.forgot_password_newpw);
+        forgot_password_confirmpw = findViewById(R.id.forgot_password_confirmpw);
+        forgot_password_description = findViewById(R.id.forgot_password_description);
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
@@ -109,10 +115,9 @@ public class ForgotPassword extends AppCompatActivity {
 
                     if (Objects.equals(emailFromDB, userEmail)) {
                         forgot_password_username.setError(null);
-                        Intent intent = new Intent(ForgotPassword.this, MainPage.class);
-                        startActivity(intent);
+                        changePassword();
                     } else {
-                        forgot_password_email.setError("Wrong email address");
+                        forgot_password_email.setError("Email doesn't match");
                         forgot_password_email.requestFocus();
                     }
                 } else {
@@ -128,4 +133,68 @@ public class ForgotPassword extends AppCompatActivity {
         });
     }
 
+    public void changePassword() {
+        forgot_password_email.setVisibility(View.GONE);
+        forgot_password_username.setVisibility(View.GONE);
+        verify_button.setVisibility(View.GONE);
+
+        forgot_password_newpw.setVisibility(View.VISIBLE);
+        forgot_password_confirmpw.setVisibility(View.VISIBLE);
+        change_password_button.setVisibility(View.VISIBLE);
+
+        forgot_password_description.setText("Verify passed, please enter your new password and confirm it");
+
+        change_password_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (!validateNewPassword() | !validateConfirmPassword()) {
+                    return;
+                } else {
+                    updatePassword();
+                }
+            }
+        });
+    }
+
+    private Boolean validateNewPassword() {
+        String val = forgot_password_newpw.getText().toString().trim();
+        if (val.isEmpty()) {
+            forgot_password_newpw.setError("Password can't be empty");
+            return false;
+        } else if (val.length() < 8) {
+            forgot_password_newpw.setError("Password must be at least 8 characters long");
+            return false;
+        } else {
+            forgot_password_newpw.setError(null);
+            return true;
+        }
+    }
+
+    private Boolean validateConfirmPassword() {
+        String val = forgot_password_confirmpw.getText().toString().trim();
+        String password = forgot_password_newpw.getText().toString().trim();
+        if (val.isEmpty()) {
+            forgot_password_confirmpw.setError("Confirm password can't be empty");
+            return false;
+        } else if (!val.equals(password)) {
+            forgot_password_confirmpw.setError("Password didn't match");
+            return false;
+        } else {
+            forgot_password_confirmpw.setError(null);
+            return true;
+        }
+    }
+
+    private void updatePassword() {
+        String userUsername = forgot_password_username.getText().toString().trim();
+        String userPassword = forgot_password_newpw.getText().toString().trim();
+        String hashedPassword = Encrypt.hashPassword(userPassword);
+
+        databaseReference = FirebaseDatabase.getInstance().getReference("user");
+        databaseReference.child(userUsername).child("password").setValue(hashedPassword);
+
+        Toast.makeText(ForgotPassword.this, "Password updated successfully", Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent(ForgotPassword.this, SignIn.class);
+        startActivity(intent);
+    }
 }
