@@ -19,9 +19,39 @@
         android:theme="@style/Theme.Prj"
         tools:targetApi="31">
         <activity
-            android:name=".ForgotPassword"
+            android:name=".AccountSettingPage"
+            android:exported="false" />
+        <activity
+            android:name=".TermsAndPoliciesPage"
+            android:exported="false" />
+        <activity
+            android:name=".SupportPage"
+            android:exported="false" />
+        <activity
+            android:name=".ReportbugsSettingPage"
+            android:exported="false" />
+        <activity
+            android:name=".ActivitycenterSettingPage"
+            android:exported="false" />
+        <activity
+            android:name=".DisplaySettingPage"
+            android:exported="false" />
+        <activity
+            android:name=".SecuritySettingPage"
+            android:exported="false" />
+        <activity
+            android:name=".NotificationSettingPage"
+            android:exported="false" />
+        <activity
+            android:name=".SecuritySetting"
+            android:exported="false" />
+        <activity
+            android:name=".AcoountSettingPage"
+            android:exported="false" />
+        <activity
+            android:name=".Authen.ForgotPassword"
             android:exported="false"
-            android:launchMode="singleTask"/>
+            android:launchMode="singleTask" />
         <activity
             android:name=".MapPage"
             android:exported="false" />
@@ -41,7 +71,7 @@
             android:name=".SettingPage"
             android:exported="false" />
         <activity
-            android:name=".SignIn"
+            android:name=".Authen.SignIn"
             android:exported="false"
             android:launchMode="singleTask" />
         <activity
@@ -49,7 +79,7 @@
             android:exported="false"
             android:launchMode="singleTask" />
         <activity
-            android:name=".SignUp"
+            android:name=".Authen.SignUp"
             android:exported="false"
             android:launchMode="singleTask" />
         <activity

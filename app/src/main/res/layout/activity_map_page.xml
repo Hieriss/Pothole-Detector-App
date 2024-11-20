@@ -38,7 +38,7 @@
                     android:layout_height="24dp"
                     android:layout_centerHorizontal="true"
                     android:layout_centerVertical="true"
-                    app:srcCompat="@drawable/white_back" />
+                    app:srcCompat="@drawable/back" />
 
                 <androidx.appcompat.widget.AppCompatButton
                     android:id="@+id/return_button"

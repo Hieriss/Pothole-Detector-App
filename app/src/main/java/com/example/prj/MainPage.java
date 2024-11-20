@@ -14,18 +14,33 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.example.prj.Authen.Encrypt;
+import com.example.prj.Authen.SignIn;
 import com.example.prj.Session.SessionManager;
+import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.components.Description;
+import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.components.YAxis;
+import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.data.LineData;
+import com.github.mikephil.charting.data.LineDataSet;
+import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 
 public class MainPage extends AppCompatActivity {
 
     SessionManager sessionManager;
     private Button logoutButton, scanButton, settingButton, achievementButton, notificationButton, historyButton, profileButton, mapButton;
+    private LineChart lineChart1,lineChart2;
+    private List<String> xValues1, yValues1, xValues2, yValues2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,6 +70,104 @@ public class MainPage extends AppCompatActivity {
             nameTextView.setText(usernameqr);
         }
 
+        // Linechart
+        lineChart1 = findViewById(R.id.line_chart1);
+
+        Description description1 = new Description();
+        description1.setText("");
+        lineChart1.setDescription(description1);
+
+        lineChart1.getAxisRight().setDrawLabels(false);
+        lineChart1.getAxisRight().setDrawGridLines(false);
+
+        xValues1 = Arrays.asList("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun");
+
+        XAxis xAxis1 = lineChart1.getXAxis();
+        xAxis1.setPosition(XAxis.XAxisPosition.BOTTOM);
+        xAxis1.setValueFormatter(new IndexAxisValueFormatter(xValues1));
+        xAxis1.setDrawGridLines(false);
+        xAxis1.setLabelCount(6);
+
+        YAxis yAxis1 = lineChart1.getAxisLeft();
+        yAxis1.setAxisMinimum(0f);
+        yAxis1.setAxisMaximum(20f);
+        yAxis1.setAxisLineWidth(1f);
+        yAxis1.setDrawGridLines(false);
+        yAxis1.setLabelCount(4);
+
+        List<Entry> entries1 = new ArrayList<>();
+        entries1.add(new Entry(0, 0f));
+        entries1.add(new Entry(1, 7f));
+        entries1.add(new Entry(2, 5f));
+        entries1.add(new Entry(3, 12f));
+        entries1.add(new Entry(4, 10f));
+        entries1.add(new Entry(5, 3f));
+        entries1.add(new Entry(6, 18f));
+
+        LineDataSet dataSet1 = new LineDataSet(entries1, "Detected");
+        dataSet1.setColor(getColor(R.color.red));
+        dataSet1.setMode(LineDataSet.Mode.HORIZONTAL_BEZIER);
+        dataSet1.setDrawCircles(false);
+        dataSet1.setLineWidth(3f);
+
+        LineData lineData1 = new LineData(dataSet1);
+        lineData1.setDrawValues(false);
+
+        lineChart1.setData(lineData1);
+        lineChart1.invalidate();
+        lineChart1.setScaleEnabled(false);
+        lineChart1.setPinchZoom(false);
+        lineChart1.setDoubleTapToZoomEnabled(false);
+
+        //-----------------------------------------
+
+        lineChart2 = findViewById(R.id.line_chart2);
+
+        Description description2 = new Description();
+        description2.setText("");
+        lineChart2.setDescription(description2);
+
+        lineChart2.getAxisRight().setDrawLabels(false);
+        lineChart2.getAxisRight().setDrawGridLines(false);
+
+        xValues1 = Arrays.asList("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun");
+
+        XAxis xAxis2 = lineChart2.getXAxis();
+        xAxis2.setPosition(XAxis.XAxisPosition.BOTTOM);
+        xAxis2.setValueFormatter(new IndexAxisValueFormatter(xValues1));
+        xAxis2.setDrawGridLines(false);
+        xAxis2.setLabelCount(6);
+
+        YAxis yAxis2 = lineChart2.getAxisLeft();
+        yAxis2.setAxisMinimum(0f);
+        yAxis2.setAxisMaximum(20f);
+        yAxis2.setAxisLineWidth(1f);
+        yAxis2.setDrawGridLines(false);
+        yAxis2.setLabelCount(4);
+
+        List<Entry> entries2 = new ArrayList<>();
+        entries2.add(new Entry(0, 10f));
+        entries2.add(new Entry(1, 2f));
+        entries2.add(new Entry(2, 15f));
+        entries2.add(new Entry(3, 1f));
+        entries2.add(new Entry(4, 5f));
+        entries2.add(new Entry(5, 20f));
+        entries2.add(new Entry(6, 10f));
+
+        LineDataSet dataSet2 = new LineDataSet(entries2, "Detected");
+        dataSet2.setColor(getColor(R.color.cyan));
+        dataSet2.setMode(LineDataSet.Mode.HORIZONTAL_BEZIER);
+        dataSet2.setDrawCircles(false);
+        dataSet2.setLineWidth(3f);
+
+        LineData lineData2 = new LineData(dataSet2);
+        lineData2.setDrawValues(false);
+
+        lineChart2.setData(lineData2);
+        lineChart2.invalidate();
+        lineChart2.setScaleEnabled(false);
+        lineChart2.setPinchZoom(false);
+        lineChart2.setDoubleTapToZoomEnabled(false);
 
         // Initialize buttons and listeners
         logoutButton = findViewById(R.id.logout_button);

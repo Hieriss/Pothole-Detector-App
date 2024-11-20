@@ -1,4 +1,4 @@
-package com.example.prj;
+package com.example.prj.Authen;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -15,6 +15,8 @@ import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.prj.MainPage;
+import com.example.prj.R;
 import com.example.prj.Session.SessionManager;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;

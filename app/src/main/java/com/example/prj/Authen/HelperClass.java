@@ -1,4 +1,4 @@
-package com.example.prj;
+package com.example.prj.Authen;
 
 public class HelperClass {
     String username, password, email, phone;

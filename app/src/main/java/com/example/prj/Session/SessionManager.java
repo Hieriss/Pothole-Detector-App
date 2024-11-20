@@ -5,11 +5,9 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 
 import com.example.prj.IntroPage;
-import com.example.prj.SignIn;
+import com.example.prj.Authen.SignIn;
 
 import java.util.HashMap;
-
-import kotlin.UShortArray;
 
 public class SessionManager {
     SharedPreferences sharedPreferences;

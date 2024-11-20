@@ -5,6 +5,641 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/main"
     tools:context=".SettingPage">
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="10"
+            android:orientation="horizontal">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginStart="30dp">
+
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        app:srcCompat="@drawable/home"
+                        app:tint="@color/black"/>
+
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/setting_home_button"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_centerVertical="true"
+                        android:background="@android:color/transparent"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:text="" />
+
+                </RelativeLayout>
+
+                <TextView
+                    android:id="@+id/setting_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_centerVertical="true"
+                    android:fontFamily="@font/grandstander_semi_bold"
+                    android:text="Settings"
+                    android:textColor="@color/black"
+                    android:textSize="26sp" />
+            </RelativeLayout>
+
+        </LinearLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/setting_text_option1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginStart="20dp"
+                        android:fontFamily="@font/grandstander_medium"
+                        android:text="Account"
+                        android:textColor="@color/black"
+                        android:textSize="16sp" />
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="100dp"
+                        android:layout_marginStart="5dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginEnd="5dp">
+
+                        <ImageView
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            app:srcCompat="@drawable/setting_box_background" />
+
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent">
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:orientation="vertical">
+
+                                <RelativeLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:layout_weight="1">
+
+                                    <LinearLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:orientation="horizontal">
+
+                                        <ImageView
+                                            android:id="@+id/setting_account_icon"
+                                            android:layout_width="20dp"
+                                            android:layout_height="20dp"
+                                            android:layout_gravity="center"
+                                            android:layout_marginStart="20dp"
+                                            android:layout_marginEnd="5dp"
+                                            android:src="@drawable/user" />
+
+                                        <TextView
+                                            android:id="@+id/setting_account"
+                                            android:layout_width="match_parent"
+                                            android:layout_height="match_parent"
+                                            android:layout_marginStart="10dp"
+                                            android:layout_weight="1"
+                                            android:fontFamily="@font/grandstander_regular"
+                                            android:gravity="center_vertical"
+                                            android:text="Account"
+                                            android:textSize="20sp" />
+                                    </LinearLayout>
+
+                                    <androidx.appcompat.widget.AppCompatButton
+                                        android:id="@+id/setting_account_button"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:background="@android:color/transparent"
+                                        android:clickable="true"
+                                        android:focusable="true"
+                                        android:text="" />
+                                </RelativeLayout>
+
+                                <RelativeLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:layout_weight="1">
+
+                                    <LinearLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:orientation="horizontal">
+
+                                        <ImageView
+                                            android:id="@+id/setting_security_icon"
+                                            android:layout_width="20dp"
+                                            android:layout_height="20dp"
+                                            android:layout_gravity="center"
+                                            android:layout_marginStart="20dp"
+                                            android:layout_marginEnd="5dp"
+                                            android:src="@drawable/lock" />
+
+                                        <TextView
+                                            android:id="@+id/setting_security"
+                                            android:layout_width="match_parent"
+                                            android:layout_height="match_parent"
+                                            android:layout_marginStart="10dp"
+                                            android:layout_weight="1"
+                                            android:fontFamily="@font/grandstander_regular"
+                                            android:gravity="center_vertical"
+                                            android:text="Security"
+                                            android:textSize="20sp" />
+                                    </LinearLayout>
+
+                                    <androidx.appcompat.widget.AppCompatButton
+                                        android:id="@+id/setting_security_button"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:background="@android:color/transparent"
+                                        android:clickable="true"
+                                        android:focusable="true"
+                                        android:text="" />
+                                </RelativeLayout>
+                            </LinearLayout>
+                        </RelativeLayout>
+                    </RelativeLayout>
+
+                    <TextView
+                        android:id="@+id/setting_text_option2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="20dp"
+                        android:layout_marginTop="10dp"
+                        android:fontFamily="@font/grandstander_medium"
+                        android:text="Notification &amp; Display"
+                        android:textColor="@color/black"
+                        android:textSize="16sp" />
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="150dp"
+                        android:layout_marginStart="5dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginEnd="5dp">
+
+                        <ImageView
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            app:srcCompat="@drawable/setting_box_background" />
+
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent">
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:orientation="vertical">
+
+                                <RelativeLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:layout_weight="1">
+
+                                    <LinearLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:orientation="horizontal">
+
+                                        <ImageView
+                                            android:id="@+id/setting_notification_icon"
+                                            android:layout_width="20dp"
+                                            android:layout_height="20dp"
+                                            android:layout_gravity="center"
+                                            android:layout_marginStart="20dp"
+                                            android:layout_marginEnd="5dp"
+                                            android:src="@drawable/notification" />
+
+                                        <TextView
+                                            android:id="@+id/setting_notification"
+                                            android:layout_width="match_parent"
+                                            android:layout_height="match_parent"
+                                            android:layout_marginStart="10dp"
+                                            android:layout_weight="1"
+                                            android:fontFamily="@font/grandstander_regular"
+                                            android:gravity="center_vertical"
+                                            android:text="Notification"
+                                            android:textSize="20sp" />
+                                    </LinearLayout>
+
+                                    <androidx.appcompat.widget.AppCompatButton
+                                        android:id="@+id/setting_notification_button"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:background="@android:color/transparent"
+                                        android:clickable="true"
+                                        android:focusable="true"
+                                        android:text="" />
+                                </RelativeLayout>
+
+                                <RelativeLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:layout_weight="1">
+
+                                    <LinearLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:orientation="horizontal">
+
+                                        <ImageView
+                                            android:id="@+id/setting_display_icon"
+                                            android:layout_width="20dp"
+                                            android:layout_height="20dp"
+                                            android:layout_gravity="center"
+                                            android:layout_marginStart="20dp"
+                                            android:layout_marginEnd="5dp"
+                                            android:src="@drawable/lock" />
+
+                                        <TextView
+                                            android:id="@+id/setting_display"
+                                            android:layout_width="match_parent"
+                                            android:layout_height="match_parent"
+                                            android:layout_marginStart="10dp"
+                                            android:layout_weight="1"
+                                            android:fontFamily="@font/grandstander_regular"
+                                            android:gravity="center_vertical"
+                                            android:text="Display"
+                                            android:textSize="20sp" />
+                                    </LinearLayout>
+
+                                    <androidx.appcompat.widget.AppCompatButton
+                                        android:id="@+id/setting_display_button"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:background="@android:color/transparent"
+                                        android:clickable="true"
+                                        android:focusable="true"
+                                        android:text="" />
+                                </RelativeLayout>
+
+                                <RelativeLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:layout_weight="1">
+
+                                    <LinearLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:orientation="horizontal">
+
+                                        <ImageView
+                                            android:id="@+id/setting_activity_center_icon"
+                                            android:layout_width="20dp"
+                                            android:layout_height="20dp"
+                                            android:layout_gravity="center"
+                                            android:layout_marginStart="20dp"
+                                            android:layout_marginEnd="5dp"
+                                            android:src="@drawable/lock" />
+
+                                        <TextView
+                                            android:id="@+id/setting_activity_center"
+                                            android:layout_width="match_parent"
+                                            android:layout_height="match_parent"
+                                            android:layout_marginStart="10dp"
+                                            android:layout_weight="1"
+                                            android:fontFamily="@font/grandstander_regular"
+                                            android:gravity="center_vertical"
+                                            android:text="Activity Center"
+                                            android:textSize="20sp" />
+                                    </LinearLayout>
+
+                                    <androidx.appcompat.widget.AppCompatButton
+                                        android:id="@+id/setting_activity_center_button"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:background="@android:color/transparent"
+                                        android:clickable="true"
+                                        android:focusable="true"
+                                        android:text="" />
+                                </RelativeLayout>
+                            </LinearLayout>
+                        </RelativeLayout>
+                    </RelativeLayout>
+
+                    <TextView
+                        android:id="@+id/setting_text_option3"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="20dp"
+                        android:layout_marginTop="10dp"
+                        android:fontFamily="@font/grandstander_medium"
+                        android:text="Support &amp; Referrals"
+                        android:textColor="@color/black"
+                        android:textSize="16sp" />
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="150dp"
+                        android:layout_marginStart="5dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginEnd="5dp">
+
+                        <ImageView
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            app:srcCompat="@drawable/setting_box_background" />
+
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent">
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:orientation="vertical">
+
+                                <RelativeLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:layout_weight="1">
+
+                                    <LinearLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:orientation="horizontal">
+
+                                        <ImageView
+                                            android:id="@+id/setting_report_bugs_icon"
+                                            android:layout_width="20dp"
+                                            android:layout_height="20dp"
+                                            android:layout_gravity="center"
+                                            android:layout_marginStart="20dp"
+                                            android:layout_marginEnd="5dp"
+                                            android:src="@drawable/notification" />
+
+                                        <TextView
+                                            android:id="@+id/setting_report_bugs"
+                                            android:layout_width="match_parent"
+                                            android:layout_height="match_parent"
+                                            android:layout_marginStart="10dp"
+                                            android:layout_weight="1"
+                                            android:fontFamily="@font/grandstander_regular"
+                                            android:gravity="center_vertical"
+                                            android:text="Report Bugs"
+                                            android:textSize="20sp" />
+                                    </LinearLayout>
+
+                                    <androidx.appcompat.widget.AppCompatButton
+                                        android:id="@+id/setting_report_bugs_button"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:background="@android:color/transparent"
+                                        android:clickable="true"
+                                        android:focusable="true"
+                                        android:text="" />
+                                </RelativeLayout>
+
+                                <RelativeLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:layout_weight="1">
+
+                                    <LinearLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:orientation="horizontal">
+
+                                        <ImageView
+                                            android:id="@+id/setting_support_icon"
+                                            android:layout_width="20dp"
+                                            android:layout_height="20dp"
+                                            android:layout_gravity="center"
+                                            android:layout_marginStart="20dp"
+                                            android:layout_marginEnd="5dp"
+                                            android:src="@drawable/lock" />
+
+                                        <TextView
+                                            android:id="@+id/setting_support"
+                                            android:layout_width="match_parent"
+                                            android:layout_height="match_parent"
+                                            android:layout_marginStart="10dp"
+                                            android:layout_weight="1"
+                                            android:fontFamily="@font/grandstander_regular"
+                                            android:gravity="center_vertical"
+                                            android:text="Support"
+                                            android:textSize="20sp" />
+                                    </LinearLayout>
+
+                                    <androidx.appcompat.widget.AppCompatButton
+                                        android:id="@+id/setting_support_button"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:background="@android:color/transparent"
+                                        android:clickable="true"
+                                        android:focusable="true"
+                                        android:text="" />
+                                </RelativeLayout>
+
+                                <RelativeLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:layout_weight="1">
+
+                                    <LinearLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:orientation="horizontal">
+
+                                        <ImageView
+                                            android:id="@+id/setting_term_icon"
+                                            android:layout_width="20dp"
+                                            android:layout_height="20dp"
+                                            android:layout_gravity="center"
+                                            android:layout_marginStart="20dp"
+                                            android:layout_marginEnd="5dp"
+                                            android:src="@drawable/lock" />
+
+                                        <TextView
+                                            android:id="@+id/setting_term"
+                                            android:layout_width="match_parent"
+                                            android:layout_height="match_parent"
+                                            android:layout_marginStart="10dp"
+                                            android:layout_weight="1"
+                                            android:fontFamily="@font/grandstander_regular"
+                                            android:gravity="center_vertical"
+                                            android:text="Terms &amp; Policies"
+                                            android:textSize="20sp" />
+                                    </LinearLayout>
+
+                                    <androidx.appcompat.widget.AppCompatButton
+                                        android:id="@+id/setting_term_button"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:background="@android:color/transparent"
+                                        android:clickable="true"
+                                        android:focusable="true"
+                                        android:text="" />
+                                </RelativeLayout>
+                            </LinearLayout>
+                        </RelativeLayout>
+                    </RelativeLayout>
+
+                    <TextView
+                        android:id="@+id/setting_text_option4"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="20dp"
+                        android:layout_marginTop="10dp"
+                        android:fontFamily="@font/grandstander_medium"
+                        android:text="Login"
+                        android:textColor="@color/black"
+                        android:textSize="16sp" />
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="100dp"
+                        android:layout_marginStart="5dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginEnd="5dp">
+
+                        <ImageView
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            app:srcCompat="@drawable/setting_box_background" />
+
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent">
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:orientation="vertical">
+
+                                <RelativeLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:layout_weight="1">
+
+                                    <LinearLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:orientation="horizontal">
+
+                                        <ImageView
+                                            android:id="@+id/setting_switch_account_icon"
+                                            android:layout_width="20dp"
+                                            android:layout_height="20dp"
+                                            android:layout_gravity="center"
+                                            android:layout_marginStart="20dp"
+                                            android:layout_marginEnd="5dp"
+                                            android:src="@drawable/user" />
+
+                                        <TextView
+                                            android:id="@+id/setting_switch_account"
+                                            android:layout_width="match_parent"
+                                            android:layout_height="match_parent"
+                                            android:layout_marginStart="10dp"
+                                            android:layout_weight="1"
+                                            android:fontFamily="@font/grandstander_regular"
+                                            android:gravity="center_vertical"
+                                            android:text="Switch Account"
+                                            android:textSize="20sp" />
+                                    </LinearLayout>
+
+                                    <androidx.appcompat.widget.AppCompatButton
+                                        android:id="@+id/setting_switch_account_button"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:background="@android:color/transparent"
+                                        android:clickable="true"
+                                        android:focusable="true"
+                                        android:text="" />
+                                </RelativeLayout>
+
+                                <RelativeLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:layout_weight="1">
+
+                                    <LinearLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:orientation="horizontal">
+
+                                        <ImageView
+                                            android:id="@+id/setting_logout_icon"
+                                            android:layout_width="20dp"
+                                            android:layout_height="20dp"
+                                            android:layout_gravity="center"
+                                            android:layout_marginStart="20dp"
+                                            android:layout_marginEnd="5dp"
+                                            android:src="@drawable/lock" />
+
+                                        <TextView
+                                            android:id="@+id/setting_logout"
+                                            android:layout_width="match_parent"
+                                            android:layout_height="match_parent"
+                                            android:layout_marginStart="10dp"
+                                            android:layout_weight="1"
+                                            android:fontFamily="@font/grandstander_regular"
+                                            android:gravity="center_vertical"
+                                            android:text="Logout"
+                                            android:textSize="20sp" />
+                                    </LinearLayout>
+
+                                    <androidx.appcompat.widget.AppCompatButton
+                                        android:id="@+id/setting_logout_button"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:background="@android:color/transparent"
+                                        android:clickable="true"
+                                        android:focusable="true"
+                                        android:text="" />
+                                </RelativeLayout>
+                            </LinearLayout>
+                        </RelativeLayout>
+                    </RelativeLayout>
+
+                    <TextView
+                        android:id="@+id/setting_version_text"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_gravity="center"
+                        android:layout_marginTop="40dp"
+                        android:fontFamily="@font/grandstander_regular"
+                        android:text="Version 1.0.0 \n Made by hi3r1ss, harrylee02, Howf and Bacann"
+                        android:textAlignment="center"
+                        android:textColor="@color/black"
+                        android:textSize="16sp"  />
+                </LinearLayout>
+            </ScrollView>
+
+        </RelativeLayout>
+    </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
