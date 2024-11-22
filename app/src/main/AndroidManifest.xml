@@ -2,10 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
     <application
         android:allowBackup="true"
@@ -41,12 +39,6 @@
             android:exported="false" />
         <activity
             android:name=".NotificationSettingPage"
-            android:exported="false" />
-        <activity
-            android:name=".SecuritySetting"
-            android:exported="false" />
-        <activity
-            android:name=".AcoountSettingPage"
             android:exported="false" />
         <activity
             android:name=".Authen.ForgotPassword"
@@ -91,10 +83,5 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <meta-data
-            android:name="com.google.android.geo.API_KEY"
-            android:value="@string/google_maps_key" />
     </application>
-
 </manifest>

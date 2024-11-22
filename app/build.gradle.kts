@@ -49,20 +49,21 @@ dependencies {
 
     implementation("com.google.zxing:core:3.4.1")
     implementation("com.journeyapps:zxing-android-embedded:4.2.0")
-    implementation(libs.play.services.maps)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
-    implementation("com.google.android.gms:play-services-maps:19.0.0")
-    implementation("com.google.android.gms:play-services-location:21.3.0")
+
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
-    implementation("com.google.android.libraries.places:places:4.0.0")
-    implementation("com.google.android.gms:play-services:12.0.1")
 
     implementation("com.androidplot:androidplot-core:1.5.11")
     implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
+
+    implementation("com.mapbox.maps:android:11.8.0")
+    implementation("com.mapbox.search:mapbox-search-android-ui:2.5.0")
+    implementation("androidx.core:core:1.9.0")
+    implementation("androidx.activity:activity:1.7.0")
 }
 
 apply(plugin = "com.google.gms.google-services")
