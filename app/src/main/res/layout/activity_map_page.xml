@@ -1,4 +1,5 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
@@ -6,96 +7,75 @@
     android:layout_height="match_parent"
     tools:context=".MapPage">
 
-    <fragment
-        android:id="@+id/id_map"
-        android:name="com.google.android.gms.maps.SupportMapFragment"
+    <com.mapbox.maps.MapView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent"
+        android:id="@+id/mapView"/>
 
-    <RelativeLayout
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/search_bar"
         android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:layout_margin="20dp"
-        android:background="@drawable/searchbar_background">
+        android:layout_height="wrap_content"
+        android:layout_marginTop="50sp"
+        android:layout_marginStart="10sp"
+        android:layout_marginEnd="10sp"
+        android:elevation="4dp"
+        android:hint="Search"
+        app:boxCornerRadiusBottomEnd="20sp"
+        app:boxCornerRadiusBottomStart="20sp"
+        app:boxCornerRadiusTopEnd="20sp"
+        app:boxCornerRadiusTopStart="20sp"
+        app:boxStrokeWidthFocused="0sp"
+        app:boxStrokeWidth="0sp"
+        app:startIconDrawable="@drawable/search"
+        style="@style/Widget.Material3.TextInputLayout.FilledBox.Dense">
 
-        <LinearLayout
-            android:id="@+id/search_layout"
+        <com.google.android.material.textfield.TextInputEditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:inputType="text"
+            android:id="@+id/search_bar_text"/>
 
-            <RelativeLayout
-                android:id="@+id/return_button_layout"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_marginStart="15dp"
-                android:layout_weight="1"
-                android:visibility="gone">
+    </com.google.android.material.textfield.TextInputLayout>
 
-                <ImageView
-                    android:id="@+id/imageView10"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:layout_centerHorizontal="true"
-                    android:layout_centerVertical="true"
-                    app:srcCompat="@drawable/back" />
+    <com.mapbox.search.ui.view.SearchResultsView
+        android:id="@+id/search_results_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginTop="20dp"
+        android:visibility="gone"
+        android:elevation="4dp"
+        android:paddingTop="10dp"
+        android:paddingBottom="20dp"
+        android:layout_below="@id/search_bar" />
 
-                <androidx.appcompat.widget.AppCompatButton
-                    android:id="@+id/return_button"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:background="@android:color/transparent"
-                    android:clickable="true"
-                    android:focusable="true" />
+    <com.mapbox.navigation.ui.voice.view.MapboxSoundButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_below="@+id/search_bar"
+        android:layout_marginTop="20sp"
+        android:layout_marginEnd="20sp"
+        android:id="@+id/soundButton"/>
 
-            </RelativeLayout>
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/route_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20sp"
+        android:layout_marginEnd="20sp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="20sp"
+        android:text="Set Route"/>
 
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:layout_marginEnd="10dp"
-                android:paddingStart="10dp"
-                android:paddingEnd="10dp"
-                android:layout_weight="1">
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/focus_location_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/my_location"
+        android:layout_alignParentEnd="true"
+        android:layout_above="@id/route_button"
+        android:layout_margin="16sp"/>
 
-                <AutoCompleteTextView
-                    android:id="@+id/search_address"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:fontFamily="@font/grandstander_regular"
-                    android:hint="Search for a place"
-                    android:inputType="text"
-                    android:textColor="@color/white"
-                    android:textColorHint="@color/white" />
-            </RelativeLayout>
-
-            <RelativeLayout
-                android:id="@+id/search_button_layout"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_marginEnd="15dp"
-                android:layout_weight="1"
-                android:visibility="gone">
-
-                <ImageView
-                    android:id="@+id/imageView9"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:layout_centerVertical="true"
-                    android:layout_centerHorizontal="true"
-                    app:srcCompat="@drawable/white_search" />
-
-                <androidx.appcompat.widget.AppCompatButton
-                    android:id="@+id/search_button"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:background="@android:color/transparent"
-                    android:clickable="true"
-                    android:focusable="true" />
-            </RelativeLayout>
-
-        </LinearLayout>
-    </RelativeLayout>
-
-</FrameLayout>
+</RelativeLayout>
