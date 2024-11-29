@@ -60,8 +60,7 @@ dependencies {
     implementation("com.androidplot:androidplot-core:1.5.11")
     implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
 
-    implementation("com.mapbox.maps:android:11.8.0")
-    implementation("com.mapbox.search:mapbox-search-android-ui:2.5.0")
+    implementation("com.mapbox.navigation:android:2.15.2")
     implementation("androidx.core:core:1.9.0")
     implementation("androidx.activity:activity:1.7.0")
 }

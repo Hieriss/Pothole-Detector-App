@@ -10,63 +10,33 @@
     <com.mapbox.maps.MapView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/mapView" />
+        android:id="@+id/mapView"/>
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/searchLayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:layout_marginEnd="20dp"
-        android:layout_marginTop="20dp"
-        app:boxStrokeWidth="0dp"
-        app:boxStrokeWidthFocused="0dp"
-        style="@style/Widget.Material3.TextInputLayout.FilledBox.Dense"
-        app:boxCornerRadiusBottomEnd="20dp"
-        app:boxCornerRadiusBottomStart="20dp"
-        app:boxCornerRadiusTopEnd="20dp"
-        app:boxCornerRadiusTopStart="20dp"
-        app:endIconDrawable="@drawable/search"
-        android:hint="Search"
-        android:elevation="4sp">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/searchEditText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="text"/>
-
-    </com.google.android.material.textfield.TextInputLayout>
-
-    <com.mapbox.search.ui.view.SearchResultsView
-        android:id="@+id/searchResultView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/searchLayout"
-        android:layout_marginTop="20dp"
-        android:visibility="gone"
-        android:paddingTop="10dp"
-        android:paddingBottom="25dp"/>
-
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/routeButton"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_marginStart="20dp"
-        android:layout_marginEnd="20dp"
-        android:layout_alignParentBottom="true"
-        android:layout_marginBottom="20dp"
-        android:background="@drawable/map_button_background"
-        android:text="Route" />
-
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/myLocationButton"
+    <com.mapbox.navigation.ui.voice.view.MapboxSoundButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="20dp"
-        android:layout_marginBottom="10dp"
         android:layout_alignParentEnd="true"
-        android:layout_above="@+id/routeButton"
-        android:src="@drawable/my_location" />
+        android:layout_marginTop="64sp"
+        android:layout_marginEnd="10sp"
+        android:id="@+id/soundButton"/>
+
+    <com.google.android.material.button.MaterialButton
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10sp"
+        android:layout_marginEnd="10sp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="20sp"
+        android:id="@+id/setRoute"
+        android:text="Set Route"/>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/my_location"
+        android:id="@+id/focusLocation"
+        android:layout_alignParentEnd="true"
+        android:layout_above="@id/setRoute"
+        android:layout_margin="16sp"/>
 
 </RelativeLayout>
