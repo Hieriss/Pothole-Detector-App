@@ -8,10 +8,12 @@ import static com.mapbox.navigation.base.extensions.RouteOptionsExtensions.apply
 
 import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.VectorDrawable;
@@ -27,6 +29,7 @@ import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -64,12 +67,17 @@ import com.mapbox.maps.MapView;
 import com.mapbox.maps.Style;
 import com.mapbox.maps.extension.style.layers.properties.generated.TextAnchor;
 import com.mapbox.maps.plugin.LocationPuck2D;
+import com.mapbox.maps.plugin.Plugin;
 import com.mapbox.maps.plugin.animation.MapAnimationOptions;
 import com.mapbox.maps.plugin.annotation.AnnotationPlugin;
 import com.mapbox.maps.plugin.annotation.AnnotationPluginImplKt;
 import com.mapbox.maps.plugin.annotation.generated.PointAnnotationManager;
 import com.mapbox.maps.plugin.annotation.generated.PointAnnotationManagerKt;
 import com.mapbox.maps.plugin.annotation.generated.PointAnnotationOptions;
+import com.mapbox.maps.plugin.compass.CompassPlugin;
+import com.mapbox.maps.plugin.compass.CompassView;
+import com.mapbox.maps.plugin.compass.CompassViewPlugin;
+import com.mapbox.maps.plugin.gestures.GesturesPlugin;
 import com.mapbox.maps.plugin.gestures.OnMapClickListener;
 import com.mapbox.maps.plugin.gestures.OnMoveListener;
 import com.mapbox.maps.plugin.locationcomponent.LocationComponentConstants;
@@ -77,6 +85,7 @@ import com.mapbox.maps.plugin.locationcomponent.LocationComponentPlugin;
 import com.mapbox.maps.plugin.locationcomponent.OnIndicatorBearingChangedListener;
 import com.mapbox.maps.plugin.locationcomponent.OnIndicatorPositionChangedListener;
 import com.mapbox.maps.plugin.locationcomponent.generated.LocationComponentSettings;
+import com.mapbox.maps.plugin.scalebar.ScaleBarPlugin;
 import com.mapbox.navigation.base.options.NavigationOptions;
 import com.mapbox.navigation.base.route.NavigationRoute;
 import com.mapbox.navigation.base.route.NavigationRouterCallback;
@@ -126,6 +135,9 @@ public class MapPage extends AppCompatActivity {
     MapView mapView;
     MaterialButton setRoute;
     FloatingActionButton focusLocationBtn;
+    CompassView compassView;
+    /*RelativeLayout focus_location_button_layout = findViewById(R.id.focus_location_button_layout);
+    ImageView focus_location_icon = findViewById(R.id.focus_location_icon);*/
 
     private final NavigationLocationProvider navigationLocationProvider = new NavigationLocationProvider();
     private MapboxRouteLineView routeLineView;
@@ -190,7 +202,9 @@ public class MapPage extends AppCompatActivity {
         @Override
         public void onActivityResult(Boolean result) {
             if (result) {
-                Toast.makeText(MapPage.this, "Permission granted! Restart this app", Toast.LENGTH_SHORT).show();
+                Intent intent = getIntent();
+                finish();
+                startActivity(intent);
             }
         }
     });
@@ -253,6 +267,7 @@ public class MapPage extends AppCompatActivity {
             return insets;
         });
 
+
         // route
         mapView = findViewById(R.id.mapView);
         focusLocationBtn = findViewById(R.id.focus_location_button);
@@ -306,6 +321,8 @@ public class MapPage extends AppCompatActivity {
         }
 
         focusLocationBtn.hide();
+        /*focus_location_button_layout.setVisibility(View.GONE);*/
+
         LocationComponentPlugin locationComponentPlugin = getLocationComponent(mapView);
         getGestures(mapView).addOnMoveListener(onMoveListener);
 
@@ -362,9 +379,18 @@ public class MapPage extends AppCompatActivity {
             }
         });
 
-        mapView.getMapboxMap().loadStyleUri(Style.LIGHT, new Style.OnStyleLoaded() {
+        mapView.getMapboxMap().loadStyleUri(Style.OUTDOORS, new Style.OnStyleLoaded() {
             @Override
             public void onStyleLoaded(@NonNull Style style) {
+                CompassPlugin compassPlugin = (CompassPlugin) mapView.getPlugin(Plugin.MAPBOX_COMPASS_PLUGIN_ID);
+                if (compassPlugin != null) {
+                    compassPlugin.setVisibility(false);
+                    compassPlugin.setEnabled(false);
+                }
+                ScaleBarPlugin scaleBarPlugin = (ScaleBarPlugin) mapView.getPlugin(Plugin.MAPBOX_SCALEBAR_PLUGIN_ID);
+                if (scaleBarPlugin != null) {
+                    scaleBarPlugin.setEnabled(false);
+                }
                 mapView.getMapboxMap().setCamera(new CameraOptions.Builder().zoom(20.0).build());
                 locationComponentPlugin.setEnabled(true);
                 locationComponentPlugin.setLocationProvider(navigationLocationProvider);
@@ -403,6 +429,7 @@ public class MapPage extends AppCompatActivity {
                         focusLocation = true;
                         getGestures(mapView).addOnMoveListener(onMoveListener);
                         focusLocationBtn.hide();
+                        /*focus_location_button_layout.setVisibility(View.GONE);*/
                     }
                 });
 
@@ -460,7 +487,7 @@ public class MapPage extends AppCompatActivity {
                 RouteOptions.Builder builder = RouteOptions.builder();
                 Point origin = Point.fromLngLat(Objects.requireNonNull(location).getLongitude(), location.getLatitude());
                 builder.coordinatesList(Arrays.asList(origin, point));
-                builder.alternatives(false);
+                builder.alternatives(true);
                 builder.profile(DirectionsCriteria.PROFILE_DRIVING);
                 builder.bearingsList(Arrays.asList(Bearing.builder().angle(location.getBearing()).degrees(45.0).build(), null));
                 applyDefaultNavigationOptions(builder);

@@ -12,6 +12,15 @@
         android:layout_height="match_parent"
         android:id="@+id/mapView"/>
 
+    <com.mapbox.maps.plugin.compass.CompassViewImpl
+        android:id="@+id/compass_icon"
+        android:layout_width="53dp"
+        android:layout_height="53dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="10dp"
+        android:layout_alignParentEnd="true"
+        android:layout_above="@+id/focus_location_button_layout"/>
+
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/search_bar"
         android:layout_width="match_parent"
@@ -69,13 +78,31 @@
         android:layout_marginBottom="20sp"
         android:text="Set Route"/>
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/focus_location_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/my_location"
+    <RelativeLayout
+        android:id="@+id/focus_location_button_layout"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="10dp"
+        android:background="@drawable/map_my_location_button_background"
         android:layout_alignParentEnd="true"
-        android:layout_above="@id/route_button"
-        android:layout_margin="16sp"/>
+        android:layout_above="@id/route_button">
+
+        <ImageView
+            android:id="@+id/focus_location_icon"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_centerInParent="true"
+            android:src="@drawable/my_location"
+            app:tint="@color/white" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/focus_location_button"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:backgroundTint="@android:color/transparent"/>
+    </RelativeLayout>
 
 </RelativeLayout>
