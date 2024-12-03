@@ -19,30 +19,32 @@
         android:layout_marginEnd="20dp"
         android:layout_marginBottom="10dp"
         android:layout_alignParentEnd="true"
-        android:layout_above="@+id/focus_location_button_layout"/>
+        android:layout_above="@+id/focus_location_button" />
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/search_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="50sp"
-        android:layout_marginStart="10sp"
-        android:layout_marginEnd="10sp"
+        android:layout_marginTop="20dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
         android:elevation="4dp"
         android:hint="Search"
-        app:boxCornerRadiusBottomEnd="20sp"
-        app:boxCornerRadiusBottomStart="20sp"
-        app:boxCornerRadiusTopEnd="20sp"
-        app:boxCornerRadiusTopStart="20sp"
-        app:boxStrokeWidthFocused="0sp"
-        app:boxStrokeWidth="0sp"
+        app:boxCornerRadiusBottomEnd="20dp"
+        app:boxCornerRadiusBottomStart="20dp"
+        app:boxCornerRadiusTopEnd="20dp"
+        app:boxCornerRadiusTopStart="20dp"
+        app:boxStrokeWidthFocused="0dp"
+        app:boxStrokeWidth="0dp"
         app:startIconDrawable="@drawable/search"
+        app:boxBackgroundColor="@color/light_gray"
         style="@style/Widget.Material3.TextInputLayout.FilledBox.Dense">
 
         <com.google.android.material.textfield.TextInputEditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="text"
+            app:boxBackgroundColor="@color/light_gray"
             android:id="@+id/search_bar_text"/>
 
     </com.google.android.material.textfield.TextInputLayout>
@@ -66,43 +68,33 @@
         android:layout_below="@+id/search_bar"
         android:layout_marginTop="20sp"
         android:layout_marginEnd="20sp"
-        android:id="@+id/soundButton"/>
+        android:id="@+id/soundButton"
+        android:backgroundTint="@color/light_gray"/>
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/route_button"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="50dp"
         android:layout_marginStart="20sp"
         android:layout_marginEnd="20sp"
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="20sp"
-        android:text="Set Route"/>
+        android:text="Set Route"
+        android:fontFamily="@font/grandstander_semi_bold"
+        android:textAllCaps="false"
+        android:textColor="@color/black"
+        android:textSize="20sp"
+        android:backgroundTint="@color/light_gray"/>
 
-    <RelativeLayout
-        android:id="@+id/focus_location_button_layout"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/focus_location_button"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
         android:layout_marginEnd="20dp"
-        android:layout_marginBottom="10dp"
-        android:background="@drawable/map_my_location_button_background"
+        android:layout_marginBottom="80dp"
+        android:src="@drawable/my_location"
+        app:tint="@color/black"
+        android:backgroundTint="@color/light_gray"
         android:layout_alignParentEnd="true"
-        android:layout_above="@id/route_button">
-
-        <ImageView
-            android:id="@+id/focus_location_icon"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:layout_centerInParent="true"
-            android:src="@drawable/my_location"
-            app:tint="@color/white" />
-
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/focus_location_button"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:clickable="true"
-            android:focusable="true"
-            android:backgroundTint="@android:color/transparent"/>
+        android:layout_alignParentBottom="true"/>
     </RelativeLayout>
-
-</RelativeLayout>
