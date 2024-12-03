@@ -123,8 +123,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="140dp"
                     android:layout_gravity="center"
-                    android:layout_marginStart="5dp"
-                    android:layout_marginEnd="5dp"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginEnd="10dp"
                     android:background="@drawable/main_user_box_background">
 
                     <LinearLayout
@@ -181,9 +181,10 @@
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="5dp"
+                    android:layout_marginStart="10dp"
                     android:layout_marginTop="10dp"
-                    android:layout_marginEnd="5dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginBottom="10dp"
                     android:background="@drawable/main_user_box_background">
 
                     <LinearLayout
@@ -363,7 +364,7 @@
                 <ScrollView
                     android:layout_width="match_parent"
                     android:layout_height="500dp"
-                    android:layout_marginTop="10dp"
+
                     android:layout_weight="3">
 
                     <LinearLayout
@@ -373,10 +374,9 @@
 
                         <RelativeLayout
                             android:layout_width="match_parent"
-                            android:layout_height="300dp"
-                            android:layout_marginStart="5dp"
-                            android:layout_marginTop="10dp"
-                            android:layout_marginEnd="5dp"
+                            android:layout_height="250dp"
+                            android:layout_marginStart="10dp"
+                            android:layout_marginEnd="10dp"
                             android:background="@drawable/main_user_box_background">
 
                             <LinearLayout
@@ -389,8 +389,7 @@
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:layout_marginStart="10dp"
-                                    android:layout_marginTop="10dp"
-                                    android:layout_marginBottom="10dp"
+                                    android:layout_marginTop="5dp"
                                     android:fontFamily="@font/grandstander_medium"
                                     android:layout_gravity="center"
                                     android:text="Potholes Detected per day"
@@ -406,18 +405,17 @@
                                     <com.github.mikephil.charting.charts.LineChart
                                         android:id="@+id/line_chart1"
                                         android:layout_width="match_parent"
-                                        android:layout_height="match_parent"
-                                        android:layout_marginBottom="10dp"/>
+                                        android:layout_height="match_parent" />
                                 </LinearLayout>
                             </LinearLayout>
                         </RelativeLayout>
 
                         <RelativeLayout
                             android:layout_width="match_parent"
-                            android:layout_height="300dp"
-                            android:layout_marginStart="5dp"
+                            android:layout_height="250dp"
+                            android:layout_marginStart="10dp"
                             android:layout_marginTop="10dp"
-                            android:layout_marginEnd="5dp"
+                            android:layout_marginEnd="10dp"
                             android:background="@drawable/main_user_box_background">
 
                             <LinearLayout
@@ -430,8 +428,7 @@
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:layout_marginStart="10dp"
-                                    android:layout_marginTop="10dp"
-                                    android:layout_marginBottom="10dp"
+                                    android:layout_marginTop="5dp"
                                     android:layout_gravity="center"
                                     android:fontFamily="@font/grandstander_medium"
                                     android:text="Km travelled per day"
@@ -441,14 +438,13 @@
                                 <LinearLayout
                                     android:layout_width="match_parent"
                                     android:layout_height="match_parent"
+                                    android:layout_margin="10dp"
                                     android:orientation="vertical" >
 
                                     <com.github.mikephil.charting.charts.LineChart
                                         android:id="@+id/line_chart2"
                                         android:layout_width="match_parent"
-                                        android:layout_height="match_parent"
-                                        android:layout_margin="10dp"
-                                        android:layout_marginBottom="10dp"/>
+                                        android:layout_height="match_parent"/>
                                 </LinearLayout>
                             </LinearLayout>
                         </RelativeLayout>
@@ -487,9 +483,9 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
                             android:layout_marginStart="5dp"
-                            android:fontFamily="@font/grandstander_semi_bold"
                             android:gravity="center"
                             android:text="Open map"
+                            android:fontFamily="@font/grandstander_semi_bold"
                             android:textAllCaps="false"
                             android:textColor="#000000"
                             android:textSize="20sp" />

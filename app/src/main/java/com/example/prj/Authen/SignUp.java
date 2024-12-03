@@ -9,22 +9,25 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.example.prj.R;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-public class SignUp extends AppCompatActivity {
+public class SignUp extends VerifyStatus {
 
     Button signupButton;
     TextView switchtosigninText;
     EditText signupUsername, signupPassword, signupConfirmpassword, signupEmail, signupPhone;
     FirebaseDatabase database;
     DatabaseReference reference;
+
+    private FirebaseAuth mAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +39,8 @@ public class SignUp extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
+        mAuth = FirebaseAuth.getInstance();
 
         signupUsername = findViewById(R.id.signup_username);
         signupPassword = findViewById(R.id.signup_password);
@@ -51,7 +56,7 @@ public class SignUp extends AppCompatActivity {
                 if (!validateUsername() | !validatePassword() | !validateConfirmPassword() | !validateEmail() | !validatePhone()) {
                     return;
                 } else {
-                    checkInfo();
+                    createAccount();
                 }
             }
         });
@@ -136,22 +141,35 @@ public class SignUp extends AppCompatActivity {
         }
     }
 
-    private void checkInfo() {
-        database = FirebaseDatabase.getInstance();
-        reference = database.getReference("user");
+    private void createAccount() {
+        final String email = signupEmail.getText().toString();
+        final String password = signupPassword.getText().toString();
+        final String username = signupUsername.getText().toString();
+        final String phone = signupPhone.getText().toString();
 
-        String username = signupUsername.getText().toString();
-        String password = signupPassword.getText().toString();
-        String confirmpassword = signupConfirmpassword.getText().toString();
-        String email = signupEmail.getText().toString();
-        String phone = signupPhone.getText().toString();
+        mAuth.createUserWithEmailAndPassword(email, password)
+                .addOnCompleteListener(task -> {
+                    FirebaseUser user = mAuth.getCurrentUser();
 
-        String hashedPassword = Encrypt.hashPassword(password);
-        HelperClass helperClass = new HelperClass(username, hashedPassword, email, phone);
-        reference.child(username).setValue(helperClass);
+                    if (user != null) {
+                        user.sendEmailVerification()
+                                .addOnCompleteListener(task1 -> {
+                                    if (task1.isSuccessful()) {
+                                        Toast.makeText(SignUp.this, "Verification email sent.", Toast.LENGTH_SHORT).show();
 
-        Toast.makeText(SignUp.this, "Signed up successfully!", Toast.LENGTH_SHORT).show();
-        Intent intent = new Intent(SignUp.this, SignIn.class);
-        startActivity(intent);
+                                        Intent intent = new Intent(SignUp.this, VerifySignUp.class);
+                                        intent.putExtra("username", username);
+                                        intent.putExtra("password", password);
+                                        intent.putExtra("email", email);
+                                        intent.putExtra("phone", phone);
+                                        startActivity(intent);
+                                    } else {
+                                        Toast.makeText(SignUp.this, "Failed to send verification email.", Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+                    } else {
+                        Toast.makeText(SignUp.this, "Registration failed: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
     }
 }

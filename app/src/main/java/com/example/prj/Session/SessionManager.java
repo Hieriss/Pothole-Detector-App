@@ -38,8 +38,14 @@ public class SessionManager {
     public boolean isLoggedIn() {
         return sharedPreferences.getBoolean(IS_LOGIN, false);
     }
+
     public boolean PassedIntro() {
         return sharedPreferences.getBoolean(PASS_INTRO, false);
+    }
+
+    public void setIntroPassed(boolean isPassed) {
+        editor.putBoolean(PASS_INTRO, isPassed);
+        editor.apply();
     }
 
     public void checkPassIntro() {

@@ -88,10 +88,10 @@
 
                     <RelativeLayout
                         android:layout_width="match_parent"
-                        android:layout_height="100dp"
-                        android:layout_marginStart="5dp"
+                        android:layout_height="105dp"
+                        android:layout_marginStart="10dp"
                         android:layout_marginTop="10dp"
-                        android:layout_marginEnd="5dp">
+                        android:layout_marginEnd="10dp">
 
                         <ImageView
                             android:layout_width="match_parent"
@@ -108,6 +108,7 @@
                                 android:orientation="vertical">
 
                                 <RelativeLayout
+                                    android:id="@+id/account_layout"
                                     android:layout_width="match_parent"
                                     android:layout_height="match_parent"
                                     android:layout_weight="1">
@@ -148,7 +149,18 @@
                                         android:text="" />
                                 </RelativeLayout>
 
+                                <View
+                                    android:layout_width="match_parent"
+                                    android:layout_height="1dp"
+                                    android:layout_marginStart="10dp"
+                                    android:layout_marginEnd="10dp"
+                                    android:layout_marginTop="2dp"
+                                    android:layout_marginBottom="2dp"
+                                    android:alpha="0.2"
+                                    android:background="#000000"/>
+
                                 <RelativeLayout
+                                    android:id="@+id/security_layout"
                                     android:layout_width="match_parent"
                                     android:layout_height="match_parent"
                                     android:layout_weight="1">
@@ -205,10 +217,10 @@
 
                     <RelativeLayout
                         android:layout_width="match_parent"
-                        android:layout_height="150dp"
-                        android:layout_marginStart="5dp"
+                        android:layout_height="160dp"
+                        android:layout_marginStart="10dp"
                         android:layout_marginTop="10dp"
-                        android:layout_marginEnd="5dp">
+                        android:layout_marginEnd="10dp">
 
                         <ImageView
                             android:layout_width="match_parent"
@@ -265,6 +277,16 @@
                                         android:text="" />
                                 </RelativeLayout>
 
+                                <View
+                                    android:layout_width="match_parent"
+                                    android:layout_height="1dp"
+                                    android:layout_marginStart="10dp"
+                                    android:layout_marginEnd="10dp"
+                                    android:layout_marginTop="2dp"
+                                    android:layout_marginBottom="2dp"
+                                    android:alpha="0.2"
+                                    android:background="#000000"/>
+
                                 <RelativeLayout
                                     android:layout_width="match_parent"
                                     android:layout_height="match_parent"
@@ -306,6 +328,16 @@
                                         android:text="" />
                                 </RelativeLayout>
 
+                                <View
+                                    android:layout_width="match_parent"
+                                    android:layout_height="1dp"
+                                    android:layout_marginStart="10dp"
+                                    android:layout_marginEnd="10dp"
+                                    android:layout_marginTop="2dp"
+                                    android:layout_marginBottom="2dp"
+                                    android:alpha="0.2"
+                                    android:background="#000000"/>
+
                                 <RelativeLayout
                                     android:layout_width="match_parent"
                                     android:layout_height="match_parent"
@@ -333,7 +365,7 @@
                                             android:layout_weight="1"
                                             android:fontFamily="@font/grandstander_regular"
                                             android:gravity="center_vertical"
-                                            android:text="Activity Center"
+                                            android:text="Map"
                                             android:textSize="20sp" />
                                     </LinearLayout>
 
@@ -363,10 +395,10 @@
 
                     <RelativeLayout
                         android:layout_width="match_parent"
-                        android:layout_height="150dp"
-                        android:layout_marginStart="5dp"
+                        android:layout_height="160dp"
+                        android:layout_marginStart="10dp"
                         android:layout_marginTop="10dp"
-                        android:layout_marginEnd="5dp">
+                        android:layout_marginEnd="10dp">
 
                         <ImageView
                             android:layout_width="match_parent"
@@ -423,6 +455,16 @@
                                         android:text="" />
                                 </RelativeLayout>
 
+                                <View
+                                    android:layout_width="match_parent"
+                                    android:layout_height="1dp"
+                                    android:layout_marginStart="10dp"
+                                    android:layout_marginEnd="10dp"
+                                    android:layout_marginTop="2dp"
+                                    android:layout_marginBottom="2dp"
+                                    android:alpha="0.2"
+                                    android:background="#000000"/>
+
                                 <RelativeLayout
                                     android:layout_width="match_parent"
                                     android:layout_height="match_parent"
@@ -463,6 +505,16 @@
                                         android:focusable="true"
                                         android:text="" />
                                 </RelativeLayout>
+
+                                <View
+                                    android:layout_width="match_parent"
+                                    android:layout_height="1dp"
+                                    android:layout_marginStart="10dp"
+                                    android:layout_marginEnd="10dp"
+                                    android:layout_marginTop="2dp"
+                                    android:layout_marginBottom="2dp"
+                                    android:alpha="0.2"
+                                    android:background="#000000"/>
 
                                 <RelativeLayout
                                     android:layout_width="match_parent"
@@ -521,10 +573,10 @@
 
                     <RelativeLayout
                         android:layout_width="match_parent"
-                        android:layout_height="100dp"
-                        android:layout_marginStart="5dp"
+                        android:layout_height="105dp"
+                        android:layout_marginStart="10dp"
                         android:layout_marginTop="10dp"
-                        android:layout_marginEnd="5dp">
+                        android:layout_marginEnd="10dp">
 
                         <ImageView
                             android:layout_width="match_parent"
@@ -580,6 +632,16 @@
                                         android:focusable="true"
                                         android:text="" />
                                 </RelativeLayout>
+
+                                <View
+                                    android:layout_width="match_parent"
+                                    android:layout_height="1dp"
+                                    android:layout_marginStart="10dp"
+                                    android:layout_marginEnd="10dp"
+                                    android:layout_marginTop="2dp"
+                                    android:layout_marginBottom="2dp"
+                                    android:alpha="0.2"
+                                    android:background="#000000"/>
 
                                 <RelativeLayout
                                     android:layout_width="match_parent"

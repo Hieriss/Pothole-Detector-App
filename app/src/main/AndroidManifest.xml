@@ -17,6 +17,10 @@
         android:theme="@style/Theme.Prj"
         tools:targetApi="31">
         <activity
+            android:name=".Authen.VerifySignUp"
+            android:theme="@style/TransparentActivityTheme"
+            android:exported="false" />
+        <activity
             android:name=".AccountSettingPage"
             android:exported="false" />
         <activity
@@ -84,4 +88,5 @@
             </intent-filter>
         </activity>
     </application>
+
 </manifest>
