@@ -1,3 +1,6 @@
+// 489 driving options
+
+
 package com.example.prj;
 
 import static com.mapbox.maps.plugin.animation.CameraAnimationsUtils.getCamera;
@@ -8,10 +11,12 @@ import static com.mapbox.navigation.base.extensions.RouteOptionsExtensions.apply
 
 import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.VectorDrawable;
@@ -20,11 +25,14 @@ import android.location.Geocoder;
 import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -38,12 +46,14 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.content.res.AppCompatResources;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.textfield.TextInputEditText;
 import com.mapbox.android.core.location.LocationEngine;
 import com.mapbox.android.core.location.LocationEngineCallback;
 import com.mapbox.android.core.location.LocationEngineProvider;
@@ -61,12 +71,17 @@ import com.mapbox.maps.MapView;
 import com.mapbox.maps.Style;
 import com.mapbox.maps.extension.style.layers.properties.generated.TextAnchor;
 import com.mapbox.maps.plugin.LocationPuck2D;
+import com.mapbox.maps.plugin.Plugin;
 import com.mapbox.maps.plugin.animation.MapAnimationOptions;
 import com.mapbox.maps.plugin.annotation.AnnotationPlugin;
 import com.mapbox.maps.plugin.annotation.AnnotationPluginImplKt;
 import com.mapbox.maps.plugin.annotation.generated.PointAnnotationManager;
 import com.mapbox.maps.plugin.annotation.generated.PointAnnotationManagerKt;
 import com.mapbox.maps.plugin.annotation.generated.PointAnnotationOptions;
+import com.mapbox.maps.plugin.compass.CompassPlugin;
+import com.mapbox.maps.plugin.compass.CompassView;
+import com.mapbox.maps.plugin.compass.CompassViewPlugin;
+import com.mapbox.maps.plugin.gestures.GesturesPlugin;
 import com.mapbox.maps.plugin.gestures.OnMapClickListener;
 import com.mapbox.maps.plugin.gestures.OnMoveListener;
 import com.mapbox.maps.plugin.locationcomponent.LocationComponentConstants;
@@ -74,6 +89,7 @@ import com.mapbox.maps.plugin.locationcomponent.LocationComponentPlugin;
 import com.mapbox.maps.plugin.locationcomponent.OnIndicatorBearingChangedListener;
 import com.mapbox.maps.plugin.locationcomponent.OnIndicatorPositionChangedListener;
 import com.mapbox.maps.plugin.locationcomponent.generated.LocationComponentSettings;
+import com.mapbox.maps.plugin.scalebar.ScaleBarPlugin;
 import com.mapbox.navigation.base.options.NavigationOptions;
 import com.mapbox.navigation.base.route.NavigationRoute;
 import com.mapbox.navigation.base.route.NavigationRouterCallback;
@@ -101,6 +117,11 @@ import com.mapbox.navigation.ui.voice.model.SpeechError;
 import com.mapbox.navigation.ui.voice.model.SpeechValue;
 import com.mapbox.navigation.ui.voice.model.SpeechVolume;
 import com.mapbox.navigation.ui.voice.view.MapboxSoundButton;
+import com.mapbox.search.autocomplete.PlaceAutocomplete;
+import com.mapbox.search.autocomplete.PlaceAutocompleteSuggestion;
+import com.mapbox.search.ui.adapter.autocomplete.PlaceAutocompleteUiAdapter;
+import com.mapbox.search.ui.view.CommonSearchViewConfiguration;
+import com.mapbox.search.ui.view.SearchResultsView;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -109,12 +130,16 @@ import java.util.Locale;
 import java.util.Objects;
 
 import kotlin.Unit;
+import kotlin.coroutines.Continuation;
+import kotlin.coroutines.CoroutineContext;
+import kotlin.coroutines.EmptyCoroutineContext;
 import kotlin.jvm.functions.Function1;
 
 public class MapPage extends AppCompatActivity {
     MapView mapView;
     MaterialButton setRoute;
     FloatingActionButton focusLocationBtn;
+    CompassView compassView;
 
     private final NavigationLocationProvider navigationLocationProvider = new NavigationLocationProvider();
     private MapboxRouteLineView routeLineView;
@@ -179,7 +204,9 @@ public class MapPage extends AppCompatActivity {
         @Override
         public void onActivityResult(Boolean result) {
             if (result) {
-                Toast.makeText(MapPage.this, "Permission granted! Restart this app", Toast.LENGTH_SHORT).show();
+                Intent intent = getIntent();
+                finish();
+                startActivity(intent);
             }
         }
     });
@@ -224,6 +251,13 @@ public class MapPage extends AppCompatActivity {
 
     private boolean isVoiceInstructionsMuted = false;
 
+    // search
+    private PlaceAutocomplete placeAutocomplete;
+    private SearchResultsView searchResultsView;
+    private PlaceAutocompleteUiAdapter placeAutocompleteUiAdapter;
+    private TextInputEditText searchET;
+    private boolean ignoreNextQueryUpdate = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -235,9 +269,12 @@ public class MapPage extends AppCompatActivity {
             return insets;
         });
 
+        // route
         mapView = findViewById(R.id.mapView);
-        focusLocationBtn = findViewById(R.id.focusLocation);
-        setRoute = findViewById(R.id.setRoute);
+        focusLocationBtn = findViewById(R.id.focus_location_button);
+        setRoute = findViewById(R.id.route_button);
+
+        //setRoute.setVisibility(View.GONE);
 
         MapboxRouteLineOptions options = new MapboxRouteLineOptions.Builder(this).withRouteLineResources(new RouteLineResources.Builder().build())
                 .withRouteLineBelowLayerId(LocationComponentConstants.LOCATION_INDICATOR_LAYER).build();
@@ -287,6 +324,7 @@ public class MapPage extends AppCompatActivity {
         }
 
         focusLocationBtn.hide();
+
         LocationComponentPlugin locationComponentPlugin = getLocationComponent(mapView);
         getGestures(mapView).addOnMoveListener(onMoveListener);
 
@@ -297,9 +335,64 @@ public class MapPage extends AppCompatActivity {
             }
         });
 
-        mapView.getMapboxMap().loadStyleUri(Style.LIGHT, new Style.OnStyleLoaded() {
+        // search
+        placeAutocomplete = PlaceAutocomplete.create(getString(R.string.mapbox_access_token));
+        searchET = findViewById(R.id.search_bar_text);
+
+        searchResultsView = findViewById(R.id.search_results_view);
+        searchResultsView.initialize(new SearchResultsView.Configuration(new CommonSearchViewConfiguration()));
+
+        placeAutocompleteUiAdapter = new PlaceAutocompleteUiAdapter(searchResultsView, placeAutocomplete, LocationEngineProvider.getBestLocationEngine(MapPage.this));
+
+        searchET.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                if (ignoreNextQueryUpdate) {
+                    ignoreNextQueryUpdate = false;
+                } else {
+                    placeAutocompleteUiAdapter.search(charSequence.toString(), new Continuation<Unit>() {
+                        @NonNull
+                        @Override
+                        public CoroutineContext getContext() {
+                            return EmptyCoroutineContext.INSTANCE;
+                        }
+
+                        @Override
+                        public void resumeWith(@NonNull Object o) {
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    searchResultsView.setVisibility(View.VISIBLE);
+                                }
+                            });
+                        }
+                    });
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
+
+        mapView.getMapboxMap().loadStyleUri(Style.OUTDOORS, new Style.OnStyleLoaded() {
             @Override
             public void onStyleLoaded(@NonNull Style style) {
+                CompassPlugin compassPlugin = (CompassPlugin) mapView.getPlugin(Plugin.MAPBOX_COMPASS_PLUGIN_ID);
+                if (compassPlugin != null) {
+                    compassPlugin.setVisibility(false);
+                    compassPlugin.setEnabled(false);
+                }
+                ScaleBarPlugin scaleBarPlugin = (ScaleBarPlugin) mapView.getPlugin(Plugin.MAPBOX_SCALEBAR_PLUGIN_ID);
+                if (scaleBarPlugin != null) {
+                    scaleBarPlugin.setEnabled(false);
+                }
                 mapView.getMapboxMap().setCamera(new CameraOptions.Builder().zoom(20.0).build());
                 locationComponentPlugin.setEnabled(true);
                 locationComponentPlugin.setLocationProvider(navigationLocationProvider);
@@ -313,35 +406,70 @@ public class MapPage extends AppCompatActivity {
                     }
                 });
                 Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.placeholder);
-                if (bitmap != null) {
-                    AnnotationPlugin annotationPlugin = AnnotationPluginImplKt.getAnnotations(mapView);
-                    PointAnnotationManager pointAnnotationManager = PointAnnotationManagerKt.createPointAnnotationManager(annotationPlugin, mapView);
-                    addOnMapClickListener(mapView.getMapboxMap(), new OnMapClickListener() {
-                        @Override
-                        public boolean onMapClick(@NonNull Point point) {
-                            pointAnnotationManager.deleteAll();
-                            PointAnnotationOptions pointAnnotationOptions = new PointAnnotationOptions().withTextAnchor(TextAnchor.CENTER).withIconImage(bitmap)
-                                    .withPoint(point);
-                            pointAnnotationManager.create(pointAnnotationOptions);
+                AnnotationPlugin annotationPlugin = AnnotationPluginImplKt.getAnnotations(mapView);
+                PointAnnotationManager pointAnnotationManager = PointAnnotationManagerKt.createPointAnnotationManager(annotationPlugin, mapView);
+                addOnMapClickListener(mapView.getMapboxMap(), new OnMapClickListener() {
+                    @Override
+                    public boolean onMapClick(@NonNull Point point) {
+                        pointAnnotationManager.deleteAll();
+                        PointAnnotationOptions pointAnnotationOptions = new PointAnnotationOptions().withTextAnchor(TextAnchor.CENTER).withIconImage(bitmap)
+                                .withPoint(point);
+                        pointAnnotationManager.create(pointAnnotationOptions);
 
-                            setRoute.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View view) {
-                                    fetchRoute(point);
-                                }
-                            });
-                            return true;
-                        }
-                    });
-                } else {
-                    Toast.makeText(MapPage.this, "Error loading icon image", Toast.LENGTH_SHORT).show();
-                }
+                        setRoute.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                fetchRoute(point);
+                            }
+                        });
+                        return true;
+                    }
+                });
                 focusLocationBtn.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         focusLocation = true;
                         getGestures(mapView).addOnMoveListener(onMoveListener);
                         focusLocationBtn.hide();
+                    }
+                });
+
+                // search
+                placeAutocompleteUiAdapter.addSearchListener(new PlaceAutocompleteUiAdapter.SearchListener() {
+                    @Override
+                    public void onSuggestionsShown(@NonNull List<PlaceAutocompleteSuggestion> list) {
+
+                    }
+
+                    @Override
+                    public void onSuggestionSelected(@NonNull PlaceAutocompleteSuggestion placeAutocompleteSuggestion) {
+                        ignoreNextQueryUpdate = true;
+                        focusLocation = false;
+                        searchET.setText(placeAutocompleteSuggestion.getName());
+                        searchResultsView.setVisibility(View.GONE);
+
+                        pointAnnotationManager.deleteAll();
+                        PointAnnotationOptions pointAnnotationOptions = new PointAnnotationOptions().withTextAnchor(TextAnchor.CENTER).withIconImage(bitmap)
+                                .withPoint(placeAutocompleteSuggestion.getCoordinate());
+                        pointAnnotationManager.create(pointAnnotationOptions);
+                        updateCamera(placeAutocompleteSuggestion.getCoordinate(), 0.0);
+
+                        setRoute.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                fetchRoute(placeAutocompleteSuggestion.getCoordinate());
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onPopulateQueryClick(@NonNull PlaceAutocompleteSuggestion placeAutocompleteSuggestion) {
+                        //queryEditText.setText(placeAutocompleteSuggestion.getName());
+                    }
+
+                    @Override
+                    public void onError(@NonNull Exception e) {
+
                     }
                 });
             }
@@ -360,8 +488,8 @@ public class MapPage extends AppCompatActivity {
                 RouteOptions.Builder builder = RouteOptions.builder();
                 Point origin = Point.fromLngLat(Objects.requireNonNull(location).getLongitude(), location.getLatitude());
                 builder.coordinatesList(Arrays.asList(origin, point));
-                builder.alternatives(false);
-                builder.profile(DirectionsCriteria.PROFILE_DRIVING);
+                builder.alternatives(true); // alternative
+                builder.profile(DirectionsCriteria.PROFILE_DRIVING); // driving options
                 builder.bearingsList(Arrays.asList(Bearing.builder().angle(location.getBearing()).degrees(45.0).build(), null));
                 applyDefaultNavigationOptions(builder);
 
@@ -398,8 +526,9 @@ public class MapPage extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        mapboxNavigation.onDestroy();
-        mapboxNavigation.unregisterRoutesObserver(routesObserver);
-        mapboxNavigation.unregisterLocationObserver(locationObserver);
+        if(mapboxNavigation != null){
+            mapboxNavigation.onDestroy();
+            mapboxNavigation = null;
+        }
     }
 }

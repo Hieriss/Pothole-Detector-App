@@ -12,31 +12,89 @@
         android:layout_height="match_parent"
         android:id="@+id/mapView"/>
 
+    <com.mapbox.maps.plugin.compass.CompassViewImpl
+        android:id="@+id/compass_icon"
+        android:layout_width="53dp"
+        android:layout_height="53dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="10dp"
+        android:layout_alignParentEnd="true"
+        android:layout_above="@+id/focus_location_button" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/search_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:elevation="4dp"
+        android:hint="Search"
+        app:boxCornerRadiusBottomEnd="20dp"
+        app:boxCornerRadiusBottomStart="20dp"
+        app:boxCornerRadiusTopEnd="20dp"
+        app:boxCornerRadiusTopStart="20dp"
+        app:boxStrokeWidthFocused="0dp"
+        app:boxStrokeWidth="0dp"
+        app:startIconDrawable="@drawable/search"
+        app:boxBackgroundColor="@color/light_gray"
+        style="@style/Widget.Material3.TextInputLayout.FilledBox.Dense">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="text"
+            app:boxBackgroundColor="@color/light_gray"
+            android:id="@+id/search_bar_text"/>
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.mapbox.search.ui.view.SearchResultsView
+        android:id="@+id/search_results_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginTop="20dp"
+        android:visibility="gone"
+        android:elevation="4dp"
+        android:paddingTop="10dp"
+        android:paddingBottom="20dp"
+        android:layout_below="@id/search_bar" />
+
     <com.mapbox.navigation.ui.voice.view.MapboxSoundButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
-        android:layout_marginTop="64sp"
-        android:layout_marginEnd="10sp"
-        android:id="@+id/soundButton"/>
+        android:layout_below="@+id/search_bar"
+        android:layout_marginTop="20sp"
+        android:layout_marginEnd="20sp"
+        android:id="@+id/soundButton"
+        android:backgroundTint="@color/light_gray"/>
 
     <com.google.android.material.button.MaterialButton
+        android:id="@+id/route_button"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="10sp"
-        android:layout_marginEnd="10sp"
+        android:layout_height="50dp"
+        android:layout_marginStart="20sp"
+        android:layout_marginEnd="20sp"
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="20sp"
-        android:id="@+id/setRoute"
-        android:text="Set Route"/>
+        android:text="Set Route"
+        android:fontFamily="@font/grandstander_semi_bold"
+        android:textAllCaps="false"
+        android:textColor="@color/black"
+        android:textSize="20sp"
+        android:backgroundTint="@color/light_gray"/>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:id="@+id/focus_location_button"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="80dp"
         android:src="@drawable/my_location"
-        android:id="@+id/focusLocation"
+        app:tint="@color/black"
+        android:backgroundTint="@color/light_gray"
         android:layout_alignParentEnd="true"
-        android:layout_above="@id/setRoute"
-        android:layout_margin="16sp"/>
-
-</RelativeLayout>
+        android:layout_alignParentBottom="true"/>
+    </RelativeLayout>
