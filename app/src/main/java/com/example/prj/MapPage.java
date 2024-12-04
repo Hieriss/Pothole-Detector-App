@@ -1,6 +1,3 @@
-// 489 driving options
-
-
 package com.example.prj;
 
 import static com.mapbox.maps.plugin.animation.CameraAnimationsUtils.getCamera;
@@ -46,7 +43,6 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.content.res.AppCompatResources;
 import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -140,6 +136,8 @@ public class MapPage extends AppCompatActivity {
     MaterialButton setRoute;
     FloatingActionButton focusLocationBtn;
     CompassView compassView;
+    /*RelativeLayout focus_location_button_layout = findViewById(R.id.focus_location_button_layout);
+    ImageView focus_location_icon = findViewById(R.id.focus_location_icon);*/
 
     private final NavigationLocationProvider navigationLocationProvider = new NavigationLocationProvider();
     private MapboxRouteLineView routeLineView;
@@ -269,12 +267,11 @@ public class MapPage extends AppCompatActivity {
             return insets;
         });
 
+
         // route
         mapView = findViewById(R.id.mapView);
         focusLocationBtn = findViewById(R.id.focus_location_button);
         setRoute = findViewById(R.id.route_button);
-
-        //setRoute.setVisibility(View.GONE);
 
         MapboxRouteLineOptions options = new MapboxRouteLineOptions.Builder(this).withRouteLineResources(new RouteLineResources.Builder().build())
                 .withRouteLineBelowLayerId(LocationComponentConstants.LOCATION_INDICATOR_LAYER).build();
@@ -324,6 +321,7 @@ public class MapPage extends AppCompatActivity {
         }
 
         focusLocationBtn.hide();
+        /*focus_location_button_layout.setVisibility(View.GONE);*/
 
         LocationComponentPlugin locationComponentPlugin = getLocationComponent(mapView);
         getGestures(mapView).addOnMoveListener(onMoveListener);
@@ -431,6 +429,7 @@ public class MapPage extends AppCompatActivity {
                         focusLocation = true;
                         getGestures(mapView).addOnMoveListener(onMoveListener);
                         focusLocationBtn.hide();
+                        /*focus_location_button_layout.setVisibility(View.GONE);*/
                     }
                 });
 
@@ -488,8 +487,8 @@ public class MapPage extends AppCompatActivity {
                 RouteOptions.Builder builder = RouteOptions.builder();
                 Point origin = Point.fromLngLat(Objects.requireNonNull(location).getLongitude(), location.getLatitude());
                 builder.coordinatesList(Arrays.asList(origin, point));
-                builder.alternatives(true); // alternative
-                builder.profile(DirectionsCriteria.PROFILE_DRIVING); // driving options
+                builder.alternatives(true);
+                builder.profile(DirectionsCriteria.PROFILE_DRIVING);
                 builder.bearingsList(Arrays.asList(Bearing.builder().angle(location.getBearing()).degrees(45.0).build(), null));
                 applyDefaultNavigationOptions(builder);
 
@@ -526,9 +525,8 @@ public class MapPage extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if(mapboxNavigation != null){
-            mapboxNavigation.onDestroy();
-            mapboxNavigation = null;
-        }
+        mapboxNavigation.onDestroy();
+        mapboxNavigation.unregisterRoutesObserver(routesObserver);
+        mapboxNavigation.unregisterLocationObserver(locationObserver);
     }
 }
