@@ -97,12 +97,14 @@ import com.mapbox.navigation.base.route.NavigationRoute;
 import com.mapbox.navigation.base.route.NavigationRouterCallback;
 import com.mapbox.navigation.base.route.RouterFailure;
 import com.mapbox.navigation.base.route.RouterOrigin;
+import com.mapbox.navigation.base.trip.model.RouteProgress;
 import com.mapbox.navigation.core.MapboxNavigation;
 import com.mapbox.navigation.core.directions.session.RoutesObserver;
 import com.mapbox.navigation.core.directions.session.RoutesUpdatedResult;
 import com.mapbox.navigation.core.lifecycle.MapboxNavigationApp;
 import com.mapbox.navigation.core.trip.session.LocationMatcherResult;
 import com.mapbox.navigation.core.trip.session.LocationObserver;
+import com.mapbox.navigation.core.trip.session.RouteProgressObserver;
 import com.mapbox.navigation.core.trip.session.VoiceInstructionsObserver;
 import com.mapbox.navigation.ui.base.util.MapboxNavigationConsumer;
 import com.mapbox.navigation.ui.maps.location.NavigationLocationProvider;
@@ -196,6 +198,20 @@ public class MapPage extends AppCompatActivity {
             });
         }
     };
+    private final RouteProgressObserver routeProgressObserver = new RouteProgressObserver() {
+        @Override
+        public void onRouteProgressChanged(@NonNull RouteProgress routeProgress) {
+            routeLineApi.updateWithRouteProgress(routeProgress, new MapboxNavigationConsumer<Expected<RouteLineError, RouteLineUpdateValue>>() {
+                @Override
+                public void accept(Expected<RouteLineError, RouteLineUpdateValue> result) {
+                    Style style = mapView.getMapboxMap().getStyle();
+                    if (style != null)
+                        routeLineView.renderRouteLineUpdate(style, result);
+                }
+            });
+        }
+    };
+
     boolean focusLocation = true;
     private MapboxNavigation mapboxNavigation;
     private void updateCamera(Point point, Double bearing) {
@@ -301,10 +317,10 @@ public class MapPage extends AppCompatActivity {
         //setRoute.setVisibility(View.GONE);
         // Define your custom color resources
         RouteLineColorResources routeLineColorResources = new RouteLineColorResources.Builder()
-                .routeDefaultColor(Color.TRANSPARENT)
-                .routeCasingColor(Color.TRANSPARENT)
-                .routeLineTraveledColor(Color.GREEN)
-                .routeLineTraveledCasingColor(Color.WHITE)
+//                .routeDefaultColor(Color.TRANSPARENT)
+//                .routeCasingColor(Color.TRANSPARENT)
+                .routeLineTraveledColor(Color.GRAY)
+                .routeLineTraveledCasingColor(Color.DKGRAY)  //mau vien
                 .routeUnknownCongestionColor(Color.TRANSPARENT)
                 .routeLowCongestionColor(Color.TRANSPARENT)
                 .routeModerateCongestionColor(Color.TRANSPARENT)
@@ -334,6 +350,7 @@ public class MapPage extends AppCompatActivity {
         mapboxNavigation = new MapboxNavigation(navigationOptions);
 
         mapboxNavigation.registerRoutesObserver(routesObserver);
+        mapboxNavigation.registerRouteProgressObserver(routeProgressObserver);
         mapboxNavigation.registerLocationObserver(locationObserver);
         mapboxNavigation.registerVoiceInstructionsObserver(voiceInstructionsObserver);
 
