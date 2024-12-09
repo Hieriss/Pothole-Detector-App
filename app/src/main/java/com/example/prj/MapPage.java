@@ -1,6 +1,4 @@
 // 489 driving options
-
-
 package com.example.prj;
 
 import static com.mapbox.maps.plugin.animation.CameraAnimationsUtils.getCamera;
@@ -108,6 +106,12 @@ import com.mapbox.navigation.core.trip.session.RouteProgressObserver;
 import com.mapbox.navigation.core.trip.session.VoiceInstructionsObserver;
 import com.mapbox.navigation.ui.base.util.MapboxNavigationConsumer;
 import com.mapbox.navigation.ui.maps.location.NavigationLocationProvider;
+import com.mapbox.navigation.ui.maps.route.RouteLayerConstants;
+import com.mapbox.navigation.ui.maps.route.arrow.api.MapboxRouteArrowApi;
+import com.mapbox.navigation.ui.maps.route.arrow.api.MapboxRouteArrowView;
+import com.mapbox.navigation.ui.maps.route.arrow.model.InvalidPointError;
+import com.mapbox.navigation.ui.maps.route.arrow.model.RouteArrowOptions;
+import com.mapbox.navigation.ui.maps.route.arrow.model.UpdateManeuverArrowValue;
 import com.mapbox.navigation.ui.maps.route.line.api.MapboxRouteLineApi;
 import com.mapbox.navigation.ui.maps.route.line.api.MapboxRouteLineView;
 import com.mapbox.navigation.ui.maps.route.line.model.MapboxRouteLineOptions;
@@ -144,15 +148,34 @@ import kotlin.coroutines.EmptyCoroutineContext;
 import kotlin.jvm.functions.Function1;
 
 public class MapPage extends AppCompatActivity {
-    MapView mapView;
+    // view && boolean
+    static MapView mapView;
     MaterialButton setRoute;
     FloatingActionButton focusLocationBtn;
-    CompassView compassView;
+    private Style mapStyle;
+    boolean focusLocation = true;
+    private boolean isRouteActive = false;
+    private boolean isVoiceInstructionsMuted = false;
+    //CompassView compassView;
 
+    // map component
+    private MapboxNavigation mapboxNavigation;
     private final NavigationLocationProvider navigationLocationProvider = new NavigationLocationProvider();
     private MapboxRouteLineView routeLineView;
     private MapboxRouteLineApi routeLineApi;
+    private MapboxRouteArrowApi routeArrowApi;
+    private MapboxRouteArrowView routeArrowView;
+    private MapboxSpeechApi speechApi;
+    private MapboxVoiceInstructionsPlayer mapboxVoiceInstructionsPlayer;
 
+    // search variables
+    private PlaceAutocomplete placeAutocomplete;
+    private SearchResultsView searchResultsView;
+    private PlaceAutocompleteUiAdapter placeAutocompleteUiAdapter;
+    private TextInputEditText searchET;
+    private boolean ignoreNextQueryUpdate = false;
+
+    //--------------------------Navigation Register--------------------------------
     private final OnIndicatorPositionChangedListener onPositionChangedListener = new OnIndicatorPositionChangedListener() {
         @Override
         public void onIndicatorPositionChanged(Point point) {
@@ -160,10 +183,8 @@ public class MapPage extends AppCompatActivity {
             if (isRouteActive) {
                 Expected<RouteLineError, RouteLineUpdateValue> result =
                         routeLineApi.updateTraveledRouteLine(point);
-
-                Style style = mapView.getMapboxMap().getStyle();
-                if (style != null) {
-                    routeLineView.renderRouteLineUpdate(style, result);
+                if (mapStyle != null) {
+                    routeLineView.renderRouteLineUpdate(mapStyle, result);
                 }
             }
         }
@@ -184,36 +205,38 @@ public class MapPage extends AppCompatActivity {
             }
         }
     };
+
     private final RoutesObserver routesObserver = new RoutesObserver() {
         @Override
         public void onRoutesChanged(@NonNull RoutesUpdatedResult routesUpdatedResult) {
             routeLineApi.setNavigationRoutes(routesUpdatedResult.getNavigationRoutes(), new MapboxNavigationConsumer<Expected<RouteLineError, RouteSetValue>>() {
                 @Override
                 public void accept(Expected<RouteLineError, RouteSetValue> routeLineErrorRouteSetValueExpected) {
-                    Style style = mapView.getMapboxMap().getStyle();
-                    if (style != null) {
-                        routeLineView.renderRouteDrawData(style, routeLineErrorRouteSetValueExpected);
+                    if (mapStyle != null) {
+                        routeLineView.renderRouteDrawData(mapStyle, routeLineErrorRouteSetValueExpected);
                     }
                 }
             });
         }
     };
+
     private final RouteProgressObserver routeProgressObserver = new RouteProgressObserver() {
         @Override
         public void onRouteProgressChanged(@NonNull RouteProgress routeProgress) {
             routeLineApi.updateWithRouteProgress(routeProgress, new MapboxNavigationConsumer<Expected<RouteLineError, RouteLineUpdateValue>>() {
                 @Override
                 public void accept(Expected<RouteLineError, RouteLineUpdateValue> result) {
-                    Style style = mapView.getMapboxMap().getStyle();
-                    if (style != null)
-                        routeLineView.renderRouteLineUpdate(style, result);
+                    if (mapStyle != null) {
+                        routeLineView.renderRouteLineUpdate(mapStyle, result);
+                    }
                 }
             });
+            Expected<InvalidPointError, UpdateManeuverArrowValue> updatedManeuverArrow = routeArrowApi.addUpcomingManeuverArrow(routeProgress);
+            routeArrowView.renderManeuverUpdate(mapStyle, updatedManeuverArrow);
         }
     };
+    //---------------------------------------------------------------------------------
 
-    boolean focusLocation = true;
-    private MapboxNavigation mapboxNavigation;
     private void updateCamera(Point point, Double bearing) {
         MapAnimationOptions animationOptions = new MapAnimationOptions.Builder().duration(1500L).build();
         CameraOptions cameraOptions = new CameraOptions.Builder().center(point).zoom(18.0).bearing(bearing).pitch(0.0)
@@ -250,9 +273,6 @@ public class MapPage extends AppCompatActivity {
         }
     });
 
-    private MapboxSpeechApi speechApi;
-    private MapboxVoiceInstructionsPlayer mapboxVoiceInstructionsPlayer;
-
     private MapboxNavigationConsumer<Expected<SpeechError, SpeechValue>> speechCallback = new MapboxNavigationConsumer<Expected<SpeechError, SpeechValue>>() {
         @Override
         public void accept(Expected<SpeechError, SpeechValue> speechErrorSpeechValueExpected) {
@@ -288,15 +308,6 @@ public class MapPage extends AppCompatActivity {
         }
     };
 
-    private boolean isVoiceInstructionsMuted = false;
-
-    // search
-    private PlaceAutocomplete placeAutocomplete;
-    private SearchResultsView searchResultsView;
-    private PlaceAutocompleteUiAdapter placeAutocompleteUiAdapter;
-    private TextInputEditText searchET;
-    private boolean ignoreNextQueryUpdate = false;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -308,14 +319,13 @@ public class MapPage extends AppCompatActivity {
             return insets;
         });
 
-        // route
+        // route line
         mapView = findViewById(R.id.mapView);
         focusLocationBtn = findViewById(R.id.focus_location_button);
         setRoute = findViewById(R.id.route_button);
-
-
         //setRoute.setVisibility(View.GONE);
-        // Define your custom color resources
+
+        // route line color resources
         RouteLineColorResources routeLineColorResources = new RouteLineColorResources.Builder()
 //                .routeDefaultColor(Color.TRANSPARENT)
 //                .routeCasingColor(Color.TRANSPARENT)
@@ -327,33 +337,41 @@ public class MapPage extends AppCompatActivity {
                 .routeSevereCongestionColor(Color.TRANSPARENT)
                 .build();
 
-        // Create RouteLineResources with the custom color resources
+        // route line resources
         RouteLineResources routeLineResources = new RouteLineResources.Builder()
                 .routeLineColorResources(routeLineColorResources)
                 .build();
 
-        // Create MapboxRouteLineOptions with the custom RouteLineResources
-        MapboxRouteLineOptions options = new MapboxRouteLineOptions.Builder(this)
+        // route line options
+        MapboxRouteLineOptions lineOptions = new MapboxRouteLineOptions.Builder(this)
                 .withVanishingRouteLineEnabled(true)
                 .withRouteLineResources(routeLineResources)
                 .withRouteLineBelowLayerId(LocationComponentConstants.LOCATION_INDICATOR_LAYER)
                 .build();
-        routeLineView = new MapboxRouteLineView(options);
-        routeLineApi = new MapboxRouteLineApi(options);
+        routeLineView = new MapboxRouteLineView(lineOptions);
+        routeLineApi = new MapboxRouteLineApi(lineOptions);
 
+        // arrow on route line
+        routeArrowApi = new MapboxRouteArrowApi();
+        RouteArrowOptions arrowOptions = new RouteArrowOptions.Builder(this)
+                .withAboveLayerId(RouteLayerConstants.TOP_LEVEL_ROUTE_LINE_LAYER_ID)
+                .build();
+        routeArrowView = new MapboxRouteArrowView(arrowOptions);
+
+        // speech
         speechApi = new MapboxSpeechApi(MapPage.this, getString(R.string.mapbox_access_token), Locale.US.toLanguageTag());
         mapboxVoiceInstructionsPlayer = new MapboxVoiceInstructionsPlayer(MapPage.this, Locale.US.toLanguageTag());
 
+        // register
         NavigationOptions navigationOptions = new NavigationOptions.Builder(this).accessToken(getString(R.string.mapbox_access_token)).build();
-
         MapboxNavigationApp.setup(navigationOptions);
         mapboxNavigation = new MapboxNavigation(navigationOptions);
-
         mapboxNavigation.registerRoutesObserver(routesObserver);
         mapboxNavigation.registerRouteProgressObserver(routeProgressObserver);
         mapboxNavigation.registerLocationObserver(locationObserver);
         mapboxNavigation.registerVoiceInstructionsObserver(voiceInstructionsObserver);
 
+        // sound button
         MapboxSoundButton soundButton = findViewById(R.id.soundButton);
         soundButton.unmute();
         soundButton.setOnClickListener(new View.OnClickListener() {
@@ -385,9 +403,8 @@ public class MapPage extends AppCompatActivity {
         }
 
         focusLocationBtn.hide();
-
+        // location plugin
         LocationComponentPlugin locationComponentPlugin = getLocationComponent(mapView);
-
         locationComponentPlugin.addOnIndicatorPositionChangedListener(onPositionChangedListener);
         getGestures(mapView).addOnMoveListener(onMoveListener);
 
@@ -401,10 +418,8 @@ public class MapPage extends AppCompatActivity {
         // search
         placeAutocomplete = PlaceAutocomplete.create(getString(R.string.mapbox_access_token));
         searchET = findViewById(R.id.search_bar_text);
-
         searchResultsView = findViewById(R.id.search_results_view);
         searchResultsView.initialize(new SearchResultsView.Configuration(new CommonSearchViewConfiguration()));
-
         placeAutocompleteUiAdapter = new PlaceAutocompleteUiAdapter(searchResultsView, placeAutocomplete, LocationEngineProvider.getBestLocationEngine(MapPage.this));
 
         searchET.addTextChangedListener(new TextWatcher() {
@@ -447,6 +462,7 @@ public class MapPage extends AppCompatActivity {
         mapView.getMapboxMap().loadStyleUri(Style.OUTDOORS, new Style.OnStyleLoaded() {
             @Override
             public void onStyleLoaded(@NonNull Style style) {
+                mapStyle = style;
                 CompassPlugin compassPlugin = (CompassPlugin) mapView.getPlugin(Plugin.MAPBOX_COMPASS_PLUGIN_ID);
                 if (compassPlugin != null) {
                     compassPlugin.setVisibility(false);
@@ -544,9 +560,6 @@ public class MapPage extends AppCompatActivity {
             }
         });
     }
-
-
-    private boolean isRouteActive = false;
 
     @SuppressLint("MissingPermission")
     private void fetchRoute(Point point) {
