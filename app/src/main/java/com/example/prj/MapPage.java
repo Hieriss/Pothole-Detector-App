@@ -111,6 +111,8 @@ import com.mapbox.navigation.ui.maps.location.NavigationLocationProvider;
 import com.mapbox.navigation.ui.maps.route.RouteLayerConstants;
 import com.mapbox.navigation.ui.maps.route.arrow.api.MapboxRouteArrowApi;
 import com.mapbox.navigation.ui.maps.route.arrow.api.MapboxRouteArrowView;
+import com.mapbox.navigation.ui.maps.route.arrow.model.ArrowAddedValue;
+import com.mapbox.navigation.ui.maps.route.arrow.model.ArrowVisibilityChangeValue;
 import com.mapbox.navigation.ui.maps.route.arrow.model.InvalidPointError;
 import com.mapbox.navigation.ui.maps.route.arrow.model.RouteArrowOptions;
 import com.mapbox.navigation.ui.maps.route.arrow.model.UpdateManeuverArrowValue;
@@ -161,6 +163,7 @@ public class MapPage extends AppCompatActivity {
     boolean focusLocation = true;
     private boolean isRouteActive = false;
     private boolean isVoiceInstructionsMuted = false;
+    private Point searchedPoint;
     //CompassView compassView;
 
     // map component
@@ -506,11 +509,12 @@ public class MapPage extends AppCompatActivity {
                 addOnMapClickListener(mapView.getMapboxMap(), new OnMapClickListener() {
                     @Override
                     public boolean onMapClick(@NonNull Point point) {
-//                        pointAnnotationManager.deleteAll();
-//                        PointAnnotationOptions pointAnnotationOptions = new PointAnnotationOptions().withTextAnchor(TextAnchor.CENTER).withIconImage(bitmap)
-//                                .withPoint(point);
-//                        pointAnnotationManager.create(pointAnnotationOptions);
-
+                        if (!isRouteActive) {
+                            pointAnnotationManager.deleteAll();
+                            PointAnnotationOptions pointAnnotationOptions = new PointAnnotationOptions().withTextAnchor(TextAnchor.CENTER).withIconImage(bitmap)
+                                    .withPoint(point);
+                            pointAnnotationManager.create(pointAnnotationOptions);
+                        }
                         setRoute.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
@@ -542,23 +546,26 @@ public class MapPage extends AppCompatActivity {
                         focusLocation = false;
                         searchET.setText(placeAutocompleteSuggestion.getName());
                         searchResultsView.setVisibility(View.GONE);
+                        searchedPoint = placeAutocompleteSuggestion.getCoordinate();
 
                         // add point on map
                         pointAnnotationManager.deleteAll();
                         PointAnnotationOptions pointAnnotationOptions = new PointAnnotationOptions().withTextAnchor(TextAnchor.CENTER).withIconImage(bitmap)
-                                .withPoint(placeAutocompleteSuggestion.getCoordinate());
+                                .withPoint(searchedPoint);
                         pointAnnotationManager.create(pointAnnotationOptions);
 
-                        updateCamera(placeAutocompleteSuggestion.getCoordinate(), 0.0);
+                        updateCamera(searchedPoint, 0.0);
 
                         setRoute.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
                                 if (!isRouteActive)
-                                    fetchRoute(placeAutocompleteSuggestion.getCoordinate());
+                                    fetchRoute(searchedPoint);
                                 else {
                                     isRouteActive = false;
                                     mapboxNavigation.setNavigationRoutes(Collections.emptyList());
+                                    ArrowVisibilityChangeValue tmp = routeArrowApi.hideManeuverArrow();
+                                    routeArrowView.render(mapStyle, tmp);
                                     setRoute.setText("Set route");
                                 }
                             }
@@ -627,10 +634,12 @@ public class MapPage extends AppCompatActivity {
                                     @Override
                                     public void onClick(View view) {
                                         if (!isRouteActive)
-                                            fetchRoute(point);
+                                            fetchRoute(searchedPoint);
                                         else {
                                             isRouteActive = false;
                                             mapboxNavigation.setNavigationRoutes(Collections.emptyList());
+                                            ArrowVisibilityChangeValue tmp = routeArrowApi.hideManeuverArrow();
+                                            routeArrowView.render(mapStyle, tmp);
                                             setRoute.setText("Set route");
                                         }
                                     }
@@ -645,10 +654,12 @@ public class MapPage extends AppCompatActivity {
                             public void onClick(View view) {
                                 if (isRouteActive) {
                                     mapboxNavigation.setNavigationRoutes(Collections.emptyList());
+                                    ArrowVisibilityChangeValue tmp = routeArrowApi.hideManeuverArrow();
+                                    routeArrowView.render(mapStyle, tmp);
                                     setRoute.setText("Set route");
                                     isRouteActive = false;
                                 } else {
-                                    fetchRoute(point);
+                                    fetchRoute(searchedPoint);
                                 }
                             }
                         });
