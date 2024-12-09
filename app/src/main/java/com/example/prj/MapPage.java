@@ -69,6 +69,8 @@ import com.mapbox.maps.CameraOptions;
 import com.mapbox.maps.EdgeInsets;
 import com.mapbox.maps.MapView;
 import com.mapbox.maps.Style;
+import com.mapbox.maps.extension.style.expressions.generated.Expression;
+import com.mapbox.maps.extension.style.layers.generated.LineLayer;
 import com.mapbox.maps.extension.style.layers.properties.generated.TextAnchor;
 import com.mapbox.maps.plugin.LocationPuck2D;
 import com.mapbox.maps.plugin.Plugin;
@@ -107,8 +109,10 @@ import com.mapbox.navigation.ui.maps.location.NavigationLocationProvider;
 import com.mapbox.navigation.ui.maps.route.line.api.MapboxRouteLineApi;
 import com.mapbox.navigation.ui.maps.route.line.api.MapboxRouteLineView;
 import com.mapbox.navigation.ui.maps.route.line.model.MapboxRouteLineOptions;
+import com.mapbox.navigation.ui.maps.route.line.model.RouteLineColorResources;
 import com.mapbox.navigation.ui.maps.route.line.model.RouteLineError;
 import com.mapbox.navigation.ui.maps.route.line.model.RouteLineResources;
+import com.mapbox.navigation.ui.maps.route.line.model.RouteLineUpdateValue;
 import com.mapbox.navigation.ui.maps.route.line.model.RouteSetValue;
 import com.mapbox.navigation.ui.voice.api.MapboxSpeechApi;
 import com.mapbox.navigation.ui.voice.api.MapboxVoiceInstructionsPlayer;
@@ -122,9 +126,11 @@ import com.mapbox.search.autocomplete.PlaceAutocompleteSuggestion;
 import com.mapbox.search.ui.adapter.autocomplete.PlaceAutocompleteUiAdapter;
 import com.mapbox.search.ui.view.CommonSearchViewConfiguration;
 import com.mapbox.search.ui.view.SearchResultsView;
+import com.mapbox.geojson.Point;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
@@ -144,6 +150,23 @@ public class MapPage extends AppCompatActivity {
     private final NavigationLocationProvider navigationLocationProvider = new NavigationLocationProvider();
     private MapboxRouteLineView routeLineView;
     private MapboxRouteLineApi routeLineApi;
+
+    private final OnIndicatorPositionChangedListener onPositionChangedListener = new OnIndicatorPositionChangedListener() {
+        @Override
+        public void onIndicatorPositionChanged(Point point) {
+            // Only update if a route exists
+            if (isRouteActive) {
+                Expected<RouteLineError, RouteLineUpdateValue> result =
+                        routeLineApi.updateTraveledRouteLine(point);
+
+                Style style = mapView.getMapboxMap().getStyle();
+                if (style != null) {
+                    routeLineView.renderRouteLineUpdate(style, result);
+                }
+            }
+        }
+    };
+
     private final LocationObserver locationObserver = new LocationObserver() {
         @Override
         public void onNewRawLocation(@NonNull Location location) {
@@ -274,10 +297,31 @@ public class MapPage extends AppCompatActivity {
         focusLocationBtn = findViewById(R.id.focus_location_button);
         setRoute = findViewById(R.id.route_button);
 
-        //setRoute.setVisibility(View.GONE);
 
-        MapboxRouteLineOptions options = new MapboxRouteLineOptions.Builder(this).withRouteLineResources(new RouteLineResources.Builder().build())
-                .withRouteLineBelowLayerId(LocationComponentConstants.LOCATION_INDICATOR_LAYER).build();
+        //setRoute.setVisibility(View.GONE);
+        // Define your custom color resources
+        RouteLineColorResources routeLineColorResources = new RouteLineColorResources.Builder()
+                .routeDefaultColor(Color.TRANSPARENT)
+                .routeCasingColor(Color.TRANSPARENT)
+                .routeLineTraveledColor(Color.GREEN)
+                .routeLineTraveledCasingColor(Color.WHITE)
+                .routeUnknownCongestionColor(Color.TRANSPARENT)
+                .routeLowCongestionColor(Color.TRANSPARENT)
+                .routeModerateCongestionColor(Color.TRANSPARENT)
+                .routeSevereCongestionColor(Color.TRANSPARENT)
+                .build();
+
+        // Create RouteLineResources with the custom color resources
+        RouteLineResources routeLineResources = new RouteLineResources.Builder()
+                .routeLineColorResources(routeLineColorResources)
+                .build();
+
+        // Create MapboxRouteLineOptions with the custom RouteLineResources
+        MapboxRouteLineOptions options = new MapboxRouteLineOptions.Builder(this)
+                .withVanishingRouteLineEnabled(true)
+                .withRouteLineResources(routeLineResources)
+                .withRouteLineBelowLayerId(LocationComponentConstants.LOCATION_INDICATOR_LAYER)
+                .build();
         routeLineView = new MapboxRouteLineView(options);
         routeLineApi = new MapboxRouteLineApi(options);
 
@@ -326,6 +370,8 @@ public class MapPage extends AppCompatActivity {
         focusLocationBtn.hide();
 
         LocationComponentPlugin locationComponentPlugin = getLocationComponent(mapView);
+
+        locationComponentPlugin.addOnIndicatorPositionChangedListener(onPositionChangedListener);
         getGestures(mapView).addOnMoveListener(onMoveListener);
 
         setRoute.setOnClickListener(new View.OnClickListener() {
@@ -457,7 +503,13 @@ public class MapPage extends AppCompatActivity {
                         setRoute.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
-                                fetchRoute(placeAutocompleteSuggestion.getCoordinate());
+                                if (!isRouteActive)
+                                    fetchRoute(placeAutocompleteSuggestion.getCoordinate());
+                                else {
+                                    isRouteActive = false;
+                                    mapboxNavigation.setNavigationRoutes(Collections.emptyList());
+                                    setRoute.setText("Set route");
+                                }
                             }
                         });
                     }
@@ -475,6 +527,9 @@ public class MapPage extends AppCompatActivity {
             }
         });
     }
+
+
+    private boolean isRouteActive = false;
 
     @SuppressLint("MissingPermission")
     private void fetchRoute(Point point) {
@@ -499,7 +554,21 @@ public class MapPage extends AppCompatActivity {
                         mapboxNavigation.setNavigationRoutes(list);
                         focusLocationBtn.performClick();
                         setRoute.setEnabled(true);
-                        setRoute.setText("Set route");
+                        setRoute.setText("Stop route");
+                        isRouteActive = true;
+
+                        setRoute.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                if (isRouteActive) {
+                                    mapboxNavigation.setNavigationRoutes(Collections.emptyList());
+                                    setRoute.setText("Set route");
+                                    isRouteActive = false;
+                                } else {
+                                    fetchRoute(point);
+                                }
+                            }
+                        });
                     }
 
                     @Override
@@ -530,5 +599,7 @@ public class MapPage extends AppCompatActivity {
             mapboxNavigation.onDestroy();
             mapboxNavigation = null;
         }
+        LocationComponentPlugin locationComponentPlugin = getLocationComponent(mapView);
+        locationComponentPlugin.removeOnIndicatorPositionChangedListener(onPositionChangedListener);
     }
 }

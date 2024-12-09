@@ -62,6 +62,7 @@ dependencies {
 
     implementation("com.mapbox.navigation:android:2.15.2")
     implementation("com.mapbox.search:mapbox-search-android-ui:1.0.0-rc.6")
+    implementation("com.mapbox.maps:android:10.10.0")
     implementation("androidx.core:core:1.9.0")
     implementation("androidx.activity:activity:1.7.0")
 }
