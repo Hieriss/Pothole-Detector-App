@@ -62,6 +62,7 @@ import com.mapbox.api.directions.v5.models.Bearing;
 import com.mapbox.api.directions.v5.models.RouteOptions;
 import com.mapbox.api.directions.v5.models.VoiceInstructions;
 import com.mapbox.bindgen.Expected;
+import com.mapbox.geojson.LineString;
 import com.mapbox.geojson.Point;
 import com.mapbox.maps.CameraOptions;
 import com.mapbox.maps.EdgeInsets;
@@ -100,6 +101,7 @@ import com.mapbox.navigation.core.MapboxNavigation;
 import com.mapbox.navigation.core.directions.session.RoutesObserver;
 import com.mapbox.navigation.core.directions.session.RoutesUpdatedResult;
 import com.mapbox.navigation.core.lifecycle.MapboxNavigationApp;
+import com.mapbox.navigation.core.routealternatives.AlternativeRouteMetadata;
 import com.mapbox.navigation.core.trip.session.LocationMatcherResult;
 import com.mapbox.navigation.core.trip.session.LocationObserver;
 import com.mapbox.navigation.core.trip.session.RouteProgressObserver;
@@ -133,6 +135,9 @@ import com.mapbox.search.ui.adapter.autocomplete.PlaceAutocompleteUiAdapter;
 import com.mapbox.search.ui.view.CommonSearchViewConfiguration;
 import com.mapbox.search.ui.view.SearchResultsView;
 import com.mapbox.geojson.Point;
+import com.mapbox.geojson.LineString;
+import com.mapbox.turf.TurfMeasurement;
+import com.mapbox.turf.TurfMisc;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -167,6 +172,7 @@ public class MapPage extends AppCompatActivity {
     private MapboxRouteArrowView routeArrowView;
     private MapboxSpeechApi speechApi;
     private MapboxVoiceInstructionsPlayer mapboxVoiceInstructionsPlayer;
+    private NavigationRoute alternativeRoute;
 
     // search variables
     private PlaceAutocomplete placeAutocomplete;
@@ -217,6 +223,7 @@ public class MapPage extends AppCompatActivity {
                     }
                 }
             });
+
         }
     };
 
@@ -236,6 +243,15 @@ public class MapPage extends AppCompatActivity {
         }
     };
     //---------------------------------------------------------------------------------
+
+    private boolean isPointOnRoute(Point point, NavigationRoute route) {
+        LineString routeLineString = LineString.fromPolyline(route.getDirectionsRoute().geometry(), 6);
+        Point nearestPoint = (Point) TurfMisc.nearestPointOnLine(point, routeLineString.coordinates()).geometry();
+        double distance = TurfMeasurement.distance(point, nearestPoint);
+        // Define a threshold distance (in kilometers) to consider the point as being on the route
+        double thresholdDistance = 0.05; // 50 meters
+        return distance < thresholdDistance;
+    }
 
     private void updateCamera(Point point, Double bearing) {
         MapAnimationOptions animationOptions = new MapAnimationOptions.Builder().duration(1500L).build();
@@ -490,10 +506,10 @@ public class MapPage extends AppCompatActivity {
                 addOnMapClickListener(mapView.getMapboxMap(), new OnMapClickListener() {
                     @Override
                     public boolean onMapClick(@NonNull Point point) {
-                        pointAnnotationManager.deleteAll();
-                        PointAnnotationOptions pointAnnotationOptions = new PointAnnotationOptions().withTextAnchor(TextAnchor.CENTER).withIconImage(bitmap)
-                                .withPoint(point);
-                        pointAnnotationManager.create(pointAnnotationOptions);
+//                        pointAnnotationManager.deleteAll();
+//                        PointAnnotationOptions pointAnnotationOptions = new PointAnnotationOptions().withTextAnchor(TextAnchor.CENTER).withIconImage(bitmap)
+//                                .withPoint(point);
+//                        pointAnnotationManager.create(pointAnnotationOptions);
 
                         setRoute.setOnClickListener(new View.OnClickListener() {
                             @Override
@@ -501,7 +517,7 @@ public class MapPage extends AppCompatActivity {
                                 fetchRoute(point);
                             }
                         });
-                        return true;
+                        return false;
                     }
                 });
                 focusLocationBtn.setOnClickListener(new View.OnClickListener() {
@@ -527,10 +543,12 @@ public class MapPage extends AppCompatActivity {
                         searchET.setText(placeAutocompleteSuggestion.getName());
                         searchResultsView.setVisibility(View.GONE);
 
+                        // add point on map
                         pointAnnotationManager.deleteAll();
                         PointAnnotationOptions pointAnnotationOptions = new PointAnnotationOptions().withTextAnchor(TextAnchor.CENTER).withIconImage(bitmap)
                                 .withPoint(placeAutocompleteSuggestion.getCoordinate());
                         pointAnnotationManager.create(pointAnnotationOptions);
+
                         updateCamera(placeAutocompleteSuggestion.getCoordinate(), 0.0);
 
                         setRoute.setOnClickListener(new View.OnClickListener() {
@@ -587,6 +605,41 @@ public class MapPage extends AppCompatActivity {
                         setRoute.setText("Stop route");
                         isRouteActive = true;
 
+                        // click on map to change to alternative route
+                        addOnMapClickListener(mapView.getMapboxMap(), new OnMapClickListener() {
+                            @Override
+                            public boolean onMapClick(@NonNull Point point) {
+                                int index=1;
+                                if (list.size() > 1) {
+                                    for (int i = 1; i < list.size(); i++) {
+                                        alternativeRoute = list.get(i);
+                                        if (isPointOnRoute(point, alternativeRoute)) {
+                                            index = i;
+                                            break;
+                                        }
+                                    }
+                                    list.remove(index);
+                                    list.add(0, alternativeRoute);
+                                }
+                                mapboxNavigation.setNavigationRoutes(list);
+
+                                setRoute.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View view) {
+                                        if (!isRouteActive)
+                                            fetchRoute(point);
+                                        else {
+                                            isRouteActive = false;
+                                            mapboxNavigation.setNavigationRoutes(Collections.emptyList());
+                                            setRoute.setText("Set route");
+                                        }
+                                    }
+                                });
+                                return true;
+                            }
+                        });
+
+                        // set route btn
                         setRoute.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
