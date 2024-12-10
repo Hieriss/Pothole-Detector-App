@@ -9,6 +9,9 @@ import static com.mapbox.navigation.base.extensions.RouteOptionsExtensions.apply
 
 import android.annotation.SuppressLint;
 import android.app.Dialog;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -19,6 +22,8 @@ import android.hardware.Sensor;
 import android.hardware.SensorManager;
 import android.location.Location;
 import android.location.LocationManager;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -37,6 +42,7 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.core.app.NotificationCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -173,6 +179,8 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
     private MapboxSpeechApi speechApi;
     private MapboxVoiceInstructionsPlayer mapboxVoiceInstructionsPlayer;
     private NavigationRoute alternativeRoute;
+    private NavigationRoute selectedRoute;
+    private PointAnnotationManager pointAnnotationManager;
 
     // search variables
     private PlaceAutocomplete placeAutocomplete;
@@ -281,13 +289,38 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
     };
 
     //---------------------------------------------------------------------------------
+    private void showNotification(String title, String message) {
+        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        String channelId = "nearby_annotation_channel";
+        Uri soundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel channel = new NotificationChannel(channelId, "Nearby Annotation", NotificationManager.IMPORTANCE_HIGH);
+            channel.setSound(soundUri, null);
+            notificationManager.createNotificationChannel(channel);
+        }
+
+        Intent intent = new Intent(this, MapPage.class);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, channelId)
+                .setSmallIcon(R.drawable.pothole_on_map)
+                .setContentTitle(title)
+                .setContentText(message)
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setContentIntent(pendingIntent)
+                .setAutoCancel(true)
+                .setSound(soundUri);
+
+        notificationManager.notify(1, builder.build());
+    }
 
     private boolean isPointOnRoute(Point point, NavigationRoute route) {
         LineString routeLineString = LineString.fromPolyline(route.getDirectionsRoute().geometry(), 6);
         Point nearestPoint = (Point) TurfMisc.nearestPointOnLine(point, routeLineString.coordinates()).geometry();
         double distance = TurfMeasurement.distance(point, nearestPoint);
         // Define a threshold distance (in kilometers) to consider the point as being on the route
-        double thresholdDistance = 0.05; // 50 meters
+        double thresholdDistance = 0.01; // 10 meters
         return distance < thresholdDistance;
     }
 
@@ -596,14 +629,14 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
                     }
                 });
                 AnnotationPlugin annotationPlugin = AnnotationPluginImplKt.getAnnotations(mapView);
-                PointAnnotationManager pointAnnotationManager = PointAnnotationManagerKt.createPointAnnotationManager(annotationPlugin, mapView);
+                pointAnnotationManager = PointAnnotationManagerKt.createPointAnnotationManager(annotationPlugin, mapView);
 
                 addOnMapClickListener(mapView.getMapboxMap(), new OnMapClickListener() {
                     @Override
                     public boolean onMapClick(@NonNull Point point) {
                         if (!isRouteActive) {
                             if (manualAddActive) {
-                                bitmap =  BitmapFactory.decodeResource(getResources(), R.drawable.search_marker);
+                                bitmap =  BitmapFactory.decodeResource(getResources(), R.drawable.pothole_on_map);
                                 PointAnnotationOptions pointAnnotationOptions = new PointAnnotationOptions()
                                         .withTextAnchor(TextAnchor.CENTER)
                                         .withIconSize(0.8)  // change later
@@ -655,7 +688,7 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
                                 }
                             }
                         });
-                        return true;
+                        return false;
                     }
                 });
                 // add pothole button (use to change boolean)
@@ -699,11 +732,19 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
                         searchResultsView.setVisibility(View.GONE);
                         searchedPoint = placeAutocompleteSuggestion.getCoordinate();
 
-                        // add point on map
+                        // Filter and remove annotations with icon size not equal to 0.8
+                        List<PointAnnotation> annotations = pointAnnotationManager.getAnnotations();
+                        for (PointAnnotation annotation : annotations) {
+                            if (annotation.getIconSize() != 0.8) {
+                                pointAnnotationManager.delete(annotation);
+                            }
+                        }
+
+                        // Add new point on map
                         bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.placeholder);
-                        pointAnnotationManager.deleteAll();
                         PointAnnotationOptions pointAnnotationOptions = new PointAnnotationOptions()
                                 .withTextAnchor(TextAnchor.CENTER)
+                                .withIconSize(1)
                                 .withIconImage(bitmap)
                                 .withPoint(searchedPoint);
                         pointAnnotationManager.create(pointAnnotationOptions);
@@ -767,6 +808,7 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
                     @Override
                     public void onRoutesReady(@NonNull List<NavigationRoute> list, @NonNull RouterOrigin routerOrigin) {
                         mapboxNavigation.setNavigationRoutes(list);
+                        selectedRoute = list.get(0);
                         focusLocationBtn.performClick();
                         setRoute.setEnabled(true);
                         setRoute.setText("Stop route");
@@ -776,6 +818,7 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
                         addOnMapClickListener(mapView.getMapboxMap(), new OnMapClickListener() {
                             @Override
                             public boolean onMapClick(@NonNull Point point) {
+                                Toast.makeText(MapPage.this, "Change route", Toast.LENGTH_SHORT).show();
                                 int index=1;
                                 if (list.size() > 1) {
                                     for (int i = 1; i < list.size(); i++) {
@@ -787,24 +830,10 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
                                     }
                                     list.remove(index);
                                     list.add(0, alternativeRoute);
+                                    selectedRoute = list.get(0);
                                 }
                                 mapboxNavigation.setNavigationRoutes(list);
-
-                                setRoute.setOnClickListener(new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View view) {
-                                        if (!isRouteActive)
-                                            fetchRoute(searchedPoint);
-                                        else {
-                                            isRouteActive = false;
-                                            mapboxNavigation.setNavigationRoutes(Collections.emptyList());
-                                            ArrowVisibilityChangeValue tmp = routeArrowApi.hideManeuverArrow();
-                                            routeArrowView.render(mapStyle, tmp);
-                                            setRoute.setText("Set route");
-                                        }
-                                    }
-                                });
-                                return true;
+                                return false;
                             }
                         });
 
@@ -915,11 +944,46 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
 
     @Override
     public void onLocationChanged(Location location) {
+        if (pointAnnotationManager == null) {
+            Log.e(TAG, "PointAnnotationManager is not initialized");
+            return;
+        }
+
+        // Get the speed in meters/second
         float speed = location.getSpeed();
+        // Convert to km/h
         speedKmh = speed * 3.6f;
 
         latitude = location.getLatitude();
         longitude = location.getLongitude();
+
+        // Check distance to annotation point
+        List<PointAnnotation> annotations = pointAnnotationManager.getAnnotations();
+        double thresholdDistance = 0.01; // 10 meters
+        if (annotations != null) {
+            for (PointAnnotation annotation : annotations) {
+                Point annotationPoint = annotation.getPoint();
+                if (annotationPoint != null) {
+                    if (annotation.getIconSize() == 0.8) {
+                        Double distance = TurfMeasurement.distance(Point.fromLngLat(location.getLongitude(), location.getLatitude()), annotationPoint);
+                        if (isRouteActive) {
+                            if (isPointOnRoute(annotationPoint, selectedRoute)) {
+                                if (distance < thresholdDistance) {
+                                    showNotification("Pothole On Route", "There are a pothole ahead!.");
+                                    break;
+                                }
+                            }
+                        } else {
+                            if (distance < thresholdDistance) {
+                                showNotification("Pothole Nearby", "You are near a pothole!.");
+                                break;
+                            }
+                        }
+                    }
+                }
+
+            }
+        }
     }
 
     private void pushData() {
