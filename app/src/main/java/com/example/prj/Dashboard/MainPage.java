@@ -1,4 +1,4 @@
-package com.example.prj;
+package com.example.prj.Dashboard;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -9,14 +9,22 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.example.prj.AchievementPage;
+import com.example.prj.Authen.ForgotPassword;
 import com.example.prj.Authen.SignIn;
+import com.example.prj.HistoryPage;
 import com.example.prj.Map.MapPage;
+import com.example.prj.NotificationPage;
+import com.example.prj.ProfilePage;
+import com.example.prj.R;
 import com.example.prj.Session.SessionManager;
+import com.example.prj.SettingPage;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.Description;
 import com.github.mikephil.charting.components.XAxis;
@@ -25,8 +33,12 @@ import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
@@ -41,12 +53,15 @@ public class MainPage extends AppCompatActivity {
     private Button logoutButton, scanButton, settingButton, achievementButton, notificationButton, historyButton, profileButton, mapButton;
     private LineChart lineChart1, lineChart2;
     private List<String> xValues1, yValues1, xValues2, yValues2;
+    public TextView nameTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main_page);
+
+        nameTextView = findViewById(R.id.name_text);
 
         sessionManager = new SessionManager(this);
         sessionManager.checkLogin();
@@ -61,14 +76,32 @@ public class MainPage extends AppCompatActivity {
 
         if (username != null) {
             // Set the username to the name_text TextView
-            TextView nameTextView = findViewById(R.id.name_text);
             nameTextView.setText(username);
         } else {
             // Set the username to the name_text TextView
             String usernameqr = getIntent().getStringExtra("USERNAMEQR");
-            TextView nameTextView = findViewById(R.id.name_text);
             nameTextView.setText(usernameqr);
         }
+
+        // Check if the digital otp is null
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("user");
+        Query checkUserDatabase = reference.orderByChild("username").equalTo(nameTextView.getText().toString());
+
+        checkUserDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()) {
+                    String otpFromDB = snapshot.child(nameTextView.getText().toString()).child("otp").getValue(String.class);
+                    if (otpFromDB == null) {
+                        setDigitalOTP();
+                    }
+                }
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Toast.makeText(MainPage.this, "Database Error", Toast.LENGTH_SHORT).show();
+            }
+        });
 
         // Linechart
         lineChart1 = findViewById(R.id.line_chart1);
@@ -281,10 +314,6 @@ public class MainPage extends AppCompatActivity {
             if (task.isSuccessful() && task.getResult().exists()) {
                 String status = task.getResult().getValue(String.class);
                 if ("waiting_for_login".equals(status)) {
-                    // Retrieve the current user's credentials
-                    // SharedPreferences preferences = getSharedPreferences("user_session", MODE_PRIVATE);
-                    // String username = preferences.getString("username", null);
-
                     // Update the session ID with user credentials
                     String username = getIntent().getStringExtra("USERNAME");
                     ref.child(sessionId).child("username").setValue(username);
@@ -298,5 +327,11 @@ public class MainPage extends AppCompatActivity {
                 Toast.makeText(MainPage.this, "Session ID not found", Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    private void setDigitalOTP() {
+        Intent intent = new Intent(MainPage.this, SetDigital.class);
+        intent.putExtra("USERNAME", nameTextView.getText().toString());
+        startActivity(intent);
     }
 }

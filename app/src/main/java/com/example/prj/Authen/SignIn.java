@@ -15,7 +15,7 @@ import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.prj.MainPage;
+import com.example.prj.Dashboard.MainPage;
 import com.example.prj.R;
 import com.example.prj.Session.SessionManager;
 import com.google.firebase.database.DataSnapshot;

@@ -73,8 +73,8 @@ public class VerifySignUp extends VerifyStatus {
         DatabaseReference reference = database.getReference("user");
 
         String hashedPassword = Encrypt.hashPassword(password);
-        HelperClass helperClass = new HelperClass(username, hashedPassword, email, phone);
-        reference.child(username).setValue(helperClass);
+        UserData userData = new UserData(username, hashedPassword, email, phone);
+        reference.child(username).setValue(userData);
 
         Toast.makeText(VerifySignUp.this, "Signed up successfully!", Toast.LENGTH_SHORT).show();
         Intent intent = new Intent(VerifySignUp.this, SignIn.class);

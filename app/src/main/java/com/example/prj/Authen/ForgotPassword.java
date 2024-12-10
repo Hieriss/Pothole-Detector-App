@@ -2,6 +2,7 @@ package com.example.prj.Authen;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -37,6 +38,8 @@ public class ForgotPassword extends DigitalVerify {
     private FirebaseAuth mAuth;
 
     public String userUsername, userEmail;
+
+    public Boolean isChecked;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -121,10 +124,14 @@ public class ForgotPassword extends DigitalVerify {
                 if (snapshot.exists()) {
                     forgot_password_username.setError(null);
                     String emailFromDB = snapshot.child(userUsername).child("email").getValue(String.class);
-
+                    String otpFromDB = snapshot.child(userUsername).child("otp").getValue(String.class);
                     if (Objects.equals(emailFromDB, userEmail)) {
                         forgot_password_username.setError(null);
-                        checkDigitalOTP();
+                        if (otpFromDB != null) {
+                            checkDigitalOTP();
+                        } else {
+                            Toast.makeText(ForgotPassword.this, "You didn't set your digital OTP", Toast.LENGTH_SHORT).show();
+                        }
                     } else {
                         forgot_password_email.setError("Email doesn't match");
                         forgot_password_email.requestFocus();

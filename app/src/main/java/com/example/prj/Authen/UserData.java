@@ -1,7 +1,7 @@
 package com.example.prj.Authen;
 
-public class HelperClass {
-    String username, password, email, phone;
+public class UserData {
+    String username, password, email, phone, otp;
 
     public String getUsername() {
         return username;
@@ -35,13 +35,14 @@ public class HelperClass {
         this.phone = phone;
     }
 
-    public HelperClass(String username, String password, String email, String phone) {
+    public UserData(String username, String password, String email, String phone) {
         this.username = username;
         this.password = password;
         this.email = email;
         this.phone = phone;
+        this.otp = "";
     }
 
-    public HelperClass() {
+    public UserData() {
     }
 }

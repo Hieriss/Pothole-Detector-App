@@ -1,14 +1,7 @@
-package com.example.prj;
+package com.example.prj.Dashboard;
 
+import android.content.Intent;
 import android.os.Bundle;
-
-import androidx.activity.EdgeToEdge;
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
-
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
@@ -16,30 +9,46 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import androidx.activity.EdgeToEdge;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
+
 import com.example.prj.Authen.Encrypt;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
+import com.example.prj.Authen.ForgotPassword;
+import com.example.prj.Authen.SignIn;
+import com.example.prj.DigitalVerify;
+import com.example.prj.R;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
-import com.google.firebase.database.ValueEventListener;
 
-import java.util.Objects;
+public class SetDigital extends AppCompatActivity {
+    Button setButton;
+    public String otp, hashedOTP;
+    public String username;
 
-public class DigitalVerify extends AppCompatActivity {
-    Button verifyButton;
-    String userUsername = getIntent().getStringExtra("userUsername");
+    DatabaseReference databaseReference;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_digital_verify);
+        setContentView(R.layout.activity_set_digital);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
+        Intent intent = getIntent();
+        if (intent != null && intent.hasExtra("USERNAME")) {
+            username = intent.getStringExtra("USERNAME");
+            // Use the username as needed
+        } else {
+            Toast.makeText(this, "No username provided", Toast.LENGTH_SHORT).show();
+            finish(); // Close the activity if no username is provided
+        }
 
         EditText otpBox1 = findViewById(R.id.otpBox1);
         EditText otpBox2 = findViewById(R.id.otpBox2);
@@ -50,7 +59,7 @@ public class DigitalVerify extends AppCompatActivity {
 
         EditText[] otpBoxes = {otpBox1, otpBox2, otpBox3, otpBox4, otpBox5, otpBox6};
 
-        verifyButton = findViewById(R.id.verify_button);
+        setButton = findViewById(R.id.set_button);
 
         // Add TextWatcher to each box
         for (int i = 0; i < otpBoxes.length; i++) {
@@ -75,7 +84,7 @@ public class DigitalVerify extends AppCompatActivity {
             });
         }
 
-        verifyButton.setOnClickListener(new View.OnClickListener() {
+        setButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // Define the array of OTP boxes
@@ -89,18 +98,15 @@ public class DigitalVerify extends AppCompatActivity {
                 };
 
                 // Get the full OTP
-                String otp = getOtp(otpBoxes);
+                otp = getOtp(otpBoxes);
 
                 // Do something with the OTP (e.g., validate or send to server)
                 if (otp.length() == 6) {
-                    Toast.makeText(DigitalVerify.this, "OTP: " + otp, Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(DigitalVerify.this, "Please enter a valid OTP", Toast.LENGTH_SHORT).show();
+                    pushDigitalOTP();
                 }
             }
         });
     }
-
     private String getOtp(EditText[] otpBoxes) {
         StringBuilder otp = new StringBuilder();
         for (EditText box : otpBoxes) {
@@ -109,38 +115,13 @@ public class DigitalVerify extends AppCompatActivity {
         return otp.toString();
     }
 
-    private void validateOtp(EditText[] otpBoxes) {
-        String otp = getOtp(otpBoxes);
-        String hashedOtp;
-        if (otp.length() < 6) {
-            Toast.makeText(DigitalVerify.this, "Please enter a valid OTP", Toast.LENGTH_SHORT).show();
-        } else {
-            Toast.makeText(DigitalVerify.this, "OTP is valid", Toast.LENGTH_SHORT).show();
+    public void pushDigitalOTP() {
+        hashedOTP = Encrypt.hashPassword(otp);
 
-            hashedOtp = Encrypt.hashPassword(otp);
-            DatabaseReference reference = FirebaseDatabase.getInstance().getReference("user");
-            Query checkUserDatabase = reference.orderByChild("username").equalTo(userUsername);
+        databaseReference = FirebaseDatabase.getInstance().getReference("user");
+        databaseReference.child(username).child("otp").setValue(hashedOTP);
 
-            checkUserDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot snapshot) {
-                    if (snapshot.exists()) {
-                        String otpFromDB = snapshot.child(userUsername).child("otp").getValue(String.class);
-                        if (Objects.equals(otpFromDB, hashedOtp)) {
-                            Toast.makeText(DigitalVerify.this, "OTP is correct", Toast.LENGTH_SHORT).show();
-                        } else {
-                            Toast.makeText(DigitalVerify.this, "OTP is incorrect", Toast.LENGTH_SHORT).show();
-                        }
-                    } else {
-                        Toast.makeText(DigitalVerify.this, "User not found", Toast.LENGTH_SHORT).show();
-                    }
-                }
-                @Override
-                public void onCancelled(@NonNull DatabaseError error) {
-                    Toast.makeText(DigitalVerify.this, "Database Error", Toast.LENGTH_SHORT).show();
-                }
-            });
-
-        }
+        Toast.makeText(SetDigital.this, "Digital OTP set successfully", Toast.LENGTH_SHORT).show();
+        finish();
     }
 }
