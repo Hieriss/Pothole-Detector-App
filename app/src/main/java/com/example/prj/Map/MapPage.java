@@ -31,6 +31,7 @@ import android.os.Vibrator;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.util.Pair;
 import android.view.View;
 import android.widget.Toast;
 import android.Manifest;
@@ -135,6 +136,7 @@ import com.mapbox.search.ui.view.SearchResultsView;
 import com.mapbox.turf.TurfMeasurement;
 import com.mapbox.turf.TurfMisc;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -221,7 +223,7 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
     private Handler handler = new Handler();
     private Runnable pushDataRunnable;
     private static final int REQUEST_LOCATION_PERMISSION = 1;
-
+    private List<Pair<Double, Double>> potholeLocations;
     private static final float SPEED_THRESHOLD = 30.0f;
     private static final float DELTA_Z_THRESHOLD = 15.0f;
 
@@ -414,6 +416,38 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
             Log.d(TAG, "Firebase initialized");
         }
 
+        // Initialize potholeLocations
+        potholeLocations = new ArrayList<>();
+
+        // Initialize LocationRetriever and retrieve locations from Firebase
+        LocationRetriever locationRetriever = new LocationRetriever(this);
+        locationRetriever.retrieveLocations(new LocationRetriever.LocationCallback() {
+            @Override
+            public void onLocationsRetrieved(List<Pair<Double, Double>> locations) {
+                // Log the retrieved locations
+                if (locations.isEmpty()) {
+                    Log.d(TAG, "No locations retrieved from local storage.");
+                } else {
+                    Log.d(TAG, "Retrieved " + locations.size() + " locations from local storage.");
+                    for (Pair<Double, Double> location : locations) {
+                        Log.d(TAG, "Latitude: " + location.first + ", Longitude: " + location.second);
+                    }
+                }
+
+                // get locations
+                potholeLocations = locations;
+            }
+
+            @Override
+            public void onError(Exception e) {
+                Log.e(TAG, "Failed to retrieve locations", e);
+            }
+        });
+
+        // Initialize addPotholeBtn
+        addPotholeBtn = findViewById(R.id.debug_detail_point);
+        addPotholeBtn.setVisibility(View.GONE);
+
         // Initialize LocationManager
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
@@ -457,8 +491,6 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
                 handler.postDelayed(this, 1000);
             }
         };
-        // add pothole manual
-        addPotholeBtn = findViewById(R.id.debug_detail_point);
 
         // Start the periodic data push
         handler.post(pushDataRunnable);
@@ -630,6 +662,17 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
                 });
                 AnnotationPlugin annotationPlugin = AnnotationPluginImplKt.getAnnotations(mapView);
                 pointAnnotationManager = PointAnnotationManagerKt.createPointAnnotationManager(annotationPlugin, mapView);
+
+                for (Pair<Double, Double> location : potholeLocations) {
+                    Point point = Point.fromLngLat(location.second, location.first);
+                    Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.pothole_on_map);
+                    PointAnnotationOptions pointAnnotationOptions = new PointAnnotationOptions()
+                            .withTextAnchor(TextAnchor.CENTER)
+                            .withIconSize(0.8)
+                            .withIconImage(bitmap)
+                            .withPoint(point);
+                    pointAnnotationManager.create(pointAnnotationOptions);
+                }
 
                 addOnMapClickListener(mapView.getMapboxMap(), new OnMapClickListener() {
                     @Override
