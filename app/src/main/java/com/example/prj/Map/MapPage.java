@@ -1,5 +1,5 @@
 // 489 driving options
-package com.example.prj;
+package com.example.prj.Map;
 
 import static com.mapbox.maps.plugin.animation.CameraAnimationsUtils.getCamera;
 import static com.mapbox.maps.plugin.gestures.GesturesUtils.addOnMapClickListener;
@@ -7,32 +7,25 @@ import static com.mapbox.maps.plugin.gestures.GesturesUtils.getGestures;
 import static com.mapbox.maps.plugin.locationcomponent.LocationComponentUtils.getLocationComponent;
 import static com.mapbox.navigation.base.extensions.RouteOptionsExtensions.applyDefaultNavigationOptions;
 
-import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
-import android.graphics.drawable.VectorDrawable;
-import android.location.Address;
-import android.location.Geocoder;
+import android.hardware.Sensor;
+import android.hardware.SensorManager;
 import android.location.Location;
+import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Vibrator;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.view.KeyEvent;
+import android.util.Log;
 import android.view.View;
-import android.view.inputmethod.EditorInfo;
-import android.widget.AutoCompleteTextView;
-import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 import android.Manifest;
 
@@ -42,16 +35,17 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.content.res.AppCompatResources;
 import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.example.prj.R;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.mapbox.android.core.location.LocationEngine;
 import com.mapbox.android.core.location.LocationEngineCallback;
 import com.mapbox.android.core.location.LocationEngineProvider;
@@ -68,10 +62,7 @@ import com.mapbox.maps.CameraOptions;
 import com.mapbox.maps.EdgeInsets;
 import com.mapbox.maps.MapView;
 import com.mapbox.maps.Style;
-import com.mapbox.maps.extension.style.expressions.generated.Expression;
-import com.mapbox.maps.extension.style.layers.generated.LineLayer;
 import com.mapbox.maps.extension.style.layers.properties.generated.TextAnchor;
-import com.mapbox.maps.plugin.LocationPuck2D;
 import com.mapbox.maps.plugin.Plugin;
 import com.mapbox.maps.plugin.animation.MapAnimationOptions;
 import com.mapbox.maps.plugin.annotation.AnnotationPlugin;
@@ -80,14 +71,10 @@ import com.mapbox.maps.plugin.annotation.generated.PointAnnotationManager;
 import com.mapbox.maps.plugin.annotation.generated.PointAnnotationManagerKt;
 import com.mapbox.maps.plugin.annotation.generated.PointAnnotationOptions;
 import com.mapbox.maps.plugin.compass.CompassPlugin;
-import com.mapbox.maps.plugin.compass.CompassView;
-import com.mapbox.maps.plugin.compass.CompassViewPlugin;
-import com.mapbox.maps.plugin.gestures.GesturesPlugin;
 import com.mapbox.maps.plugin.gestures.OnMapClickListener;
 import com.mapbox.maps.plugin.gestures.OnMoveListener;
 import com.mapbox.maps.plugin.locationcomponent.LocationComponentConstants;
 import com.mapbox.maps.plugin.locationcomponent.LocationComponentPlugin;
-import com.mapbox.maps.plugin.locationcomponent.OnIndicatorBearingChangedListener;
 import com.mapbox.maps.plugin.locationcomponent.OnIndicatorPositionChangedListener;
 import com.mapbox.maps.plugin.locationcomponent.generated.LocationComponentSettings;
 import com.mapbox.maps.plugin.scalebar.ScaleBarPlugin;
@@ -101,7 +88,6 @@ import com.mapbox.navigation.core.MapboxNavigation;
 import com.mapbox.navigation.core.directions.session.RoutesObserver;
 import com.mapbox.navigation.core.directions.session.RoutesUpdatedResult;
 import com.mapbox.navigation.core.lifecycle.MapboxNavigationApp;
-import com.mapbox.navigation.core.routealternatives.AlternativeRouteMetadata;
 import com.mapbox.navigation.core.trip.session.LocationMatcherResult;
 import com.mapbox.navigation.core.trip.session.LocationObserver;
 import com.mapbox.navigation.core.trip.session.RouteProgressObserver;
@@ -111,7 +97,6 @@ import com.mapbox.navigation.ui.maps.location.NavigationLocationProvider;
 import com.mapbox.navigation.ui.maps.route.RouteLayerConstants;
 import com.mapbox.navigation.ui.maps.route.arrow.api.MapboxRouteArrowApi;
 import com.mapbox.navigation.ui.maps.route.arrow.api.MapboxRouteArrowView;
-import com.mapbox.navigation.ui.maps.route.arrow.model.ArrowAddedValue;
 import com.mapbox.navigation.ui.maps.route.arrow.model.ArrowVisibilityChangeValue;
 import com.mapbox.navigation.ui.maps.route.arrow.model.InvalidPointError;
 import com.mapbox.navigation.ui.maps.route.arrow.model.RouteArrowOptions;
@@ -136,17 +121,16 @@ import com.mapbox.search.autocomplete.PlaceAutocompleteSuggestion;
 import com.mapbox.search.ui.adapter.autocomplete.PlaceAutocompleteUiAdapter;
 import com.mapbox.search.ui.view.CommonSearchViewConfiguration;
 import com.mapbox.search.ui.view.SearchResultsView;
-import com.mapbox.geojson.Point;
-import com.mapbox.geojson.LineString;
 import com.mapbox.turf.TurfMeasurement;
 import com.mapbox.turf.TurfMisc;
 
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import kotlin.Unit;
 import kotlin.coroutines.Continuation;
@@ -154,7 +138,11 @@ import kotlin.coroutines.CoroutineContext;
 import kotlin.coroutines.EmptyCoroutineContext;
 import kotlin.jvm.functions.Function1;
 
-public class MapPage extends AppCompatActivity {
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.location.LocationListener;
+
+public class MapPage extends AppCompatActivity implements SensorEventListener, LocationListener {
     // view && boolean
     static MapView mapView;
     MaterialButton setRoute;
@@ -184,7 +172,40 @@ public class MapPage extends AppCompatActivity {
     private TextInputEditText searchET;
     private boolean ignoreNextQueryUpdate = false;
 
+    // sensors definition
+    private static final String TAG = "btb";
+
+    private SensorManager sensorManager;
+    private Sensor accelerometer;
+    private Sensor rotationVectorSensor;
+
+    // variables for accelerometer
+    private float lastX, lastY, lastZ;
+    private float deltaX = 0;
+    private float deltaY = 0;
+    private float deltaZ = 0;
+    private float vibrateThreshold = 0;
+    public Vibrator v;
+
+    // variables for rotation vector sensor
+    private float[] rotationMatrix = new float[9];
+    private float[] orientationAngles = new float[3];
+    private double pitch;
+    private double roll;
+
+    // variables for speed
+    private LocationManager locationManager;
+    private float speedKmh;
+    private double point;
+
+    // other sensors' variables
+    private DatabaseReference database;
+    private Handler handler = new Handler();
+    private Runnable pushDataRunnable;
+    private static final int REQUEST_LOCATION_PERMISSION = 1;
+
     //--------------------------Navigation Register--------------------------------
+
     private final OnIndicatorPositionChangedListener onPositionChangedListener = new OnIndicatorPositionChangedListener() {
         @Override
         public void onIndicatorPositionChanged(Point point) {
@@ -245,6 +266,7 @@ public class MapPage extends AppCompatActivity {
             routeArrowView.renderManeuverUpdate(mapStyle, updatedManeuverArrow);
         }
     };
+
     //---------------------------------------------------------------------------------
 
     private boolean isPointOnRoute(Point point, NavigationRoute route) {
@@ -337,6 +359,59 @@ public class MapPage extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
+        // Initialize Firebase
+        FirebaseDatabase databaseInstance = FirebaseDatabase.getInstance();
+        databaseInstance.setPersistenceEnabled(true);
+        database = databaseInstance.getReference();
+        Log.d(TAG, "Firebase initialized");
+
+        // Initialize LocationManager
+        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+
+        // Check for location permissions
+        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION, android.Manifest.permission.ACCESS_COARSE_LOCATION}, 1);
+            return;
+        }
+
+        // Request location updates
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 500L, 0.5F, this);
+
+        sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+
+        if (sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER) != null) {
+            Log.d(TAG, "Success! we have an accelerometer");
+            sensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
+            vibrateThreshold = accelerometer.getMaximumRange() / 2;
+
+        } else {
+            Log.e(TAG, "Failed. Unfortunately we do not have an accelerometer");
+        }
+
+        // Initialize vibration
+        v = (Vibrator) this.getSystemService(Context.VIBRATOR_SERVICE);
+
+        // Initialize rotation vector sensor
+        if (sensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR) != null) {
+            rotationVectorSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);
+            sensorManager.registerListener(this, rotationVectorSensor, SensorManager.SENSOR_DELAY_NORMAL);
+        } else {
+            Log.e(TAG, "Failed. Unfortunately we do not have a rotation vector sensor");
+        }
+
+        // Initialize the Runnable to push data
+        pushDataRunnable = new Runnable() {
+            @Override
+            public void run() {
+                pushData();
+                // Schedule the next update after 1 second
+                handler.postDelayed(this, 1000);
+            }
+        };
+
+        // Start the periodic data push
+        handler.post(pushDataRunnable);
 
         // route line
         mapView = findViewById(R.id.mapView);
@@ -687,13 +762,147 @@ public class MapPage extends AppCompatActivity {
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        sensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
+        sensorManager.registerListener(this, rotationVectorSensor, SensorManager.SENSOR_DELAY_NORMAL);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        sensorManager.unregisterListener(this, accelerometer);
+        sensorManager.unregisterListener(this, rotationVectorSensor);
+    }
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
         if(mapboxNavigation != null){
             mapboxNavigation.onDestroy();
             mapboxNavigation = null;
         }
+
+        handler.removeCallbacks(pushDataRunnable);
         LocationComponentPlugin locationComponentPlugin = getLocationComponent(mapView);
         locationComponentPlugin.removeOnIndicatorPositionChangedListener(onPositionChangedListener);
+    }
+
+    // sensors
+    @Override
+    public void onSensorChanged(SensorEvent event) {
+        if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
+            // Handle accelerometer data
+            deltaX = Math.abs(lastX - event.values[0]);
+            deltaY = Math.abs(lastY - event.values[1]);
+            deltaZ = Math.abs(lastZ - event.values[2]);
+
+            if (deltaX < 2) deltaX = 0;
+            if (deltaY < 2) deltaY = 0;
+            if (deltaZ < 2) deltaZ = 0;
+
+            lastX = event.values[0];
+            lastY = event.values[1];
+            lastZ = event.values[2];
+
+            vibrate();
+        } else if (event.sensor.getType() == Sensor.TYPE_ROTATION_VECTOR) {
+            // Handle rotation vector data
+            SensorManager.getRotationMatrixFromVector(rotationMatrix, event.values);
+            SensorManager.getOrientation(rotationMatrix, orientationAngles);
+
+            pitch = (double) Math.toDegrees(orientationAngles[1]);
+            roll = (double) Math.toDegrees(orientationAngles[2]);
+
+            // Convert pitch
+            if (pitch < 0) {
+                pitch += 360;
+                pitch = Math.abs(pitch - 360);
+            }
+
+            // Convert roll
+            if (roll < 0) {
+                roll += 360;
+                roll = Math.abs(roll -360);
+            }
+        }
+    }
+
+    @Override
+    public void onLocationChanged(Location location) {
+        // Get the speed in meters/second
+        float speed = location.getSpeed();
+        // Convert to km/h
+        speedKmh = speed * 3.6f;
+    }
+
+    private void pushData() {
+        calcPoint();
+
+        long timestamp = System.currentTimeMillis();
+        Date date = new Date(timestamp);
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+        String formattedDate = sdf.format(date);
+
+        SensorData sensorData = new SensorData(deltaX, deltaY, deltaZ, pitch, roll, speedKmh, point, formattedDate);
+        Log.d(TAG, "Pushing data to Firebase: " + sensorData.toString());
+        database.child("sensorData").push().setValue(sensorData)
+                .addOnSuccessListener(aVoid -> {
+                    Log.d(TAG, "Data pushed successfully");
+                })
+                .addOnFailureListener(e -> {
+                    Log.e(TAG, "Failed to push data", e);
+                });
+    }
+
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int accuracy) {}
+
+    @Override
+    public void onStatusChanged(String provider, int status, Bundle extras) {}
+
+    @Override
+    public void onProviderEnabled(String provider) {}
+
+    @Override
+    public void onProviderDisabled(String provider) {}
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == REQUEST_LOCATION_PERMISSION) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
+                        ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                    locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 500L, 0.5F, this);
+                }
+            } else {
+                // Permission denied, handle accordingly
+                Log.e(TAG, "Location permission denied");
+            }
+        }
+    }
+
+    public void vibrate() {
+        if ((deltaX > vibrateThreshold) || (deltaY > vibrateThreshold) || (deltaZ > vibrateThreshold)) {
+            v.vibrate(50);
+        }
+    }
+
+    public void calcPoint(){
+        double rielZ;
+
+        if (deltaZ != 0){
+            rielZ = deltaZ * (1 / Math.cos(Math.toRadians(pitch))) * (1 / Math.cos(Math.toRadians(roll)));
+
+            if (speedKmh <= 7){
+                point = 0d;
+            }
+            else {
+                point = speedKmh / rielZ;
+            }
+        } else {
+            point = 0d;
+        }
     }
 }

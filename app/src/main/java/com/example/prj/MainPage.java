@@ -14,8 +14,8 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-import com.example.prj.Authen.Encrypt;
 import com.example.prj.Authen.SignIn;
+import com.example.prj.Map.MapPage;
 import com.example.prj.Session.SessionManager;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.Description;
@@ -39,7 +39,7 @@ public class MainPage extends AppCompatActivity {
 
     SessionManager sessionManager;
     private Button logoutButton, scanButton, settingButton, achievementButton, notificationButton, historyButton, profileButton, mapButton;
-    private LineChart lineChart1,lineChart2;
+    private LineChart lineChart1, lineChart2;
     private List<String> xValues1, yValues1, xValues2, yValues2;
 
     @Override
@@ -59,7 +59,7 @@ public class MainPage extends AppCompatActivity {
             return insets;
         });
 
-        if (username != null ) {
+        if (username != null) {
             // Set the username to the name_text TextView
             TextView nameTextView = findViewById(R.id.name_text);
             nameTextView.setText(username);
@@ -72,14 +72,11 @@ public class MainPage extends AppCompatActivity {
 
         // Linechart
         lineChart1 = findViewById(R.id.line_chart1);
-
         Description description1 = new Description();
         description1.setText("");
         lineChart1.setDescription(description1);
-
         lineChart1.getAxisRight().setDrawLabels(false);
         lineChart1.getAxisRight().setDrawGridLines(false);
-
         xValues1 = Arrays.asList("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun");
 
         XAxis xAxis1 = lineChart1.getXAxis();
@@ -122,14 +119,11 @@ public class MainPage extends AppCompatActivity {
         //-----------------------------------------
 
         lineChart2 = findViewById(R.id.line_chart2);
-
         Description description2 = new Description();
         description2.setText("");
         lineChart2.setDescription(description2);
-
         lineChart2.getAxisRight().setDrawLabels(false);
         lineChart2.getAxisRight().setDrawGridLines(false);
-
         xValues1 = Arrays.asList("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun");
 
         XAxis xAxis2 = lineChart2.getXAxis();

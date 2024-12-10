@@ -19,6 +19,29 @@
         android:padding="20dp"
         android:elevation="8dp">
 
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:layout_marginStart="0dp">
+
+            <ImageView
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                app:srcCompat="@drawable/quit"
+                app:tint="@color/black"/>
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/quit_button"
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:layout_centerVertical="true"
+                android:background="@android:color/transparent"
+                android:clickable="true"
+                android:focusable="true"
+                android:text="" />
+        </RelativeLayout>
+
         <TextView
             android:id="@+id/verify_title"
             android:layout_width="wrap_content"
