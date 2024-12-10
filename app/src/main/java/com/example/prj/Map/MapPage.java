@@ -8,6 +8,7 @@ import static com.mapbox.maps.plugin.locationcomponent.LocationComponentUtils.ge
 import static com.mapbox.navigation.base.extensions.RouteOptionsExtensions.applyDefaultNavigationOptions;
 
 import android.annotation.SuppressLint;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -62,11 +63,14 @@ import com.mapbox.maps.CameraOptions;
 import com.mapbox.maps.EdgeInsets;
 import com.mapbox.maps.MapView;
 import com.mapbox.maps.Style;
+import com.mapbox.maps.ViewAnnotationOptions;
 import com.mapbox.maps.extension.style.layers.properties.generated.TextAnchor;
 import com.mapbox.maps.plugin.Plugin;
 import com.mapbox.maps.plugin.animation.MapAnimationOptions;
 import com.mapbox.maps.plugin.annotation.AnnotationPlugin;
 import com.mapbox.maps.plugin.annotation.AnnotationPluginImplKt;
+import com.mapbox.maps.plugin.annotation.generated.OnPointAnnotationClickListener;
+import com.mapbox.maps.plugin.annotation.generated.PointAnnotation;
 import com.mapbox.maps.plugin.annotation.generated.PointAnnotationManager;
 import com.mapbox.maps.plugin.annotation.generated.PointAnnotationManagerKt;
 import com.mapbox.maps.plugin.annotation.generated.PointAnnotationOptions;
@@ -78,6 +82,7 @@ import com.mapbox.maps.plugin.locationcomponent.LocationComponentPlugin;
 import com.mapbox.maps.plugin.locationcomponent.OnIndicatorPositionChangedListener;
 import com.mapbox.maps.plugin.locationcomponent.generated.LocationComponentSettings;
 import com.mapbox.maps.plugin.scalebar.ScaleBarPlugin;
+import com.mapbox.maps.viewannotation.ViewAnnotationManager;
 import com.mapbox.navigation.base.options.NavigationOptions;
 import com.mapbox.navigation.base.route.NavigationRoute;
 import com.mapbox.navigation.base.route.NavigationRouterCallback;
@@ -147,11 +152,15 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
     static MapView mapView;
     MaterialButton setRoute;
     FloatingActionButton focusLocationBtn;
+    FloatingActionButton addPotholeBtn;
     private Style mapStyle;
     boolean focusLocation = true;
     private boolean isRouteActive = false;
     private boolean isVoiceInstructionsMuted = false;
     private Point searchedPoint;
+    private boolean manualAddActive = false;
+    Bitmap bitmap;
+
     //CompassView compassView;
 
     // map component
@@ -174,7 +183,6 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
 
     // sensors definition
     private static final String TAG = "btb";
-
     private SensorManager sensorManager;
     private Sensor accelerometer;
     private Sensor rotationVectorSensor;
@@ -361,10 +369,12 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
         });
 
         // Initialize Firebase
-        FirebaseDatabase databaseInstance = FirebaseDatabase.getInstance();
-        databaseInstance.setPersistenceEnabled(true);
-        database = databaseInstance.getReference();
-        Log.d(TAG, "Firebase initialized");
+        if (database == null) {
+            FirebaseDatabase databaseInstance = FirebaseDatabase.getInstance();
+            //databaseInstance.setPersistenceEnabled(true);
+            database = databaseInstance.getReference();
+            Log.d(TAG, "Firebase initialized");
+        }
 
         // Initialize LocationManager
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
@@ -378,13 +388,13 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
         // Request location updates
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 500L, 0.5F, this);
 
+        // sensor
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-
-        if (sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER) != null) {
+        accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        if (accelerometer != null) {
             Log.d(TAG, "Success! we have an accelerometer");
             sensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
             vibrateThreshold = accelerometer.getMaximumRange() / 2;
-
         } else {
             Log.e(TAG, "Failed. Unfortunately we do not have an accelerometer");
         }
@@ -409,6 +419,8 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
                 handler.postDelayed(this, 1000);
             }
         };
+        // add pothole manual
+        addPotholeBtn = findViewById(R.id.debug_detail_point);
 
         // Start the periodic data push
         handler.post(pushDataRunnable);
@@ -578,27 +590,86 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
                         return null;
                     }
                 });
-                Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.placeholder);
                 AnnotationPlugin annotationPlugin = AnnotationPluginImplKt.getAnnotations(mapView);
                 PointAnnotationManager pointAnnotationManager = PointAnnotationManagerKt.createPointAnnotationManager(annotationPlugin, mapView);
+
                 addOnMapClickListener(mapView.getMapboxMap(), new OnMapClickListener() {
                     @Override
                     public boolean onMapClick(@NonNull Point point) {
                         if (!isRouteActive) {
-                            pointAnnotationManager.deleteAll();
-                            PointAnnotationOptions pointAnnotationOptions = new PointAnnotationOptions().withTextAnchor(TextAnchor.CENTER).withIconImage(bitmap)
-                                    .withPoint(point);
-                            pointAnnotationManager.create(pointAnnotationOptions);
+                            if (manualAddActive) {
+                                bitmap =  BitmapFactory.decodeResource(getResources(), R.drawable.search_marker);
+                                PointAnnotationOptions pointAnnotationOptions = new PointAnnotationOptions()
+                                        .withTextAnchor(TextAnchor.CENTER)
+                                        .withIconSize(0.8)  // change later
+                                        .withIconImage(bitmap)
+                                        .withPoint(point);
+                                pointAnnotationManager.create(pointAnnotationOptions);
+                            }
+                            else {
+                                pointAnnotationManager.deleteAll();
+                                bitmap =  BitmapFactory.decodeResource(getResources(), R.drawable.placeholder);
+                                PointAnnotationOptions pointAnnotationOptions = new PointAnnotationOptions()
+                                        .withTextAnchor(TextAnchor.CENTER)
+                                        .withIconSize(1)
+                                        .withIconImage(bitmap)
+                                        .withPoint(point);
+                                pointAnnotationManager.create(pointAnnotationOptions);
+                            }
                         }
+
+                        // view point detail
+                        pointAnnotationManager.addClickListener(new OnPointAnnotationClickListener() {
+                            @Override
+                            public boolean onAnnotationClick(@NonNull PointAnnotation pointAnnotation) {
+                                if (pointAnnotation.getIconSize().equals(0.8)) {
+                                    showModalPopup();
+                                    return true;
+                                }
+                                return false;
+                            }
+                        });
+
+                        // set route button
                         setRoute.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
-                                fetchRoute(point);
+                                if (!isRouteActive) {
+                                    if (!manualAddActive) {
+                                        fetchRoute(point);
+                                    } else {
+                                        Toast.makeText(MapPage.this, "Turn off debug add pothole", Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+                                else {
+                                    isRouteActive = false;
+                                    mapboxNavigation.setNavigationRoutes(Collections.emptyList());
+                                    ArrowVisibilityChangeValue tmp = routeArrowApi.hideManeuverArrow();
+                                    routeArrowView.render(mapStyle, tmp);
+                                    setRoute.setText("Set route");
+                                }
                             }
                         });
-                        return false;
+                        return true;
                     }
                 });
+                // add pothole button (use to change boolean)
+                addPotholeBtn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        if (!isRouteActive) {
+                            if (!manualAddActive) {
+                                pointAnnotationManager.deleteAll();
+                                manualAddActive = true;
+                            } else {
+                                //pointAnnotationManager.deleteAll();
+                                manualAddActive = false;
+                            }
+                        }
+                    }
+                });
+
+                // focus button
                 focusLocationBtn.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
@@ -624,8 +695,11 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
                         searchedPoint = placeAutocompleteSuggestion.getCoordinate();
 
                         // add point on map
+                        bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.placeholder);
                         pointAnnotationManager.deleteAll();
-                        PointAnnotationOptions pointAnnotationOptions = new PointAnnotationOptions().withTextAnchor(TextAnchor.CENTER).withIconImage(bitmap)
+                        PointAnnotationOptions pointAnnotationOptions = new PointAnnotationOptions()
+                                .withTextAnchor(TextAnchor.CENTER)
+                                .withIconImage(bitmap)
                                 .withPoint(searchedPoint);
                         pointAnnotationManager.create(pointAnnotationOptions);
 
@@ -659,6 +733,12 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
                 });
             }
         });
+    }
+    private void showModalPopup() {
+        Dialog dialog = new Dialog(this);
+        dialog.setContentView(R.layout.modal_popup);
+        dialog.setCancelable(true);
+        dialog.show();
     }
 
     @SuppressLint("MissingPermission")

@@ -5,7 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MapPage">
+    tools:context=".Map.MapPage">
 
     <com.mapbox.maps.MapView
         android:layout_width="match_parent"
@@ -97,4 +97,16 @@
         android:backgroundTint="@color/light_gray"
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"/>
-    </RelativeLayout>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/debug_detail_point"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginEnd="90dp"
+        android:layout_marginBottom="80dp"
+        android:backgroundTint="@color/light_gray"
+        android:src="@drawable/my_location"
+        app:tint="@color/black" />
+</RelativeLayout>
