@@ -1,6 +1,7 @@
 package com.example.prj.Authen;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -38,8 +39,6 @@ public class ForgotPassword extends DigitalVerify {
     private FirebaseAuth mAuth;
 
     public String userUsername, userEmail;
-
-    public Boolean isChecked;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,6 +82,12 @@ public class ForgotPassword extends DigitalVerify {
             }
         });
 
+        // Check if isChecked is true and call changePassword if it is
+        SharedPreferences sharedPreferences = getSharedPreferences("MyPrefs", MODE_PRIVATE);
+        boolean isChecked = sharedPreferences.getBoolean("isChecked", false);
+        if (isChecked) {
+            changePassword();
+        }
     }
 
     private Boolean validateUsername() {
@@ -150,17 +155,21 @@ public class ForgotPassword extends DigitalVerify {
     }
 
     public void checkDigitalOTP() {
-        verify_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(ForgotPassword.this, DigitalVerify.class);
-                intent.putExtra("userUsername", userUsername);
-                startActivity(intent);
-            }
-        });
+        SharedPreferences sharedPreferences = getSharedPreferences("MyPrefs", MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putBoolean("isChecked", false);
+        editor.apply();
+
+        Intent intent = new Intent(ForgotPassword.this, DigitalVerify.class);
+        intent.putExtra("userUsername", forgot_password_username.getText().toString().trim());
+        startActivity(intent);
     }
 
     public void changePassword() {
+        forgot_password_username.setVisibility(View.GONE);
+        forgot_password_email.setVisibility(View.GONE);
+        verify_button.setVisibility(View.GONE);
+
         forgot_password_newpw.setVisibility(View.VISIBLE);
         forgot_password_confirmpw.setVisibility(View.VISIBLE);
         change_password_button.setVisibility(View.VISIBLE);
@@ -219,5 +228,15 @@ public class ForgotPassword extends DigitalVerify {
         Toast.makeText(ForgotPassword.this, "Password updated successfully", Toast.LENGTH_SHORT).show();
         Intent intent = new Intent(ForgotPassword.this, SignIn.class);
         startActivity(intent);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        // Set isChecked to false when the activity is destroyed
+        SharedPreferences sharedPreferences = getSharedPreferences("MyPrefs", MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putBoolean("isChecked", false);
+        editor.apply();
     }
 }

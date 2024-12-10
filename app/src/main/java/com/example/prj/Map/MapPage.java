@@ -215,7 +215,7 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
     private static final int REQUEST_LOCATION_PERMISSION = 1;
 
     private static final float SPEED_THRESHOLD = 30.0f;
-    private static final float DELTA_Z_THRESHOLD = 7.0f;
+    private static final float DELTA_Z_THRESHOLD = 15.0f;
 
     //--------------------------Navigation Register--------------------------------
 

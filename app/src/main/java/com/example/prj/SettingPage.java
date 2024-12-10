@@ -1,6 +1,7 @@
 package com.example.prj;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -11,6 +12,7 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.example.prj.Authen.SignIn;
 import com.example.prj.Dashboard.MainPage;
 
 public class SettingPage extends AppCompatActivity {
@@ -106,6 +108,23 @@ public class SettingPage extends AppCompatActivity {
             public void onClick(View view) {
                 Intent intent = new Intent(SettingPage.this, TermsAndPoliciesPage.class);
                 startActivity(intent);
+            }
+        });
+
+        logoutButton = findViewById(R.id.setting_logout_button);
+        logoutButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                SharedPreferences preferences = getSharedPreferences("user_session", MODE_PRIVATE);
+                SharedPreferences.Editor editor = preferences.edit();
+                editor.clear();  // Clear session data
+                editor.apply();
+
+                // Navigate back to the login screen
+                Intent intent = new Intent(SettingPage.this, SignIn.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+                finish();
             }
         });
     }
