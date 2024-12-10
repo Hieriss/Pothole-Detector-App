@@ -141,6 +141,8 @@ public class DigitalVerify extends AppCompatActivity {
                         editor.putBoolean("isChecked", true);
                         editor.apply();
 
+                        Intent resultIntent = new Intent();
+                        setResult(RESULT_OK, resultIntent);
                         finish();
                     } else {
                         Toast.makeText(DigitalVerify.this, "OTP is incorrect", Toast.LENGTH_SHORT).show();

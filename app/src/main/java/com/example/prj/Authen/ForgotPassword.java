@@ -39,6 +39,11 @@ public class ForgotPassword extends DigitalVerify {
     private FirebaseAuth mAuth;
 
     public String userUsername, userEmail;
+    private static final int REQUEST_CODE_DIGITAL_VERIFY = 1;
+
+    private static final String PREFS_NAME = "MyPrefs";
+    private static final String IS_VERIFIED_KEY = "isVerified";
+    private boolean isVerified;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,12 +87,8 @@ public class ForgotPassword extends DigitalVerify {
             }
         });
 
-        // Check if isChecked is true and call changePassword if it is
-        SharedPreferences sharedPreferences = getSharedPreferences("MyPrefs", MODE_PRIVATE);
-        boolean isChecked = sharedPreferences.getBoolean("isChecked", false);
-        if (isChecked) {
-            changePassword();
-        }
+        SharedPreferences sharedPreferences = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
+        isVerified = sharedPreferences.getBoolean(IS_VERIFIED_KEY, false);
     }
 
     private Boolean validateUsername() {
@@ -162,7 +163,7 @@ public class ForgotPassword extends DigitalVerify {
 
         Intent intent = new Intent(ForgotPassword.this, DigitalVerify.class);
         intent.putExtra("userUsername", forgot_password_username.getText().toString().trim());
-        startActivity(intent);
+        startActivityForResult(intent, REQUEST_CODE_DIGITAL_VERIFY);
     }
 
     public void changePassword() {
@@ -231,12 +232,27 @@ public class ForgotPassword extends DigitalVerify {
     }
 
     @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_CODE_DIGITAL_VERIFY) {
+            if (resultCode == RESULT_OK) {
+                isVerified = true;
+                SharedPreferences sharedPreferences = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.putBoolean(IS_VERIFIED_KEY, isVerified);
+                editor.apply();
+                changePassword();
+            }
+        }
+    }
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
-        // Set isChecked to false when the activity is destroyed
-        SharedPreferences sharedPreferences = getSharedPreferences("MyPrefs", MODE_PRIVATE);
+        isVerified = false;
+        SharedPreferences sharedPreferences = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putBoolean("isChecked", false);
+        editor.putBoolean(IS_VERIFIED_KEY, isVerified);
         editor.apply();
     }
 }
