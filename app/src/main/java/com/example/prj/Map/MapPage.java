@@ -200,6 +200,8 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
     private float[] orientationAngles = new float[3];
     private double pitch;
     private double roll;
+    private double latitude;
+    private double longitude;
 
     // variables for speed
     private LocationManager locationManager;
@@ -211,6 +213,9 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
     private Handler handler = new Handler();
     private Runnable pushDataRunnable;
     private static final int REQUEST_LOCATION_PERMISSION = 1;
+
+    private static final float SPEED_THRESHOLD = 30.0f;
+    private static final float DELTA_Z_THRESHOLD = 7.0f;
 
     //--------------------------Navigation Register--------------------------------
 
@@ -910,29 +915,32 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
 
     @Override
     public void onLocationChanged(Location location) {
-        // Get the speed in meters/second
         float speed = location.getSpeed();
-        // Convert to km/h
         speedKmh = speed * 3.6f;
+
+        latitude = location.getLatitude();
+        longitude = location.getLongitude();
     }
 
     private void pushData() {
         calcPoint();
 
-        long timestamp = System.currentTimeMillis();
-        Date date = new Date(timestamp);
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
-        String formattedDate = sdf.format(date);
+        if (point != 0 && speedKmh > SPEED_THRESHOLD && deltaZ > DELTA_Z_THRESHOLD) {
+            long timestamp = System.currentTimeMillis();
+            Date date = new Date(timestamp);
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+            String formattedDate = sdf.format(date);
 
-        SensorData sensorData = new SensorData(deltaX, deltaY, deltaZ, pitch, roll, speedKmh, point, formattedDate);
-        Log.d(TAG, "Pushing data to Firebase: " + sensorData.toString());
-        database.child("sensorData").push().setValue(sensorData)
-                .addOnSuccessListener(aVoid -> {
-                    Log.d(TAG, "Data pushed successfully");
-                })
-                .addOnFailureListener(e -> {
-                    Log.e(TAG, "Failed to push data", e);
-                });
+            SensorData sensorData = new SensorData(deltaX, deltaY, deltaZ, pitch, roll, speedKmh, latitude, longitude, point, formattedDate);
+            Log.d(TAG, "Pushing data to Firebase: " + sensorData.toString());
+            database.child("sensorData").push().setValue(sensorData)
+                    .addOnSuccessListener(aVoid -> {
+                        Log.d(TAG, "Data pushed successfully");
+                    })
+                    .addOnFailureListener(e -> {
+                        Log.e(TAG, "Failed to push data", e);
+                    });
+        }
     }
 
     @Override
