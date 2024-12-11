@@ -18,12 +18,19 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Prj"
         tools:targetApi="31" >
+
+        <meta-data
+            android:name="com.mapbox.maps.location.gms.SKIP_IF_INVALID_VERSION"
+            android:value="true" />
+
         <activity
             android:name=".Dashboard.SetDigital"
-            android:exported="false" />
+            android:exported="false"
+            android:theme="@style/TransparentActivityTheme" />
         <activity
-            android:name=".DigitalVerify"
-            android:exported="false" />
+            android:name=".Authen.DigitalVerify"
+            android:exported="false"
+            android:theme="@style/TransparentActivityTheme" />
         <activity
             android:name=".Authen.VerifySignUp"
             android:exported="false"

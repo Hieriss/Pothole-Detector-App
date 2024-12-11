@@ -1,4 +1,4 @@
-package com.example.prj;
+package com.example.prj.Authen;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -17,10 +17,9 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.prj.Authen.Encrypt;
+import com.example.prj.R;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -31,7 +30,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.Objects;
 
 public class DigitalVerify extends AppCompatActivity {
-    Button verifyButton;
+    Button verifyButton, quitButton;
     String userUsername;
 
     @Override
@@ -55,6 +54,7 @@ public class DigitalVerify extends AppCompatActivity {
         EditText[] otpBoxes = {otpBox1, otpBox2, otpBox3, otpBox4, otpBox5, otpBox6};
 
         verifyButton = findViewById(R.id.verify_button);
+        quitButton = findViewById(R.id.quit_button);
 
         Intent intent = getIntent();
         if (intent != null) {
@@ -85,6 +85,13 @@ public class DigitalVerify extends AppCompatActivity {
                 public void afterTextChanged(Editable s) {}
             });
         }
+
+        quitButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
 
         verifyButton.setOnClickListener(new View.OnClickListener() {
             @Override

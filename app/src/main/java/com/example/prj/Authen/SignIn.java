@@ -33,7 +33,6 @@ import java.util.Objects;
 import java.util.UUID;
 
 public class SignIn extends AppCompatActivity {
-    // UI components
     EditText signinUsername, signinPassword;
     Button signinButton, usernameForm, qrcodeForm;
     ImageView qrCodeImageView;
@@ -55,10 +54,8 @@ public class SignIn extends AppCompatActivity {
         sessionManager = new SessionManager(this);
         sessionManager.checkPassIntro();
 
-        // Initialize Firebase Database reference
         databaseReference = FirebaseDatabase.getInstance().getReference("qrCodes");
 
-        // UI Initialization
         signinUsername = findViewById(R.id.signin_username);
         signinPassword = findViewById(R.id.signin_password);
         signinButton = findViewById(R.id.signin_button);
@@ -68,7 +65,6 @@ public class SignIn extends AppCompatActivity {
         switchToSignUpText = findViewById(R.id.signin_text3);
         forgotPasswordText = findViewById(R.id.forgot_password);
 
-        // QR Code Button Handler (Generate QR Code)
         qrcodeForm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -77,11 +73,9 @@ public class SignIn extends AppCompatActivity {
                 signinPassword.setVisibility(View.GONE);
                 signinButton.setVisibility(View.GONE);
 
-                // Change the background of the button
                 qrcodeForm.setBackgroundResource(R.drawable.qr_username_choosen_background);
                 usernameForm.setBackgroundResource(R.drawable.qr_username_not_choosen_background);
 
-                // Generate a session ID if it doesn't exist
                 if (sessionId == null) {
                     sessionId = UUID.randomUUID().toString();
                     long timestamp = System.currentTimeMillis();
@@ -91,16 +85,13 @@ public class SignIn extends AppCompatActivity {
                 Bitmap qrCodeBitmap = generateQRCode(sessionId);
                 qrCodeImageView.setImageBitmap(qrCodeBitmap);
 
-                // Listen for changes in the session ID status
                 databaseReference.child(sessionId).addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         String status = snapshot.child("status").getValue(String.class);
                         if ("logged_in".equals(status)) {
-                            // Retrieve the user credentials
                             String usernameqr = snapshot.child("username").getValue(String.class);
 
-                            // Login successful
                             Intent intent = new Intent(SignIn.this, MainPage.class);
                             intent.putExtra("USERNAMEQR", usernameqr);
                             startActivity(intent);
@@ -130,7 +121,6 @@ public class SignIn extends AppCompatActivity {
             }
         });
 
-        // Username and Password Form Button Handler
         usernameForm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -144,7 +134,6 @@ public class SignIn extends AppCompatActivity {
             }
         });
 
-        // Sign-in Button Handler (Username/Password)
         signinButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -156,7 +145,6 @@ public class SignIn extends AppCompatActivity {
             }
         });
 
-        // Switch to Sign-Up
         switchToSignUpText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -174,7 +162,6 @@ public class SignIn extends AppCompatActivity {
         });
     }
 
-    // QR Code Generation Function
     private Bitmap generateQRCode(String sessionId) {
         QRCodeWriter writer = new QRCodeWriter();
         try {
@@ -194,7 +181,6 @@ public class SignIn extends AppCompatActivity {
         return null;
     }
 
-    // Username Validation
     private Boolean validateUsername() {
         String val = signinUsername.getText().toString().trim();
         if (val.isEmpty()) {
@@ -206,7 +192,6 @@ public class SignIn extends AppCompatActivity {
         }
     }
 
-    // Password Validation
     private Boolean validatePassword() {
         String val = signinPassword.getText().toString().trim();
         if (val.isEmpty()) {
@@ -219,7 +204,6 @@ public class SignIn extends AppCompatActivity {
         }
     }
 
-    // Check User Credentials in Firebase
     private void checkUser() {
         String userUsername = signinUsername.getText().toString().trim();
         String userPassword = signinPassword.getText().toString().trim();
@@ -242,6 +226,7 @@ public class SignIn extends AppCompatActivity {
                         Intent intent = new Intent(SignIn.this, MainPage.class);
                         intent.putExtra("USERNAME", userUsername);
                         startActivity(intent);
+                        finish();
                     } else {
                         signinPassword.setError("Invalid Credentials");
                         signinPassword.requestFocus();

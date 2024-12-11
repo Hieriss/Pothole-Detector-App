@@ -90,6 +90,7 @@ import com.mapbox.maps.plugin.locationcomponent.OnIndicatorPositionChangedListen
 import com.mapbox.maps.plugin.locationcomponent.generated.LocationComponentSettings;
 import com.mapbox.maps.plugin.scalebar.ScaleBarPlugin;
 import com.mapbox.maps.viewannotation.ViewAnnotationManager;
+import com.mapbox.navigation.base.formatter.DistanceFormatterOptions;
 import com.mapbox.navigation.base.options.NavigationOptions;
 import com.mapbox.navigation.base.route.NavigationRoute;
 import com.mapbox.navigation.base.route.NavigationRouterCallback;
@@ -99,12 +100,17 @@ import com.mapbox.navigation.base.trip.model.RouteProgress;
 import com.mapbox.navigation.core.MapboxNavigation;
 import com.mapbox.navigation.core.directions.session.RoutesObserver;
 import com.mapbox.navigation.core.directions.session.RoutesUpdatedResult;
+import com.mapbox.navigation.core.formatter.MapboxDistanceFormatter;
 import com.mapbox.navigation.core.lifecycle.MapboxNavigationApp;
 import com.mapbox.navigation.core.trip.session.LocationMatcherResult;
 import com.mapbox.navigation.core.trip.session.LocationObserver;
 import com.mapbox.navigation.core.trip.session.RouteProgressObserver;
 import com.mapbox.navigation.core.trip.session.VoiceInstructionsObserver;
 import com.mapbox.navigation.ui.base.util.MapboxNavigationConsumer;
+import com.mapbox.navigation.ui.maneuver.api.MapboxManeuverApi;
+import com.mapbox.navigation.ui.maneuver.model.Maneuver;
+import com.mapbox.navigation.ui.maneuver.model.ManeuverError;
+import com.mapbox.navigation.ui.maneuver.view.MapboxManeuverView;
 import com.mapbox.navigation.ui.maps.location.NavigationLocationProvider;
 import com.mapbox.navigation.ui.maps.route.RouteLayerConstants;
 import com.mapbox.navigation.ui.maps.route.arrow.api.MapboxRouteArrowApi;
@@ -227,6 +233,10 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
     private static final float SPEED_THRESHOLD = 30.0f;
     private static final float DELTA_Z_THRESHOLD = 15.0f;
 
+    // maneuver variables
+    private MapboxManeuverView maneuverView;
+    private MapboxManeuverApi maneuverApi;
+
     //--------------------------Navigation Register--------------------------------
 
     private final OnIndicatorPositionChangedListener onPositionChangedListener = new OnIndicatorPositionChangedListener() {
@@ -287,6 +297,23 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
             });
             Expected<InvalidPointError, UpdateManeuverArrowValue> updatedManeuverArrow = routeArrowApi.addUpcomingManeuverArrow(routeProgress);
             routeArrowView.renderManeuverUpdate(mapStyle, updatedManeuverArrow);
+
+            // maneuver
+            maneuverApi.getManeuvers(routeProgress).fold(new Expected.Transformer<ManeuverError, Object>() {
+                @NonNull
+                @Override
+                public Object invoke(@NonNull ManeuverError input) {
+                    return new Object();
+                }
+            }, new Expected.Transformer<List<Maneuver>, Object>() {
+                @NonNull
+                @Override
+                public Object invoke(@NonNull List<Maneuver> input) {
+                    maneuverView.setVisibility(View.VISIBLE);
+                    maneuverView.renderManeuvers(maneuverApi.getManeuvers(routeProgress));
+                    return new Object();
+                }
+            });
         }
     };
 
@@ -688,7 +715,12 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
                                 pointAnnotationManager.create(pointAnnotationOptions);
                             }
                             else {
-                                pointAnnotationManager.deleteAll();
+                                List<PointAnnotation> annotations = pointAnnotationManager.getAnnotations();
+                                for (PointAnnotation annotation : annotations) {
+                                    if (annotation.getIconSize() != 0.8) {
+                                        pointAnnotationManager.delete(annotation);
+                                    }
+                                }
                                 bitmap =  BitmapFactory.decodeResource(getResources(), R.drawable.placeholder);
                                 PointAnnotationOptions pointAnnotationOptions = new PointAnnotationOptions()
                                         .withTextAnchor(TextAnchor.CENTER)
@@ -822,6 +854,14 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
                 });
             }
         });
+
+        // maneuver
+        maneuverView = findViewById(R.id.maneuverView);
+        maneuverApi = new MapboxManeuverApi(new MapboxDistanceFormatter(new DistanceFormatterOptions.Builder(MapPage.this).build()));
+        routeArrowView = new MapboxRouteArrowView(new RouteArrowOptions.Builder(MapPage.this).build());
+
+
+
     }
     private void showModalPopup() {
         Dialog dialog = new Dialog(this);
@@ -923,6 +963,17 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
         super.onResume();
         sensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
         sensorManager.registerListener(this, rotationVectorSensor, SensorManager.SENSOR_DELAY_NORMAL);
+
+        for (Pair<Double, Double> location : potholeLocations) {
+            Point point = Point.fromLngLat(location.second, location.first);
+            Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.pothole_on_map);
+            PointAnnotationOptions pointAnnotationOptions = new PointAnnotationOptions()
+                    .withTextAnchor(TextAnchor.CENTER)
+                    .withIconSize(0.8)
+                    .withIconImage(bitmap)
+                    .withPoint(point);
+            pointAnnotationManager.create(pointAnnotationOptions);
+        }
     }
 
     @Override

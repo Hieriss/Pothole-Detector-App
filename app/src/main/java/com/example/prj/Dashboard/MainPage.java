@@ -1,6 +1,9 @@
 package com.example.prj.Dashboard;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
@@ -55,11 +58,24 @@ public class MainPage extends AppCompatActivity {
     private List<String> xValues1, yValues1, xValues2, yValues2;
     public TextView nameTextView;
 
+    // session
+    private BroadcastReceiver logoutReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            // Finish the MainPage activity
+            finish();
+        }
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main_page);
+
+        // Register the logout receiver
+        IntentFilter filter = new IntentFilter("com.example.prj.LOGOUT");
+        registerReceiver(logoutReceiver, filter);
 
         nameTextView = findViewById(R.id.name_text);
 
@@ -333,5 +349,12 @@ public class MainPage extends AppCompatActivity {
         Intent intent = new Intent(MainPage.this, SetDigital.class);
         intent.putExtra("USERNAME", nameTextView.getText().toString());
         startActivity(intent);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        // Unregister the logout receiver
+        unregisterReceiver(logoutReceiver);
     }
 }

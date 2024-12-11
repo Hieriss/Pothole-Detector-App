@@ -76,7 +76,8 @@ public class SessionManager {
     }
 
     public void logoutUser() {
-        editor.clear();
+        editor.remove(KEY_NAME);
+        editor.putBoolean(IS_LOGIN, false);
         editor.commit();
 
         Intent intent = new Intent(context, SignIn.class);

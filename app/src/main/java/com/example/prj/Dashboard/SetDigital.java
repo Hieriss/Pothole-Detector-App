@@ -16,9 +16,6 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.example.prj.Authen.Encrypt;
-import com.example.prj.Authen.ForgotPassword;
-import com.example.prj.Authen.SignIn;
-import com.example.prj.DigitalVerify;
 import com.example.prj.R;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;

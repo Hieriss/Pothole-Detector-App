@@ -12,6 +12,16 @@
         android:layout_height="match_parent"
         android:id="@+id/mapView"/>
 
+    <com.mapbox.navigation.ui.maneuver.view.MapboxManeuverView
+        android:id="@+id/maneuverView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:elevation="4sp"
+        android:visibility="gone"/>
+
     <com.mapbox.maps.plugin.compass.CompassViewImpl
         android:id="@+id/compass_icon"
         android:layout_width="53dp"
@@ -30,6 +40,7 @@
         android:layout_marginEnd="10dp"
         android:elevation="4dp"
         android:hint="Search"
+        android:layout_below="@+id/maneuverView"
         app:boxCornerRadiusBottomEnd="20dp"
         app:boxCornerRadiusBottomStart="20dp"
         app:boxCornerRadiusTopEnd="20dp"
@@ -108,5 +119,6 @@
         android:layout_marginBottom="80dp"
         android:backgroundTint="@color/light_gray"
         android:src="@drawable/my_location"
+        android:visibility="gone"
         app:tint="@color/black" />
 </RelativeLayout>

@@ -2,6 +2,7 @@ package com.example.prj.Authen;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
@@ -20,7 +21,7 @@ public class VerifySignUp extends VerifyStatus {
 
     private FirebaseAuth mAuth;
     private SessionManager sessionManager;
-    Button verifyButton;
+    Button verifyButton, quitButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +37,14 @@ public class VerifySignUp extends VerifyStatus {
         mAuth = FirebaseAuth.getInstance();
         sessionManager = new SessionManager(this);
         verifyButton = findViewById(R.id.verify_button);
+        quitButton = findViewById(R.id.quit_button);
+
+        quitButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
 
         verifyButton.setOnClickListener(view -> {
             if (mAuth.getCurrentUser() != null) {

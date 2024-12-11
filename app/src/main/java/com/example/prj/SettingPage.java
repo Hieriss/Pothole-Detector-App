@@ -14,6 +14,7 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.example.prj.Authen.SignIn;
 import com.example.prj.Dashboard.MainPage;
+import com.example.prj.Session.SessionManager;
 
 public class SettingPage extends AppCompatActivity {
 
@@ -115,10 +116,12 @@ public class SettingPage extends AppCompatActivity {
         logoutButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                SharedPreferences preferences = getSharedPreferences("user_session", MODE_PRIVATE);
-                SharedPreferences.Editor editor = preferences.edit();
-                editor.clear();  // Clear session data
-                editor.apply();
+                SessionManager sessionManager = new SessionManager(SettingPage.this);
+                sessionManager.logoutUser();
+
+                // Send broadcast to destroy MainPage activity
+                Intent broadcastIntent = new Intent("com.example.prj.LOGOUT");
+                sendBroadcast(broadcastIntent);
 
                 // Navigate back to the login screen
                 Intent intent = new Intent(SettingPage.this, SignIn.class);
