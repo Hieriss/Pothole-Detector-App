@@ -33,6 +33,7 @@ import android.text.TextWatcher;
 import android.util.Log;
 import android.util.Pair;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 import android.Manifest;
 
@@ -63,6 +64,9 @@ import com.mapbox.api.directions.v5.DirectionsCriteria;
 import com.mapbox.api.directions.v5.models.Bearing;
 import com.mapbox.api.directions.v5.models.RouteOptions;
 import com.mapbox.api.directions.v5.models.VoiceInstructions;
+import com.mapbox.api.geocoding.v5.GeocodingCriteria;
+import com.mapbox.api.geocoding.v5.MapboxGeocoding;
+import com.mapbox.api.geocoding.v5.models.GeocodingResponse;
 import com.mapbox.bindgen.Expected;
 import com.mapbox.geojson.LineString;
 import com.mapbox.geojson.Point;
@@ -71,6 +75,7 @@ import com.mapbox.maps.EdgeInsets;
 import com.mapbox.maps.MapView;
 import com.mapbox.maps.Style;
 import com.mapbox.maps.ViewAnnotationOptions;
+import com.mapbox.maps.extension.observable.eventdata.CameraChangedEventData;
 import com.mapbox.maps.extension.style.layers.properties.generated.TextAnchor;
 import com.mapbox.maps.plugin.Plugin;
 import com.mapbox.maps.plugin.animation.MapAnimationOptions;
@@ -82,6 +87,8 @@ import com.mapbox.maps.plugin.annotation.generated.PointAnnotationManager;
 import com.mapbox.maps.plugin.annotation.generated.PointAnnotationManagerKt;
 import com.mapbox.maps.plugin.annotation.generated.PointAnnotationOptions;
 import com.mapbox.maps.plugin.compass.CompassPlugin;
+import com.mapbox.maps.plugin.compass.CompassViewImpl;
+import com.mapbox.maps.plugin.delegates.listeners.OnCameraChangeListener;
 import com.mapbox.maps.plugin.gestures.OnMapClickListener;
 import com.mapbox.maps.plugin.gestures.OnMoveListener;
 import com.mapbox.maps.plugin.locationcomponent.LocationComponentConstants;
@@ -156,6 +163,9 @@ import kotlin.coroutines.Continuation;
 import kotlin.coroutines.CoroutineContext;
 import kotlin.coroutines.EmptyCoroutineContext;
 import kotlin.jvm.functions.Function1;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -175,8 +185,6 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
     private boolean manualAddActive = false;
     Bitmap bitmap;
 
-    //CompassView compassView;
-
     // map component
     private MapboxNavigation mapboxNavigation;
     private final NavigationLocationProvider navigationLocationProvider = new NavigationLocationProvider();
@@ -189,6 +197,9 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
     private NavigationRoute alternativeRoute;
     private NavigationRoute selectedRoute;
     private PointAnnotationManager pointAnnotationManager;
+    private MapboxManeuverView maneuverView;
+    private MapboxManeuverApi maneuverApi;
+    CompassViewImpl compassView;
 
     // search variables
     private PlaceAutocomplete placeAutocomplete;
@@ -232,10 +243,6 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
     private List<Pair<Double, Double>> potholeLocations;
     private static final float SPEED_THRESHOLD = 30.0f;
     private static final float DELTA_Z_THRESHOLD = 15.0f;
-
-    // maneuver variables
-    private MapboxManeuverView maneuverView;
-    private MapboxManeuverApi maneuverApi;
 
     //--------------------------Navigation Register--------------------------------
 
@@ -318,6 +325,42 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
     };
 
     //---------------------------------------------------------------------------------
+    private void fetchRoadName(Point point, final RoadNameCallback callback) {
+        MapboxGeocoding mapboxGeocoding = MapboxGeocoding.builder()
+                .accessToken(getString(R.string.mapbox_access_token))
+                .query(Point.fromLngLat(point.longitude(), point.latitude()))
+                .geocodingTypes(GeocodingCriteria.TYPE_ADDRESS)
+                .build();
+
+        mapboxGeocoding.enqueueCall(new Callback<GeocodingResponse>() {
+            @Override
+            public void onResponse(Call<GeocodingResponse> call, Response<GeocodingResponse> response) {
+                if (response.body() != null) {
+                    Log.d("GeocodingResponse", "Response: " + response.body().toString());
+                    if (!response.body().features().isEmpty()) {
+                        String roadName = response.body().features().get(0).placeName();
+                        callback.onRoadNameFetched(roadName);
+                    } else {
+                        callback.onRoadNameFetched("Unknown road");
+                    }
+                } else {
+                    Log.d("GeocodingResponse", "Response body is null");
+                    callback.onRoadNameFetched("Unknown road");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<GeocodingResponse> call, Throwable t) {
+                Log.e("GeocodingResponse", "Error: " + t.getMessage());
+                callback.onRoadNameFetched("Unknown road");
+            }
+        });
+    }
+
+    interface RoadNameCallback {
+        void onRoadNameFetched(String roadName);
+    }
+
     private void showNotification(String title, String message) {
         NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         String channelId = "nearby_annotation_channel";
@@ -366,6 +409,16 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
             focusLocation = false;
             getGestures(mapView).removeOnMoveListener(this);
             focusLocationBtn.show();
+            for (Pair<Double, Double> location : potholeLocations) {
+                Point point = Point.fromLngLat(location.second, location.first);
+                Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.pothole_on_map);
+                PointAnnotationOptions pointAnnotationOptions = new PointAnnotationOptions()
+                        .withTextAnchor(TextAnchor.CENTER)
+                        .withIconSize(1.1)
+                        .withIconImage(bitmap)
+                        .withPoint(point);
+                pointAnnotationManager.create(pointAnnotationOptions);
+            }
         }
 
         @Override
@@ -468,6 +521,15 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
             @Override
             public void onError(Exception e) {
                 Log.e(TAG, "Failed to retrieve locations", e);
+            }
+        });
+
+        // Compass
+        compassView = findViewById(R.id.compass_icon);
+        compassView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                resetMapBearing();
             }
         });
 
@@ -695,7 +757,7 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
                     Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.pothole_on_map);
                     PointAnnotationOptions pointAnnotationOptions = new PointAnnotationOptions()
                             .withTextAnchor(TextAnchor.CENTER)
-                            .withIconSize(0.8)
+                            .withIconSize(1.1)
                             .withIconImage(bitmap)
                             .withPoint(point);
                     pointAnnotationManager.create(pointAnnotationOptions);
@@ -709,7 +771,7 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
                                 bitmap =  BitmapFactory.decodeResource(getResources(), R.drawable.pothole_on_map);
                                 PointAnnotationOptions pointAnnotationOptions = new PointAnnotationOptions()
                                         .withTextAnchor(TextAnchor.CENTER)
-                                        .withIconSize(0.8)  // change later
+                                        .withIconSize(1.1)  // change later
                                         .withIconImage(bitmap)
                                         .withPoint(point);
                                 pointAnnotationManager.create(pointAnnotationOptions);
@@ -717,7 +779,7 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
                             else {
                                 List<PointAnnotation> annotations = pointAnnotationManager.getAnnotations();
                                 for (PointAnnotation annotation : annotations) {
-                                    if (annotation.getIconSize() != 0.8) {
+                                    if (annotation.getIconSize() != 1.1) {
                                         pointAnnotationManager.delete(annotation);
                                     }
                                 }
@@ -735,8 +797,8 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
                         pointAnnotationManager.addClickListener(new OnPointAnnotationClickListener() {
                             @Override
                             public boolean onAnnotationClick(@NonNull PointAnnotation pointAnnotation) {
-                                if (pointAnnotation.getIconSize().equals(0.8)) {
-                                    showModalPopup();
+                                if (pointAnnotation.getIconSize().equals(1.1)) {
+                                    showModalPopup(pointAnnotation.getPoint());
                                     return true;
                                 }
                                 return false;
@@ -756,6 +818,7 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
                                 }
                                 else {
                                     isRouteActive = false;
+                                    maneuverView.setVisibility(View.GONE);
                                     mapboxNavigation.setNavigationRoutes(Collections.emptyList());
                                     ArrowVisibilityChangeValue tmp = routeArrowApi.hideManeuverArrow();
                                     routeArrowView.render(mapStyle, tmp);
@@ -807,10 +870,10 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
                         searchResultsView.setVisibility(View.GONE);
                         searchedPoint = placeAutocompleteSuggestion.getCoordinate();
 
-                        // Filter and remove annotations with icon size not equal to 0.8
+                        // Filter and remove annotations with icon size not equal to 1.1
                         List<PointAnnotation> annotations = pointAnnotationManager.getAnnotations();
                         for (PointAnnotation annotation : annotations) {
-                            if (annotation.getIconSize() != 0.8) {
+                            if (annotation.getIconSize() != 1.1) {
                                 pointAnnotationManager.delete(annotation);
                             }
                         }
@@ -833,6 +896,7 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
                                     fetchRoute(searchedPoint);
                                 else {
                                     isRouteActive = false;
+                                    maneuverView.setVisibility(View.GONE);
                                     mapboxNavigation.setNavigationRoutes(Collections.emptyList());
                                     ArrowVisibilityChangeValue tmp = routeArrowApi.hideManeuverArrow();
                                     routeArrowView.render(mapStyle, tmp);
@@ -855,19 +919,83 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
             }
         });
 
+        mapView.getMapboxMap().addOnCameraChangeListener(new OnCameraChangeListener() {
+            @Override
+            public void onCameraChanged(@NonNull CameraChangedEventData cameraChangedEventData) {
+                double zoomLevel = mapView.getMapboxMap().getCameraState().getZoom();
+                double iconSize = calculateIconSize(zoomLevel);
+
+                // Update the icon size for all pothole points
+                if (pointAnnotationManager != null) {
+                    List<PointAnnotation> annotations = pointAnnotationManager.getAnnotations();
+                    for (PointAnnotation annotation : annotations) {
+                        if (annotation.getIconSize() == 1.1) { // Check if it's a pothole point
+                            annotation.setIconSize(iconSize);
+                            pointAnnotationManager.update(annotation);
+                        }
+                    }
+                }
+            }
+        });
+
         // maneuver
         maneuverView = findViewById(R.id.maneuverView);
         maneuverApi = new MapboxManeuverApi(new MapboxDistanceFormatter(new DistanceFormatterOptions.Builder(MapPage.this).build()));
         routeArrowView = new MapboxRouteArrowView(new RouteArrowOptions.Builder(MapPage.this).build());
-
-
-
     }
-    private void showModalPopup() {
-        Dialog dialog = new Dialog(this);
-        dialog.setContentView(R.layout.modal_popup);
-        dialog.setCancelable(true);
-        dialog.show();
+    private void showModalPopup(Point point) {
+        fetchRoadName(point, new RoadNameCallback() {
+            @Override
+            public void onRoadNameFetched(String roadName) {
+                Dialog dialog = new Dialog(MapPage.this);
+                dialog.setContentView(R.layout.modal_popup);
+                dialog.setCancelable(true);
+
+                TextView roadNameTextView = dialog.findViewById(R.id.road_name_text_view);
+                roadNameTextView.setText(roadName);
+
+                dialog.show();
+            }
+        });
+    }
+    private void resetMapBearing() {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // Request location permissions if not granted
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, REQUEST_LOCATION_PERMISSION);
+            return;
+        }
+
+        LocationEngine locationEngine = LocationEngineProvider.getBestLocationEngine(this);
+        locationEngine.getLastLocation(new LocationEngineCallback<LocationEngineResult>() {
+            @Override
+            public void onSuccess(LocationEngineResult result) {
+                Location location = result.getLastLocation();
+                if (location != null) {
+                    Point currentLocation = Point.fromLngLat(location.getLongitude(), location.getLatitude());
+                    updateCamera(currentLocation, 0.0);
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                Log.e(TAG, "Failed to get current location", exception);
+            }
+        });
+    }
+    private float calculateIconSize(double zoomLevel) {
+        // Define the max and min icon sizes
+        float maxSize = 1.1f;
+        float minSize = 0.5f;
+
+        // Adjust the icon size based on the zoom level
+        if (zoomLevel < 10) {
+            return maxSize;
+        } else if (zoomLevel > 15) {
+            return minSize;
+        } else {
+            // Linearly interpolate between minSize and maxSize
+            return -(minSize + (float) ((zoomLevel - 10) / 5.0 * (maxSize - minSize)));
+        }
     }
 
     @SuppressLint("MissingPermission")
@@ -930,6 +1058,7 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
                                     routeArrowView.render(mapStyle, tmp);
                                     setRoute.setText("Set route");
                                     isRouteActive = false;
+                                    maneuverView.setVisibility(View.GONE);
                                 } else {
                                     fetchRoute(searchedPoint);
                                 }
@@ -963,17 +1092,6 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
         super.onResume();
         sensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
         sensorManager.registerListener(this, rotationVectorSensor, SensorManager.SENSOR_DELAY_NORMAL);
-
-        for (Pair<Double, Double> location : potholeLocations) {
-            Point point = Point.fromLngLat(location.second, location.first);
-            Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.pothole_on_map);
-            PointAnnotationOptions pointAnnotationOptions = new PointAnnotationOptions()
-                    .withTextAnchor(TextAnchor.CENTER)
-                    .withIconSize(0.8)
-                    .withIconImage(bitmap)
-                    .withPoint(point);
-            pointAnnotationManager.create(pointAnnotationOptions);
-        }
     }
 
     @Override
@@ -1058,7 +1176,7 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
             for (PointAnnotation annotation : annotations) {
                 Point annotationPoint = annotation.getPoint();
                 if (annotationPoint != null) {
-                    if (annotation.getIconSize() == 0.8) {
+                    if (annotation.getIconSize() == 1.1) {
                         Double distance = TurfMeasurement.distance(Point.fromLngLat(location.getLongitude(), location.getLatitude()), annotationPoint);
                         if (isRouteActive) {
                             if (isPointOnRoute(annotationPoint, selectedRoute)) {
