@@ -32,20 +32,16 @@
 
             <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/quit_button"
-                android:layout_width="16dp"
-                android:layout_height="16dp"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
                 android:layout_centerVertical="true"
                 android:background="@android:color/transparent"
                 android:clickable="true"
                 android:focusable="true"
-                android:text="" />
+                android:text="Quit" />
         </RelativeLayout>
 
-        <ImageView
-            android:layout_width="400dp"
-            android:layout_height="220dp"
-            android:layout_margin="10dp"
-            android:background="@drawable/vua"/>
+
 
         <TextView
             android:layout_width="wrap_content"

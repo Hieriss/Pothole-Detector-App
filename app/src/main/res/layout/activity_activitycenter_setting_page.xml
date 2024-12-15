@@ -53,7 +53,7 @@
                     android:layout_centerHorizontal="true"
                     android:layout_centerVertical="true"
                     android:fontFamily="@font/grandstander_semi_bold"
-                    android:text="Acitivity Center"
+                    android:text="@string/activity_center_title"
                     android:textAlignment="center"
                     android:textColor="@color/black"
                     android:textSize="26sp" />
@@ -106,7 +106,7 @@
                                         android:layout_marginStart="20dp"
                                         android:fontFamily="@font/grandstander_regular"
                                         android:gravity="center_vertical"
-                                        android:text="Account Informations"
+                                        android:text="@string/account_info"
                                         android:textSize="20sp" />
 
                                     <androidx.appcompat.widget.AppCompatButton
@@ -131,7 +131,7 @@
                                         android:layout_marginStart="20dp"
                                         android:fontFamily="@font/grandstander_regular"
                                         android:gravity="center_vertical"
-                                        android:text="Password Setting"
+                                        android:text="@string/pass_setting"
                                         android:textSize="20sp" />
 
                                     <androidx.appcompat.widget.AppCompatButton
@@ -156,7 +156,7 @@
                                         android:layout_marginStart="20dp"
                                         android:fontFamily="@font/grandstander_regular"
                                         android:gravity="center_vertical"
-                                        android:text="Delete Account"
+                                        android:text="@string/delete_account"
                                         android:textSize="20sp" />
 
                                     <androidx.appcompat.widget.AppCompatButton

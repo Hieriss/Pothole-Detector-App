@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -49,6 +50,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 
 public class MainPage extends AppCompatActivity {
 
@@ -70,6 +72,7 @@ public class MainPage extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        loadLocale();
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main_page);
 
@@ -302,7 +305,7 @@ public class MainPage extends AppCompatActivity {
     private void initiateQRScan() {
         IntentIntegrator integrator = new IntentIntegrator(this);
         integrator.setDesiredBarcodeFormats(IntentIntegrator.QR_CODE);  // Only QR codes
-        integrator.setPrompt("Scan QR Code");
+        integrator.setPrompt(getString(R.string.scan_qr));
         integrator.setCameraId(0);  // Use a specific camera, or you can remove this to let it choose automatically
         integrator.setBeepEnabled(true);
         integrator.setOrientationLocked(true);  // Lock orientation
@@ -314,7 +317,7 @@ public class MainPage extends AppCompatActivity {
         IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
         if (result != null) {
             if (result.getContents() == null) {
-                Toast.makeText(this, "Scan cancelled", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, getString(R.string.scan_cancelled), Toast.LENGTH_LONG).show();
             } else {
                 String scannedSessionId = result.getContents();
                 verifyScannedSession(scannedSessionId);
@@ -335,12 +338,12 @@ public class MainPage extends AppCompatActivity {
                     ref.child(sessionId).child("username").setValue(username);
                     ref.child(sessionId).child("status").setValue("logged_in");
 
-                    Toast.makeText(MainPage.this, "Login successful!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainPage.this, getString(R.string.login_success), Toast.LENGTH_SHORT).show();
                 } else {
-                    Toast.makeText(MainPage.this, "Invalid or already used QR Code", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainPage.this, getString(R.string.invalid_qrcode), Toast.LENGTH_SHORT).show();
                 }
             } else {
-                Toast.makeText(MainPage.this, "Session ID not found", Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainPage.this, getString(R.string.session_id_not_found), Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -356,5 +359,20 @@ public class MainPage extends AppCompatActivity {
         super.onDestroy();
         // Unregister the logout receiver
         unregisterReceiver(logoutReceiver);
+    }
+    private void setLocale(String lang) {
+        Locale locale = new Locale(lang);
+        Locale.setDefault(locale);
+        Configuration config = new Configuration();
+        config.locale = locale;
+        getBaseContext().getResources().updateConfiguration(config, getBaseContext().getResources().getDisplayMetrics());
+        SharedPreferences.Editor editor = getSharedPreferences("Settings", MODE_PRIVATE).edit();
+        editor.putString("My_Lang", lang);
+        editor.apply();
+    }
+    public void loadLocale() {
+        SharedPreferences prefs = getSharedPreferences("Settings", MODE_PRIVATE);
+        String language = prefs.getString("My_Lang", "");
+        setLocale(language);
     }
 }

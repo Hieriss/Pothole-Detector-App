@@ -54,7 +54,7 @@
                     android:layout_centerHorizontal="true"
                     android:layout_centerVertical="true"
                     android:fontFamily="@font/grandstander_semi_bold"
-                    android:text="Terms &amp; Policies"
+                    android:text="@string/setting_terms_policy"
                     android:textAlignment="center"
                     android:textColor="@color/black"
                     android:textSize="26sp" />
@@ -107,7 +107,7 @@
                                         android:layout_marginStart="20dp"
                                         android:fontFamily="@font/grandstander_regular"
                                         android:gravity="center_vertical"
-                                        android:text="Terms"
+                                        android:text="@string/terms_setting"
                                         android:textSize="20sp" />
 
                                     <androidx.appcompat.widget.AppCompatButton

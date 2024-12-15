@@ -90,7 +90,7 @@ public class ForgotPassword extends DigitalVerify {
     private Boolean validateUsername() {
         String val = forgot_password_username.getText().toString().trim();
         if (val.isEmpty()) {
-            forgot_password_username.setError("Username can't be empty");
+            forgot_password_username.setError(getString(R.string.empty_username));
             return false;
         } else {
             forgot_password_username.setError(null);
@@ -102,10 +102,10 @@ public class ForgotPassword extends DigitalVerify {
         String val = forgot_password_email.getText().toString().trim();
         String emailPattern = "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+";
         if (val.isEmpty()) {
-            forgot_password_email.setError("Email can't be empty");
+            forgot_password_email.setError(getString(R.string.empty_email));
             return false;
         } else if (!val.matches(emailPattern)) {
-            forgot_password_email.setError("Invalid email address");
+            forgot_password_email.setError(getString(R.string.invalid_email));
             return false;
         } else {
             forgot_password_email.setError(null);
@@ -132,14 +132,14 @@ public class ForgotPassword extends DigitalVerify {
                         if (otpFromDB != null) {
                             checkDigitalOTP();
                         } else {
-                            Toast.makeText(ForgotPassword.this, "You didn't set your digital OTP", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(ForgotPassword.this, getString(R.string.didnt_set_otp), Toast.LENGTH_SHORT).show();
                         }
                     } else {
-                        forgot_password_email.setError("Email doesn't match");
+                        forgot_password_email.setError(getString(R.string.email_doesnt_match));
                         forgot_password_email.requestFocus();
                     }
                 } else {
-                    forgot_password_username.setError("Username doesn't exist");
+                    forgot_password_username.setError(getString(R.string.account_doesnt_exist));
                     forgot_password_username.requestFocus();
                 }
             }
@@ -171,7 +171,7 @@ public class ForgotPassword extends DigitalVerify {
         forgot_password_confirmpw.setVisibility(View.VISIBLE);
         change_password_button.setVisibility(View.VISIBLE);
 
-        forgot_password_description.setText("Verify passed, please enter your new password and confirm it");
+        forgot_password_description.setText(getString(R.string.reset_pass_success));
 
         change_password_button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -188,10 +188,10 @@ public class ForgotPassword extends DigitalVerify {
     private Boolean validateNewPassword() {
         String val = forgot_password_newpw.getText().toString().trim();
         if (val.isEmpty()) {
-            forgot_password_newpw.setError("Password can't be empty");
+            forgot_password_newpw.setError(getString(R.string.empty_password));
             return false;
         } else if (val.length() < 8) {
-            forgot_password_newpw.setError("Password must be at least 8 characters long");
+            forgot_password_newpw.setError(getString(R.string.rule_password));
             return false;
         } else {
             forgot_password_newpw.setError(null);
@@ -203,10 +203,10 @@ public class ForgotPassword extends DigitalVerify {
         String val = forgot_password_confirmpw.getText().toString().trim();
         String password = forgot_password_newpw.getText().toString().trim();
         if (val.isEmpty()) {
-            forgot_password_confirmpw.setError("Confirm password can't be empty");
+            forgot_password_confirmpw.setError(getString(R.string.empty_confirm_pass));
             return false;
         } else if (!val.equals(password)) {
-            forgot_password_confirmpw.setError("Password didn't match");
+            forgot_password_confirmpw.setError(getString(R.string.pass_didnt_match));
             return false;
         } else {
             forgot_password_confirmpw.setError(null);
@@ -222,7 +222,7 @@ public class ForgotPassword extends DigitalVerify {
         databaseReference = FirebaseDatabase.getInstance().getReference("user");
         databaseReference.child(userUsername).child("password").setValue(hashedPassword);
 
-        Toast.makeText(ForgotPassword.this, "Password updated successfully", Toast.LENGTH_SHORT).show();
+        Toast.makeText(ForgotPassword.this, getString(R.string.update_pass_success), Toast.LENGTH_SHORT).show();
         Intent intent = new Intent(ForgotPassword.this, SignIn.class);
         startActivity(intent);
     }

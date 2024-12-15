@@ -53,7 +53,7 @@
                     android:layout_centerHorizontal="true"
                     android:layout_centerVertical="true"
                     android:fontFamily="@font/grandstander_semi_bold"
-                    android:text="Notification"
+                    android:text="@string/setting_notification"
                     android:textAlignment="center"
                     android:textColor="@color/black"
                     android:textSize="26sp" />
@@ -106,7 +106,7 @@
                                         android:layout_marginStart="20dp"
                                         android:fontFamily="@font/grandstander_regular"
                                         android:gravity="center_vertical"
-                                        android:text="Pothole Detection"
+                                        android:text="@string/pothole_detetion"
                                         android:textSize="20sp" />
                                 </RelativeLayout>
 
@@ -122,7 +122,7 @@
                                         android:layout_marginStart="20dp"
                                         android:fontFamily="@font/grandstander_regular"
                                         android:gravity="center_vertical"
-                                        android:text="Pothole Warning"
+                                        android:text="@string/pothole_warning"
                                         android:textSize="20sp" />
                                 </RelativeLayout>
 
@@ -138,7 +138,7 @@
                                         android:layout_marginStart="20dp"
                                         android:fontFamily="@font/grandstander_regular"
                                         android:gravity="center_vertical"
-                                        android:text="Pothole News"
+                                        android:text="@string/pothole_news"
                                         android:textSize="20sp" />
                                 </RelativeLayout>
                             </LinearLayout>

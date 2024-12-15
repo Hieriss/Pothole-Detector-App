@@ -113,7 +113,7 @@ public class DigitalVerify extends AppCompatActivity {
                 if (otp.length() == 6) {
                     validateOtp(otpBoxes);
                 } else {
-                    Toast.makeText(DigitalVerify.this, "Please enter a valid OTP", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(DigitalVerify.this,getString(R.string.invalid_otp), Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -141,7 +141,7 @@ public class DigitalVerify extends AppCompatActivity {
                 if (snapshot.exists()) {
                     String otpFromDB = snapshot.child(userUsername).child("otp").getValue(String.class);
                     if (Objects.equals(otpFromDB, hashedOtp)) {
-                        Toast.makeText(DigitalVerify.this, "OTP is correct", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(DigitalVerify.this, getString(R.string.otp_correct), Toast.LENGTH_SHORT).show();
 
                         SharedPreferences sharedPreferences = getSharedPreferences("MyPrefs", MODE_PRIVATE);
                         SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -152,10 +152,10 @@ public class DigitalVerify extends AppCompatActivity {
                         setResult(RESULT_OK, resultIntent);
                         finish();
                     } else {
-                        Toast.makeText(DigitalVerify.this, "OTP is incorrect", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(DigitalVerify.this, getString(R.string.otp_incorrect), Toast.LENGTH_SHORT).show();
                     }
                 } else {
-                    Toast.makeText(DigitalVerify.this, "User not found", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(DigitalVerify.this, getString(R.string.user_not_found), Toast.LENGTH_SHORT).show();
                 }
             }
             @Override

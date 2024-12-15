@@ -74,7 +74,7 @@ public class SignUp extends VerifyStatus {
     private Boolean validateUsername() {
         String val = signupUsername.getText().toString().trim();
         if (val.isEmpty()) {
-            signupUsername.setError("Username can't be empty");
+            signupUsername.setError(getString(R.string.empty_username));
             return false;
         } else {
             signupUsername.setError(null);
@@ -85,10 +85,10 @@ public class SignUp extends VerifyStatus {
     private Boolean validatePassword() {
         String val = signupPassword.getText().toString().trim();
         if (val.isEmpty()) {
-            signupPassword.setError("Password can't be empty");
+            signupPassword.setError(getString(R.string.empty_password));
             return false;
         } else if (val.length() < 8) {
-            signupPassword.setError("Password must be at least 8 characters long");
+            signupPassword.setError(getString(R.string.rule_password));
             return false;
         } else {
             signupPassword.setError(null);
@@ -100,10 +100,10 @@ public class SignUp extends VerifyStatus {
         String val = signupConfirmpassword.getText().toString().trim();
         String password = signupPassword.getText().toString().trim();
         if (val.isEmpty()) {
-            signupConfirmpassword.setError("Confirm password can't be empty");
+            signupConfirmpassword.setError(getString(R.string.empty_confirm_pass));
             return false;
         } else if (!val.equals(password)) {
-            signupConfirmpassword.setError("Password didn't match");
+            signupConfirmpassword.setError(getString(R.string.pass_didnt_match));
             return false;
         } else {
             signupConfirmpassword.setError(null);
@@ -115,10 +115,10 @@ public class SignUp extends VerifyStatus {
         String val = signupEmail.getText().toString().trim();
         String emailPattern = "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+";
         if (val.isEmpty()) {
-            signupEmail.setError("Email can't be empty");
+            signupEmail.setError(getString(R.string.empty_email));
             return false;
         } else if (!val.matches(emailPattern)) {
-            signupEmail.setError("Invalid email address");
+            signupEmail.setError(getString(R.string.invalid_email));
             return false;
         } else {
             signupEmail.setError(null);
@@ -130,10 +130,10 @@ public class SignUp extends VerifyStatus {
         String val = signupPhone.getText().toString().trim();
         String phonePattern = "[0-9]{10}";
         if (val.isEmpty()) {
-            signupPhone.setError("Phone Number can't be empty");
+            signupPhone.setError(getString(R.string.empty_phonenumber));
             return false;
         } else if (!val.matches(phonePattern)) {
-            signupPhone.setError("Phone Number must be 10 digits long");
+            signupPhone.setError(getString(R.string.rule_phone));
             return false;
         } else {
             signupPhone.setError(null);
@@ -155,7 +155,7 @@ public class SignUp extends VerifyStatus {
                         user.sendEmailVerification()
                                 .addOnCompleteListener(task1 -> {
                                     if (task1.isSuccessful()) {
-                                        Toast.makeText(SignUp.this, "Verification email sent.", Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(SignUp.this, getString(R.string.sent_verify_email_success), Toast.LENGTH_SHORT).show();
 
                                         Intent intent = new Intent(SignUp.this, VerifySignUp.class);
                                         intent.putExtra("username", username);
@@ -164,11 +164,11 @@ public class SignUp extends VerifyStatus {
                                         intent.putExtra("phone", phone);
                                         startActivity(intent);
                                     } else {
-                                        Toast.makeText(SignUp.this, "Failed to send verification email.", Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(SignUp.this, getString(R.string.sent_verify_email_fail), Toast.LENGTH_SHORT).show();
                                     }
                                 });
                     } else {
-                        Toast.makeText(SignUp.this, "Registration failed: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(SignUp.this, getString(R.string.register_fail) + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 });
     }
