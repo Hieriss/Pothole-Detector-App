@@ -54,7 +54,7 @@
                     android:layout_centerHorizontal="true"
                     android:layout_centerVertical="true"
                     android:fontFamily="@font/grandstander_semi_bold"
-                    android:text="Support"
+                    android:text="@string/setting_support"
                     android:textAlignment="center"
                     android:textColor="@color/black"
                     android:textSize="26sp" />

@@ -53,7 +53,7 @@
                     android:layout_centerHorizontal="true"
                     android:layout_centerVertical="true"
                     android:fontFamily="@font/grandstander_semi_bold"
-                    android:text="Security"
+                    android:text="@string/setting_security"
                     android:textAlignment="center"
                     android:textColor="@color/black"
                     android:textSize="26sp" />
@@ -106,7 +106,7 @@
                                         android:layout_marginStart="20dp"
                                         android:fontFamily="@font/grandstander_regular"
                                         android:gravity="center_vertical"
-                                        android:text="Anonymous User"
+                                        android:text="@string/anonymous_user"
                                         android:textSize="20sp" />
 
                                     <androidx.appcompat.widget.AppCompatButton
@@ -131,7 +131,7 @@
                                         android:layout_marginStart="20dp"
                                         android:fontFamily="@font/grandstander_regular"
                                         android:gravity="center_vertical"
-                                        android:text="Manage Devices"
+                                        android:text="@string/manage_devices"
                                         android:textSize="20sp" />
 
                                     <androidx.appcompat.widget.AppCompatButton
@@ -156,7 +156,7 @@
                                         android:layout_marginStart="20dp"
                                         android:fontFamily="@font/grandstander_regular"
                                         android:gravity="center_vertical"
-                                        android:text="2FA Factor"
+                                        android:text="@string/two_fa_factor"
                                         android:textSize="20sp" />
 
                                     <androidx.appcompat.widget.AppCompatButton

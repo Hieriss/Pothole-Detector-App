@@ -51,7 +51,7 @@ public class VerifySignUp extends VerifyStatus {
                 mAuth.getCurrentUser().reload().addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         if (mAuth.getCurrentUser().isEmailVerified()) {
-                            Toast.makeText(VerifySignUp.this, "Email verified successfully!", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(VerifySignUp.this, getString(R.string.email_verify_success), Toast.LENGTH_SHORT).show();
                             isVerified = true;
 
                             Intent intent = getIntent();
@@ -65,14 +65,14 @@ public class VerifySignUp extends VerifyStatus {
                             // Set intro passed status
                             sessionManager.setIntroPassed(true);
                         } else {
-                            Toast.makeText(VerifySignUp.this, "Please verify your email first.", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(VerifySignUp.this, getString(R.string.email_verify_warning), Toast.LENGTH_SHORT).show();
                         }
                     } else {
-                        Toast.makeText(VerifySignUp.this, "Failed to reload user.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(VerifySignUp.this, getString(R.string.fail_reload_user), Toast.LENGTH_SHORT).show();
                     }
                 });
             } else {
-                Toast.makeText(VerifySignUp.this, "No user is currently logged in.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(VerifySignUp.this, getString(R.string.currently_logged), Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -85,7 +85,7 @@ public class VerifySignUp extends VerifyStatus {
         UserData userData = new UserData(username, hashedPassword, email, phone);
         reference.child(username).setValue(userData);
 
-        Toast.makeText(VerifySignUp.this, "Signed up successfully!", Toast.LENGTH_SHORT).show();
+        Toast.makeText(VerifySignUp.this, getString(R.string.sign_up_success), Toast.LENGTH_SHORT).show();
         Intent intent = new Intent(VerifySignUp.this, SignIn.class);
         startActivity(intent);
     }

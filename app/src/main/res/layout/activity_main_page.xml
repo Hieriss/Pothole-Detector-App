@@ -164,7 +164,7 @@
                                 android:layout_marginTop="5dp"
                                 android:layout_marginBottom="5dp"
                                 android:fontFamily="@font/grandstander_regular"
-                                android:text="Today detected: "
+                                android:text="@string/today_detected"
                                 android:textSize="16sp" />
 
                             <TextView
@@ -221,7 +221,7 @@
                                     android:layout_marginTop="10dp"
                                     android:layout_weight="1"
                                     android:fontFamily="@font/grandstander_regular"
-                                    android:text="Achievement"
+                                    android:text="@string/option_achievement"
                                     android:textAlignment="center"
                                     android:textSize="10sp" />
                             </LinearLayout>
@@ -262,7 +262,7 @@
                                     android:layout_marginTop="10dp"
                                     android:layout_weight="1"
                                     android:fontFamily="@font/grandstander_regular"
-                                    android:text="Notification"
+                                    android:text="@string/setting_notification"
                                     android:textAlignment="center"
                                     android:textSize="10sp" />
                             </LinearLayout>
@@ -303,7 +303,7 @@
                                     android:layout_marginTop="10dp"
                                     android:layout_weight="1"
                                     android:fontFamily="@font/grandstander_regular"
-                                    android:text="History Log"
+                                    android:text="@string/option_history_log"
                                     android:textAlignment="center"
                                     android:textSize="10sp" />
                             </LinearLayout>
@@ -344,7 +344,7 @@
                                     android:layout_marginTop="10dp"
                                     android:layout_weight="1"
                                     android:fontFamily="@font/grandstander_regular"
-                                    android:text="Profile"
+                                    android:text="@string/option_profile"
                                     android:textAlignment="center"
                                     android:textSize="10sp" />
                             </LinearLayout>
@@ -392,7 +392,7 @@
                                     android:layout_marginTop="5dp"
                                     android:fontFamily="@font/grandstander_medium"
                                     android:layout_gravity="center"
-                                    android:text="Potholes Detected per day"
+                                    android:text="@string/potholes_detected"
                                     android:textColor="#000000"
                                     android:textSize="16sp" />
 
@@ -431,7 +431,7 @@
                                     android:layout_marginTop="5dp"
                                     android:layout_gravity="center"
                                     android:fontFamily="@font/grandstander_medium"
-                                    android:text="Km travelled per day"
+                                    android:text="@string/Km_travelled"
                                     android:textColor="#000000"
                                     android:textSize="16sp" />
 
@@ -484,7 +484,7 @@
                             android:layout_gravity="center"
                             android:layout_marginStart="5dp"
                             android:gravity="center"
-                            android:text="Open map"
+                            android:text="@string/option_open_map"
                             android:fontFamily="@font/grandstander_semi_bold"
                             android:textAllCaps="false"
                             android:textColor="#000000"

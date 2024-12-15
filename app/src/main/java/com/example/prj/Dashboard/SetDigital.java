@@ -43,7 +43,7 @@ public class SetDigital extends AppCompatActivity {
             username = intent.getStringExtra("USERNAME");
             // Use the username as needed
         } else {
-            Toast.makeText(this, "No username provided", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.no_username), Toast.LENGTH_SHORT).show();
             finish(); // Close the activity if no username is provided
         }
 
@@ -118,7 +118,7 @@ public class SetDigital extends AppCompatActivity {
         databaseReference = FirebaseDatabase.getInstance().getReference("user");
         databaseReference.child(username).child("otp").setValue(hashedOTP);
 
-        Toast.makeText(SetDigital.this, "Digital OTP set successfully", Toast.LENGTH_SHORT).show();
+        Toast.makeText(SetDigital.this, getString(R.string.set_opt_success), Toast.LENGTH_SHORT).show();
         finish();
     }
 }

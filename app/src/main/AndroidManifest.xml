@@ -54,6 +54,9 @@
             android:name=".DisplaySettingPage"
             android:exported="false" />
         <activity
+            android:name=".ThemeSettingPage"
+            android:exported="false" />
+        <activity
             android:name=".SecuritySettingPage"
             android:exported="false" />
         <activity

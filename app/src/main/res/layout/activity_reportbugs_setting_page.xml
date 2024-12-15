@@ -53,7 +53,7 @@
                     android:layout_centerHorizontal="true"
                     android:layout_centerVertical="true"
                     android:fontFamily="@font/grandstander_semi_bold"
-                    android:text="Report Bugs"
+                    android:text="@string/setting_report_bugs"
                     android:textAlignment="center"
                     android:textColor="@color/black"
                     android:textSize="26sp" />

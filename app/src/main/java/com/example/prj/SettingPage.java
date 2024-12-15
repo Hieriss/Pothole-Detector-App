@@ -18,7 +18,7 @@ import com.example.prj.Session.SessionManager;
 
 public class SettingPage extends AppCompatActivity {
 
-    Button homeButton, accountButton, securityButton, notificationButton, displayButton, activityCenterButton, reportBugsButton, supportButton, termButton, switchAccountButton, logoutButton;
+    Button homeButton, accountButton, securityButton, notificationButton, displayButton, activityCenterButton, reportBugsButton, supportButton, termButton, switchAccountButton, logoutButton, themeButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,7 +75,14 @@ public class SettingPage extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-
+        themeButton = findViewById(R.id.setting_theme_button);
+        themeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(SettingPage.this, ThemeSettingPage.class);
+                startActivity(intent);
+            }
+        });
         activityCenterButton = findViewById(R.id.setting_activity_center_button);
         activityCenterButton.setOnClickListener(new View.OnClickListener() {
             @Override

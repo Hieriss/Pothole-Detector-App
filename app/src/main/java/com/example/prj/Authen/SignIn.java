@@ -184,7 +184,7 @@ public class SignIn extends AppCompatActivity {
     private Boolean validateUsername() {
         String val = signinUsername.getText().toString().trim();
         if (val.isEmpty()) {
-            signinUsername.setError("Username can't be empty");
+            signinUsername.setError(getString(R.string.empty_username));
             return false;
         } else {
             signinUsername.setError(null);
@@ -195,7 +195,7 @@ public class SignIn extends AppCompatActivity {
     private Boolean validatePassword() {
         String val = signinPassword.getText().toString().trim();
         if (val.isEmpty()) {
-            signinPassword.setError("Password can't be empty");
+            signinPassword.setError(getString(R.string.empty_password));
             return false;
         }
         else {
@@ -228,11 +228,11 @@ public class SignIn extends AppCompatActivity {
                         startActivity(intent);
                         finish();
                     } else {
-                        signinPassword.setError("Invalid Credentials");
+                        signinPassword.setError(getString(R.string.wrong_pass));
                         signinPassword.requestFocus();
                     }
                 } else {
-                    signinUsername.setError("Username doesn't exist");
+                    signinUsername.setError(getString(R.string.account_doesnt_exist));
                     signinUsername.requestFocus();
                 }
             }
