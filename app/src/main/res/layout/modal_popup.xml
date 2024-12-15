@@ -41,11 +41,18 @@
                 android:text="Quit" />
         </RelativeLayout>
 
-
+        <ImageView
+            android:layout_width="400dp"
+            android:layout_height="220dp"
+            android:layout_margin="10dp"
+            android:background="@drawable/current_location"/>
 
         <TextView
+            android:id="@+id/road_name_text_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Something ..."/>
+            android:text="Road Name"
+            android:textSize="16sp"
+            android:layout_marginTop="10dp"/>
     </LinearLayout>
 </FrameLayout>
