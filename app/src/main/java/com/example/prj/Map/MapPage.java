@@ -78,6 +78,7 @@ import com.mapbox.maps.MapView;
 import com.mapbox.maps.Style;
 import com.mapbox.maps.ViewAnnotationOptions;
 import com.mapbox.maps.extension.observable.eventdata.CameraChangedEventData;
+import com.mapbox.maps.extension.style.layers.properties.generated.IconAnchor;
 import com.mapbox.maps.extension.style.layers.properties.generated.TextAnchor;
 import com.mapbox.maps.plugin.Plugin;
 import com.mapbox.maps.plugin.animation.MapAnimationOptions;
@@ -419,6 +420,7 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
                 Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.pothole_on_map);
                 PointAnnotationOptions pointAnnotationOptions = new PointAnnotationOptions()
                         .withTextAnchor(TextAnchor.CENTER)
+                        .withIconAnchor(IconAnchor.CENTER)
                         .withIconSize(iconSize)
                         .withIconOpacity(0.95)
                         .withIconImage(bitmap)
@@ -764,6 +766,7 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
                     Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.pothole_on_map);
                     PointAnnotationOptions pointAnnotationOptions = new PointAnnotationOptions()
                             .withTextAnchor(TextAnchor.CENTER)
+                            .withIconAnchor(IconAnchor.CENTER)
                             .withIconSize(iconSize)
                             .withIconOpacity(0.95)
                             .withIconImage(bitmap)
@@ -779,6 +782,7 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
                                 bitmap =  BitmapFactory.decodeResource(getResources(), R.drawable.pothole_on_map);
                                 PointAnnotationOptions pointAnnotationOptions = new PointAnnotationOptions()
                                         .withTextAnchor(TextAnchor.CENTER)
+                                        .withIconAnchor(IconAnchor.CENTER)
                                         .withIconSize(iconSize)  // change later
                                         .withIconOpacity(0.95)
                                         .withIconImage(bitmap)
@@ -796,6 +800,7 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
                                 bitmap =  BitmapFactory.decodeResource(getResources(), R.drawable.placeholder);
                                 PointAnnotationOptions pointAnnotationOptions = new PointAnnotationOptions()
                                         .withTextAnchor(TextAnchor.CENTER)
+                                        .withIconAnchor(IconAnchor.CENTER)
                                         .withIconSize(1)
                                         .withIconImage(bitmap)
                                         .withIconOpacity(1.0)
@@ -831,6 +836,7 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
                                 else {
                                     isRouteActive = false;
                                     maneuverView.setVisibility(View.GONE);
+                                    searchET.setVisibility(View.VISIBLE);
                                     mapboxNavigation.setNavigationRoutes(Collections.emptyList());
                                     ArrowVisibilityChangeValue tmp = routeArrowApi.hideManeuverArrow();
                                     routeArrowView.render(mapStyle, tmp);
@@ -893,6 +899,7 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
                         bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.placeholder);
                         PointAnnotationOptions pointAnnotationOptions = new PointAnnotationOptions()
                                 .withTextAnchor(TextAnchor.CENTER)
+                                .withIconAnchor(IconAnchor.CENTER)
                                 .withIconSize(1)
                                 .withIconImage(bitmap)
                                 .withIconOpacity(1.0)
@@ -909,6 +916,7 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
                                 else {
                                     isRouteActive = false;
                                     maneuverView.setVisibility(View.GONE);
+                                    searchET.setVisibility(View.VISIBLE);
                                     mapboxNavigation.setNavigationRoutes(Collections.emptyList());
                                     ArrowVisibilityChangeValue tmp = routeArrowApi.hideManeuverArrow();
                                     routeArrowView.render(mapStyle, tmp);
@@ -928,8 +936,12 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
 
                     }
                 });
+
+
             }
         });
+
+
 
         mapView.getMapboxMap().addOnCameraChangeListener(new OnCameraChangeListener() {
             @Override
@@ -950,7 +962,7 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
                         }
                     }
                 };
-                camHandler.postDelayed(debounceRunnable, 200); // Adjust the delay as needed
+                camHandler.postDelayed(debounceRunnable, 300); // Adjust the delay as needed
             }
         });
 
@@ -1048,28 +1060,31 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
                         focusLocationBtn.performClick();
                         setRoute.setEnabled(true);
                         setRoute.setText("Stop route");
+                        searchET.setVisibility(View.GONE);
                         isRouteActive = true;
 
                         // click on map to change to alternative route
                         addOnMapClickListener(mapView.getMapboxMap(), new OnMapClickListener() {
                             @Override
                             public boolean onMapClick(@NonNull Point point) {
-                                Toast.makeText(MapPage.this, "Change route", Toast.LENGTH_SHORT).show();
-                                int index=1;
-                                if (list.size() > 1) {
-                                    for (int i = 1; i < list.size(); i++) {
-                                        alternativeRoute = list.get(i);
-                                        if (isPointOnRoute(point, alternativeRoute)) {
-                                            index = i;
-                                            break;
+                                if (isRouteActive) {
+                                    int index=1;
+                                    if (list.size() > 1) {
+                                        for (int i = 1; i < list.size(); i++) {
+                                            alternativeRoute = list.get(i);
+                                            if (isPointOnRoute(point, alternativeRoute)) {
+                                                index = i;
+                                                break;
+                                            }
                                         }
+                                        list.remove(index);
+                                        list.add(0, alternativeRoute);
+                                        selectedRoute = list.get(0);
                                     }
-                                    list.remove(index);
-                                    list.add(0, alternativeRoute);
-                                    selectedRoute = list.get(0);
+                                    mapboxNavigation.setNavigationRoutes(list);
+                                    return false;
                                 }
-                                mapboxNavigation.setNavigationRoutes(list);
-                                return false;
+                                return true;
                             }
                         });
 
@@ -1084,6 +1099,7 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
                                     setRoute.setText("Set route");
                                     isRouteActive = false;
                                     maneuverView.setVisibility(View.GONE);
+                                    searchET.setVisibility(View.VISIBLE);
                                 } else {
                                     fetchRoute(searchedPoint);
                                 }
