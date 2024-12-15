@@ -31,6 +31,7 @@ import java.util.Objects;
 
 public class DigitalVerify extends AppCompatActivity {
     Button verifyButton, quitButton;
+    String otp;
     String userUsername;
 
     @Override
@@ -58,9 +59,8 @@ public class DigitalVerify extends AppCompatActivity {
 
         Intent intent = getIntent();
         if (intent != null) {
+            otp = intent.getStringExtra("otp");
             userUsername = intent.getStringExtra("userUsername");
-        } else {
-            Log.e("DigitalVerify", "Intent is null");
         }
 
         // Add TextWatcher to each box
@@ -113,55 +113,32 @@ public class DigitalVerify extends AppCompatActivity {
                 if (otp.length() == 6) {
                     validateOtp(otpBoxes);
                 } else {
-                    Toast.makeText(DigitalVerify.this,getString(R.string.invalid_otp), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(DigitalVerify.this, "Please enter a valid OTP", Toast.LENGTH_SHORT).show();
                 }
             }
         });
     }
 
     private String getOtp(EditText[] otpBoxes) {
-        StringBuilder otp = new StringBuilder();
+        StringBuilder insertedOTP = new StringBuilder();
         for (EditText box : otpBoxes) {
-            otp.append(box.getText().toString());
+            insertedOTP.append(box.getText().toString());
         }
-        return otp.toString();
+        return insertedOTP.toString();
     }
 
     private void validateOtp(EditText[] otpBoxes) {
-        String otp = getOtp(otpBoxes);
-        String hashedOtp;
+        String insertedOTP = getOtp(otpBoxes);
 
-        hashedOtp = Encrypt.hashPassword(otp);
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("user");
-        Query checkUserDatabase = reference.orderByChild("username").equalTo(userUsername);
+        if (insertedOTP.equals(otp)) {
+            SharedPreferences sharedPreferences = getSharedPreferences("MyPrefs", MODE_PRIVATE);
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.putBoolean("isChecked", true);
+            editor.apply();
 
-        checkUserDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (snapshot.exists()) {
-                    String otpFromDB = snapshot.child(userUsername).child("otp").getValue(String.class);
-                    if (Objects.equals(otpFromDB, hashedOtp)) {
-                        Toast.makeText(DigitalVerify.this, getString(R.string.otp_correct), Toast.LENGTH_SHORT).show();
-
-                        SharedPreferences sharedPreferences = getSharedPreferences("MyPrefs", MODE_PRIVATE);
-                        SharedPreferences.Editor editor = sharedPreferences.edit();
-                        editor.putBoolean("isChecked", true);
-                        editor.apply();
-
-                        Intent resultIntent = new Intent();
-                        setResult(RESULT_OK, resultIntent);
-                        finish();
-                    } else {
-                        Toast.makeText(DigitalVerify.this, getString(R.string.otp_incorrect), Toast.LENGTH_SHORT).show();
-                    }
-                } else {
-                    Toast.makeText(DigitalVerify.this, getString(R.string.user_not_found), Toast.LENGTH_SHORT).show();
-                }
-            }
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                Toast.makeText(DigitalVerify.this, "Database Error", Toast.LENGTH_SHORT).show();
-            }
-        });
+            Intent resultIntent = new Intent();
+            setResult(RESULT_OK, resultIntent);
+            finish();
+        }
     }
 }

@@ -5,7 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/main"
+    android:background="@drawable/intro_background"
     tools:context=".IntroPage">
 
     <RelativeLayout
@@ -21,9 +21,8 @@
                 android:id="@+id/intro_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="80dp"
+                android:layout_marginTop="70dp"
                 android:layout_marginStart="30dp"
-                android:layout_weight="1"
                 android:gravity=""
                 android:fontFamily="@font/grandstander_regular"
                 android:text="Welcome to Echinoidea!\nWe can help you by:"
@@ -33,14 +32,10 @@
 
             <TextView
                 android:id="@+id/loop_text"
-                android:layout_width="match_parent"
-                android:layout_height="200dp"
-                android:layout_weight="6"
-                android:paddingTop="50dp"
-                android:layout_marginStart="40dp"
-                android:layout_marginEnd="40dp"
-                android:layout_marginTop="20dp"
-                android:layout_marginBottom="20dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="220dp"
                 android:textAlignment="center"
                 android:text="Provide you\nreal-time pothole\nwarnings"
                 android:fontFamily="@font/grandstander_bold"
@@ -50,24 +45,17 @@
 
             <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/intro_button"
-                android:layout_width="280dp"
-                android:layout_height="60dp"
+                android:layout_width="230dp"
+                android:layout_height="50dp"
+                android:layout_marginTop="210dp"
                 android:layout_gravity="center"
                 android:background="@drawable/signin_button_background"
                 android:fontFamily="@font/grandstander_semi_bold"
-                android:text="Get started now"
+                android:text="Get started"
                 android:textAllCaps="false"
-                android:textColor="#FFFFFF"
+                android:textColor="#000000"
                 android:textSize="20sp"
                 tools:ignore="NotSibling" />
-
-            <TextView
-                android:id="@+id/anchor_text"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="2"
-                android:text="" />
-
 
         </LinearLayout>
 

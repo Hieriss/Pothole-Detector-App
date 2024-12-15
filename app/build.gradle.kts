@@ -33,6 +33,13 @@ android {
     buildFeatures {
         viewBinding = true
     }
+
+    packaging {
+        resources {
+            excludes.add("META-INF/NOTICE.md")
+            excludes.add("META-INF/LICENSE.md")
+        }
+    }
 }
 
 dependencies {
@@ -65,6 +72,9 @@ dependencies {
     implementation("com.mapbox.maps:android:10.10.0")
     implementation("androidx.core:core:1.9.0")
     implementation("androidx.activity:activity:1.7.0")
+
+    implementation ("com.sun.mail:android-mail:1.6.7")
+    implementation ("com.sun.mail:android-activation:1.6.7")
 }
 
 apply(plugin = "com.google.gms.google-services")

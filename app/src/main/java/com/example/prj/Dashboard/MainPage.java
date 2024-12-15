@@ -103,7 +103,7 @@ public class MainPage extends AppCompatActivity {
         }
 
         // Check if the digital otp is null
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("user");
+        /*DatabaseReference reference = FirebaseDatabase.getInstance().getReference("user");
         Query checkUserDatabase = reference.orderByChild("username").equalTo(nameTextView.getText().toString());
 
         checkUserDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -120,7 +120,7 @@ public class MainPage extends AppCompatActivity {
             public void onCancelled(@NonNull DatabaseError error) {
                 Toast.makeText(MainPage.this, "Database Error", Toast.LENGTH_SHORT).show();
             }
-        });
+        });*/
 
         // Linechart
         lineChart1 = findViewById(R.id.line_chart1);
@@ -348,11 +348,11 @@ public class MainPage extends AppCompatActivity {
         });
     }
 
-    private void setDigitalOTP() {
+    /*private void setDigitalOTP() {
         Intent intent = new Intent(MainPage.this, SetDigital.class);
         intent.putExtra("USERNAME", nameTextView.getText().toString());
         startActivity(intent);
-    }
+    }*/
 
     @Override
     protected void onDestroy() {

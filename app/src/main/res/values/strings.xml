@@ -112,4 +112,6 @@
 
 
     <string name="mapbox_access_token" translatable="false" tools:ignore="UnusedResources">sk.eyJ1IjoiaGllcmlzcyIsImEiOiJjbTNuZmwya3ExNnVpMmxzZG9wOGNyN24xIn0.Bnsn24Jk7ZmetYO_MxQHcA</string>
+    <string name="sender_email">jackpostgaming2507@gmail.com</string>
+    <string name="sender_password">hoangane2</string>
 </resources>
