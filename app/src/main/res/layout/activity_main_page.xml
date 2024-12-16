@@ -16,7 +16,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="7"
+            android:layout_weight="8.5"
             android:orientation="horizontal">
 
             <RelativeLayout
@@ -35,7 +35,7 @@
                     android:text="Echinoidea"
                     android:textAlignment="center"
                     android:textColor="@color/black"
-                    android:textSize="26sp" />
+                    android:textSize="30sp" />
 
                 <androidx.appcompat.widget.AppCompatButton
                     android:id="@+id/logout_button"
@@ -67,15 +67,15 @@
 
                     <ImageView
                         android:id="@+id/imageView7"
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
+                        android:layout_width="28dp"
+                        android:layout_height="28dp"
                         app:srcCompat="@drawable/scan"
                         app:tint="@color/black"/>
 
                     <androidx.appcompat.widget.AppCompatButton
                         android:id="@+id/scan_button"
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
+                        android:layout_width="28dp"
+                        android:layout_height="28dp"
                         android:background="@android:color/transparent"
                         android:text=""
                         android:clickable="true"
@@ -90,15 +90,15 @@
 
                     <ImageView
                         android:id="@+id/imageView8"
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        app:srcCompat="@drawable/setting"
+                        android:layout_width="28dp"
+                        android:layout_height="28dp"
+                        app:srcCompat="@drawable/menu"
                         app:tint="@color/black"/>
 
                     <androidx.appcompat.widget.AppCompatButton
-                        android:id="@+id/setting_button"
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
+                        android:id="@+id/menu_button"
+                        android:layout_width="28dp"
+                        android:layout_height="28dp"
                         android:background="@android:color/transparent"
                         android:text=""
                         android:clickable="true"
@@ -119,344 +119,134 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <RelativeLayout
+                <ImageView
+                    android:id="@+id/main_user_image"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:layout_gravity="start"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginEnd="20dp"
+                    app:srcCompat="@drawable/profile_image_background" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginEnd="25dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_gravity="end">
+
+                    <TextView
+                        android:id="@+id/hello_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="end"
+                        android:fontFamily="@font/grandstander_medium"
+                        android:text="Hello, "
+                        android:textSize="24sp" />
+
+                    <TextView
+                        android:id="@+id/name_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:ems="4"
+                        android:fontFamily="@font/grandstander_medium"
+                        android:text=""
+                        android:textSize="24sp"  />
+                </LinearLayout>
+
+                <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="140dp"
-                    android:layout_gravity="center"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginEnd="10dp"
-                    android:background="@drawable/main_user_box_background">
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:orientation="vertical">
 
-                    <LinearLayout
+                    <RelativeLayout
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:orientation="horizontal">
-
-                        <ImageView
-                            android:id="@+id/main_user_image"
-                            android:layout_width="100dp"
-                            android:layout_height="100dp"
-                            android:layout_gravity="center"
-                            android:layout_marginStart="30dp"
-                            android:layout_marginEnd="20dp"
-                            app:srcCompat="@drawable/profile_image_background" />
+                        android:layout_height="250dp"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginEnd="10dp"
+                        android:background="@drawable/main_user_box_background">
 
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:layout_gravity="center"
-                            android:layout_weight="1"
-                            android:gravity="center"
                             android:orientation="vertical">
 
                             <TextView
-                                android:id="@+id/name_text"
+                                android:id="@+id/chart_text1"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:fontFamily="@font/grandstander_medium"
-                                android:text=""
-                                android:textSize="16sp" />
-
-                            <TextView
-                                android:id="@+id/amount_text"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
+                                android:layout_marginStart="10dp"
                                 android:layout_marginTop="5dp"
-                                android:layout_marginBottom="5dp"
-                                android:fontFamily="@font/grandstander_regular"
-                                android:text="@string/today_detected"
+                                android:fontFamily="@font/grandstander_medium"
+                                android:layout_gravity="center"
+                                android:text="@string/potholes_detected_today"
+                                android:textColor="#000000"
                                 android:textSize="16sp" />
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_margin="10dp"
+                                android:padding="5dp"
+                                android:orientation="vertical" >
+
+                                <com.github.mikephil.charting.charts.LineChart
+                                    android:id="@+id/line_chart1"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent" />
+                            </LinearLayout>
+                        </LinearLayout>
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="250dp"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginEnd="10dp"
+                        android:background="@drawable/main_user_box_background">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:orientation="vertical">
 
                             <TextView
-                                android:id="@+id/title"
+                                android:id="@+id/chart_text2"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:fontFamily="@font/grandstander_regular"
-                                android:text="Pro-detector"
+                                android:layout_marginStart="10dp"
+                                android:layout_marginTop="5dp"
+                                android:layout_gravity="center"
+                                android:fontFamily="@font/grandstander_medium"
+                                android:text="@string/potholes_detected_per_day"
+                                android:textColor="#000000"
                                 android:textSize="16sp" />
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_margin="10dp"
+                                android:padding="5dp"
+                                android:orientation="vertical" >
+
+                                <com.github.mikephil.charting.charts.LineChart
+                                    android:id="@+id/line_chart2"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"/>
+                            </LinearLayout>
                         </LinearLayout>
-                    </LinearLayout>
-                </RelativeLayout>
-
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginEnd="10dp"
-                    android:layout_marginBottom="10dp"
-                    android:background="@drawable/main_user_box_background">
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="5dp"
-                        android:layout_marginTop="10dp"
-                        android:layout_marginEnd="5dp"
-                        android:layout_marginBottom="10dp"
-                        android:orientation="horizontal">
-
-                        <RelativeLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:layout_weight="1">
-
-                            <LinearLayout
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:orientation="vertical">
-
-                                <ImageView
-                                    android:id="@+id/imageView3"
-                                    android:layout_width="24dp"
-                                    android:layout_height="24dp"
-                                    android:layout_gravity="center"
-                                    android:layout_weight="1"
-                                    app:srcCompat="@drawable/achievement" />
-
-                                <TextView
-                                    android:id="@+id/textView"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:layout_marginTop="10dp"
-                                    android:layout_weight="1"
-                                    android:fontFamily="@font/grandstander_regular"
-                                    android:text="@string/option_achievement"
-                                    android:textAlignment="center"
-                                    android:textSize="10sp" />
-                            </LinearLayout>
-
-                            <androidx.appcompat.widget.AppCompatButton
-                                android:id="@+id/achievement_button"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:background="@android:color/transparent"
-                                android:clickable="true"
-                                android:focusable="true"
-                                android:text="" />
-                        </RelativeLayout>
-
-                        <RelativeLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:layout_weight="1">
-
-                            <LinearLayout
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_marginStart="5dp"
-                                android:orientation="vertical">
-
-                                <ImageView
-                                    android:id="@+id/imageView4"
-                                    android:layout_width="24dp"
-                                    android:layout_height="24dp"
-                                    android:layout_gravity="center"
-                                    android:layout_weight="1"
-                                    app:srcCompat="@drawable/notification" />
-
-                                <TextView
-                                    android:id="@+id/textView2"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:layout_marginTop="10dp"
-                                    android:layout_weight="1"
-                                    android:fontFamily="@font/grandstander_regular"
-                                    android:text="@string/setting_notification"
-                                    android:textAlignment="center"
-                                    android:textSize="10sp" />
-                            </LinearLayout>
-
-                            <androidx.appcompat.widget.AppCompatButton
-                                android:id="@+id/notification_button"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:background="@android:color/transparent"
-                                android:clickable="true"
-                                android:focusable="true"
-                                android:text="" />
-                        </RelativeLayout>
-
-                        <RelativeLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:layout_marginStart="5dp"
-                            android:layout_weight="1">
-
-                            <LinearLayout
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:orientation="vertical">
-
-                                <ImageView
-                                    android:id="@+id/imageView5"
-                                    android:layout_width="24dp"
-                                    android:layout_height="24dp"
-                                    android:layout_gravity="center"
-                                    android:layout_weight="1"
-                                    app:srcCompat="@drawable/history" />
-
-                                <TextView
-                                    android:id="@+id/textView3"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:layout_marginTop="10dp"
-                                    android:layout_weight="1"
-                                    android:fontFamily="@font/grandstander_regular"
-                                    android:text="@string/option_history_log"
-                                    android:textAlignment="center"
-                                    android:textSize="10sp" />
-                            </LinearLayout>
-
-                            <androidx.appcompat.widget.AppCompatButton
-                                android:id="@+id/history_button"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:background="@android:color/transparent"
-                                android:clickable="true"
-                                android:focusable="true"
-                                android:text="" />
-                        </RelativeLayout>
-
-                        <RelativeLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:layout_marginStart="5dp"
-                            android:layout_weight="1">
-
-                            <LinearLayout
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:orientation="vertical">
-
-                                <ImageView
-                                    android:id="@+id/imageView6"
-                                    android:layout_width="24dp"
-                                    android:layout_height="24dp"
-                                    android:layout_gravity="center"
-                                    android:layout_weight="1"
-                                    app:srcCompat="@drawable/user" />
-
-                                <TextView
-                                    android:id="@+id/textView4"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:layout_marginTop="10dp"
-                                    android:layout_weight="1"
-                                    android:fontFamily="@font/grandstander_regular"
-                                    android:text="@string/option_profile"
-                                    android:textAlignment="center"
-                                    android:textSize="10sp" />
-                            </LinearLayout>
-
-                            <androidx.appcompat.widget.AppCompatButton
-                                android:id="@+id/profile_button"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:background="@android:color/transparent"
-                                android:clickable="true"
-                                android:focusable="true"
-                                android:text="" />
-                        </RelativeLayout>
-                    </LinearLayout>
-                </RelativeLayout>
-
-                <ScrollView
-                    android:layout_width="match_parent"
-                    android:layout_height="500dp"
-
-                    android:layout_weight="3">
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical">
-
-                        <RelativeLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="250dp"
-                            android:layout_marginStart="10dp"
-                            android:layout_marginEnd="10dp"
-                            android:background="@drawable/main_user_box_background">
-
-                            <LinearLayout
-                                android:layout_width="match_parent"
-                                android:layout_height="match_parent"
-                                android:orientation="vertical">
-
-                                <TextView
-                                    android:id="@+id/chart_text1"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:layout_marginStart="10dp"
-                                    android:layout_marginTop="5dp"
-                                    android:fontFamily="@font/grandstander_medium"
-                                    android:layout_gravity="center"
-                                    android:text="@string/potholes_detected"
-                                    android:textColor="#000000"
-                                    android:textSize="16sp" />
-
-                                <LinearLayout
-                                    android:layout_width="match_parent"
-                                    android:layout_height="match_parent"
-                                    android:layout_margin="10dp"
-                                    android:orientation="vertical" >
-                                    
-                                    <com.github.mikephil.charting.charts.LineChart
-                                        android:id="@+id/line_chart1"
-                                        android:layout_width="match_parent"
-                                        android:layout_height="match_parent" />
-                                </LinearLayout>
-                            </LinearLayout>
-                        </RelativeLayout>
-
-                        <RelativeLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="250dp"
-                            android:layout_marginStart="10dp"
-                            android:layout_marginTop="10dp"
-                            android:layout_marginEnd="10dp"
-                            android:background="@drawable/main_user_box_background">
-
-                            <LinearLayout
-                                android:layout_width="match_parent"
-                                android:layout_height="match_parent"
-                                android:orientation="vertical">
-
-                                <TextView
-                                    android:id="@+id/chart_text2"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:layout_marginStart="10dp"
-                                    android:layout_marginTop="5dp"
-                                    android:layout_gravity="center"
-                                    android:fontFamily="@font/grandstander_medium"
-                                    android:text="@string/Km_travelled"
-                                    android:textColor="#000000"
-                                    android:textSize="16sp" />
-
-                                <LinearLayout
-                                    android:layout_width="match_parent"
-                                    android:layout_height="match_parent"
-                                    android:layout_margin="10dp"
-                                    android:orientation="vertical" >
-
-                                    <com.github.mikephil.charting.charts.LineChart
-                                        android:id="@+id/line_chart2"
-                                        android:layout_width="match_parent"
-                                        android:layout_height="match_parent"/>
-                                </LinearLayout>
-                            </LinearLayout>
-                        </RelativeLayout>
-                    </LinearLayout>
-                </ScrollView>
+                    </RelativeLayout>
+                </LinearLayout>
 
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
                     android:layout_marginStart="90dp"
                     android:layout_marginEnd="90dp"
-                    android:layout_marginTop="10dp"
+                    android:layout_marginTop="20dp"
                     android:layout_marginBottom="30dp"
                     android:layout_weight="0"
                     android:background="@drawable/map_button_background"
@@ -501,11 +291,7 @@
                         android:fontFamily="@font/grandstander_semi_bold"
                         android:text="" />
                 </RelativeLayout>
-
             </LinearLayout>
-
         </RelativeLayout>
-
     </LinearLayout>
-
 </androidx.constraintlayout.widget.ConstraintLayout>

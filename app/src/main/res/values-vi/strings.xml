@@ -40,9 +40,9 @@
     <string name="option_achievement">"Thành tựu"</string>
     <string name="option_history_log">"Lịch sử"</string>
     <string name="option_profile">"Hồ sơ"</string>"
-    <string name="potholes_detected">"Ổ gà phát hiện mỗi ngày"</string>"
+    <string name="potholes_detected_per_day">"Ổ gà phát hiện mỗi ngày"</string>"
     <string name="option_open_map">"Mở bản đồ"</string>
-    <string name="Km_travelled">"Quãng đường đi mỗi ngày"</string>
+    <string name="potholes_detected_today">"Ổ gà phát hiện hôm nay"</string>
     <string name="empty_username">"Tên người dùng không thể để trống"</string>
     <string name="empty_password">"Mật khẩu không thể để trống"</string>
     <string name="wrong_pass">"Thông tin không hợp lệ"</string>
@@ -107,6 +107,11 @@
     <string name="session_id_not_found">"Không tìm thấy ID phiên"</string>
     <string name="scan_cancelled">"Hủy quét"</string>
     <string name="scan_qr">"Quét QR"</string>
+    <string name="menu_title">"Trang chủ"</string>
+    <string name="setting_text">Cài đặt</string>
+    <string name="profile_text">Hồ sơ</string>
+    <string name="notification_text">Thông báo</string>
+    <string name="history_text">Lịch sử phát hiện</string>
 
 
 

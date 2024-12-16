@@ -80,8 +80,9 @@
             android:name=".NotificationPage"
             android:exported="false" />
         <activity
-            android:name=".AchievementPage"
-            android:exported="false" />
+            android:name=".MenuPage"
+            android:exported="false"
+            android:theme="@style/TransparentActivityTheme" />
         <activity
             android:name=".SettingPage"
             android:exported="false" />

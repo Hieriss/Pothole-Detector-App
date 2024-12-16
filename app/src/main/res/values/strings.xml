@@ -40,9 +40,9 @@
     <string name="option_achievement">"Achievement"</string>
     <string name="option_history_log">"History Log"</string>
     <string name="option_profile">"Profile"</string>"
-    <string name="potholes_detected">"Potholes Detected per day"</string>"
+    <string name="potholes_detected_per_day">"Potholes detected per day"</string>"
     <string name="option_open_map">"Open map"</string>
-    <string name="Km_travelled">"Km travelled per day"</string>
+    <string name="potholes_detected_today">"Potholes detected today"</string>
     <string name="empty_username">"Username can't be empty"</string>
     <string name="empty_password">"Password can't be empty"</string>
     <string name="account_doesnt_exist">"Username doesn't exist"</string>
@@ -107,11 +107,14 @@
     <string name="session_id_not_found">"Session ID not found"</string>
     <string name="scan_cancelled">"Scan cancelled"</string>
     <string name="scan_qr">"Scan QR code"</string>
+    <string name="menu_title">"Menu"</string>
+    <string name="setting_text">Setting</string>
+    <string name="profile_text">Profile</string>
+    <string name="notification_text">Notification</string>
+    <string name="history_text">History</string>
 
 
 
 
     <string name="mapbox_access_token" translatable="false" tools:ignore="UnusedResources">sk.eyJ1IjoiaGllcmlzcyIsImEiOiJjbTNuZmwya3ExNnVpMmxzZG9wOGNyN24xIn0.Bnsn24Jk7ZmetYO_MxQHcA</string>
-    <string name="sender_email">jackpostgaming2507@gmail.com</string>
-    <string name="sender_password">hoangane2</string>
 </resources>

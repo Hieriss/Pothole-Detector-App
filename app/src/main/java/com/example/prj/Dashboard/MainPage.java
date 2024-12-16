@@ -13,14 +13,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-import com.example.prj.AchievementPage;
-import com.example.prj.Authen.ForgotPassword;
+import com.example.prj.MenuPage;
 import com.example.prj.Authen.SignIn;
 import com.example.prj.HistoryPage;
 import com.example.prj.Map.MapPage;
@@ -37,12 +35,8 @@ import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
-import com.google.firebase.database.ValueEventListener;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
@@ -55,7 +49,7 @@ import java.util.Locale;
 public class MainPage extends AppCompatActivity {
 
     SessionManager sessionManager;
-    private Button logoutButton, scanButton, settingButton, achievementButton, notificationButton, historyButton, profileButton, mapButton;
+    private Button logoutButton, scanButton, settingButton, menuButton, notificationButton, historyButton, profileButton, mapButton;
     private LineChart lineChart1, lineChart2;
     private List<String> xValues1, yValues1, xValues2, yValues2;
     public TextView nameTextView;
@@ -232,47 +226,11 @@ public class MainPage extends AppCompatActivity {
             }
         });
 
-        settingButton = findViewById(R.id.setting_button);
-        settingButton.setOnClickListener(new View.OnClickListener() {
+        menuButton = findViewById(R.id.menu_button);
+        menuButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(MainPage.this, SettingPage.class);
-                startActivity(intent);
-            }
-        });
-
-        achievementButton = findViewById(R.id.achievement_button);
-        achievementButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(MainPage.this, AchievementPage.class);
-                startActivity(intent);
-            }
-        });
-
-        notificationButton = findViewById(R.id.notification_button);
-        notificationButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(MainPage.this, NotificationPage.class);
-                startActivity(intent);
-            }
-        });
-
-        historyButton = findViewById(R.id.history_button);
-        historyButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(MainPage.this, HistoryPage.class);
-                startActivity(intent);
-            }
-        });
-
-        profileButton = findViewById(R.id.profile_button);
-        profileButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(MainPage.this, ProfilePage.class);
+                Intent intent = new Intent(MainPage.this, MenuPage.class);
                 startActivity(intent);
             }
         });
