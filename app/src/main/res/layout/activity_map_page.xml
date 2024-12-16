@@ -71,9 +71,9 @@
             app:boxCornerRadiusBottomStart="20dp"
             app:boxCornerRadiusTopEnd="20dp"
             app:boxCornerRadiusTopStart="20dp"
-            app:boxStrokeWidth="0dp"
+            app:boxStrokeWidth="2dp"
             app:boxStrokeColor="@color/magenta"
-            app:boxStrokeWidthFocused="0dp"
+            app:boxStrokeWidthFocused="2dp"
             app:startIconDrawable="@drawable/search"
             app:endIconMode="clear_text"
             app:endIconDrawable="@drawable/clear" >
