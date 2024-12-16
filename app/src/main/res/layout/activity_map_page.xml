@@ -20,94 +20,274 @@
         android:layout_marginStart="10dp"
         android:layout_marginEnd="10dp"
         android:elevation="4sp"
-        android:visibility="gone"/>
+        android:visibility="gone"
+        app:maneuverViewBackgroundColor="@color/light_purple"/>
 
-    <com.mapbox.maps.plugin.compass.CompassViewImpl
-        android:id="@+id/compass_icon"
-        android:layout_width="53dp"
-        android:layout_height="53dp"
-        android:layout_marginEnd="20dp"
-        android:layout_marginBottom="10dp"
-        android:layout_alignParentEnd="true"
-        android:layout_above="@+id/focus_location_button" />
-
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/search_bar"
+    <LinearLayout
+        android:id="@id/search_bar_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:layout_marginStart="10dp"
-        android:layout_marginEnd="10dp"
-        android:elevation="4dp"
-        android:hint="@string/search_option"
-        android:layout_below="@+id/maneuverView"
-        app:boxCornerRadiusBottomEnd="20dp"
-        app:boxCornerRadiusBottomStart="20dp"
-        app:boxCornerRadiusTopEnd="20dp"
-        app:boxCornerRadiusTopStart="20dp"
-        app:boxStrokeWidthFocused="0dp"
-        app:boxStrokeWidth="0dp"
-        app:startIconDrawable="@drawable/search"
-        app:boxBackgroundColor="@color/light_gray"
-        style="@style/Widget.Material3.TextInputLayout.FilledBox.Dense">
+        android:orientation="horizontal">
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:layout_width="match_parent"
+        <RelativeLayout
+            android:id="@+id/back_button_layout"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:inputType="text"
-            app:boxBackgroundColor="@color/light_gray"
-            android:id="@+id/search_bar_text"/>
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/signin_button_background"
+            android:visibility="visible">
 
-    </com.google.android.material.textfield.TextInputLayout>
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_centerVertical="true"
+                android:layout_centerHorizontal="true"
+                app:srcCompat="@drawable/back"
+                app:tint="@color/black" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/back_button"
+                android:layout_width="45dp"
+                android:layout_height="45dp"
+                android:background="@android:color/transparent"
+                android:clickable="true"
+                android:focusable="true"
+                android:text="" />
+        </RelativeLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/search_bar"
+            style="@style/Widget.Material3.TextInputLayout.FilledBox.Dense"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginEnd="10dp"
+            android:elevation="4dp"
+            android:hint="@string/search_option"
+            app:boxBackgroundColor="@color/light_purple"
+            app:boxCornerRadiusBottomEnd="20dp"
+            app:boxCornerRadiusBottomStart="20dp"
+            app:boxCornerRadiusTopEnd="20dp"
+            app:boxCornerRadiusTopStart="20dp"
+            app:boxStrokeWidth="0dp"
+            app:boxStrokeColor="@color/magenta"
+            app:boxStrokeWidthFocused="0dp"
+            app:startIconDrawable="@drawable/search"
+            app:endIconMode="clear_text"
+            app:endIconDrawable="@drawable/clear" >
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/search_bar_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="text"
+                app:boxBackgroundColor="@color/light_purple" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+    </LinearLayout>
 
     <com.mapbox.search.ui.view.SearchResultsView
         android:id="@+id/search_results_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="20dp"
-        android:layout_marginTop="20dp"
         android:visibility="gone"
         android:elevation="4dp"
         android:paddingTop="10dp"
         android:paddingBottom="20dp"
-        android:layout_below="@id/search_bar" />
+        android:layout_below="@id/search_bar_layout" />
 
     <com.mapbox.navigation.ui.voice.view.MapboxSoundButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
-        android:layout_below="@+id/search_bar"
+        android:layout_below="@+id/search_bar_layout"
         android:layout_marginTop="20sp"
         android:layout_marginEnd="20sp"
         android:id="@+id/soundButton"
-        android:backgroundTint="@color/light_gray"/>
+        android:backgroundTint="@color/light_purple"/>
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/route_button"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_marginStart="20sp"
-        android:layout_marginEnd="20sp"
+        android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_marginBottom="20sp"
-        android:text="@string/set_route"
-        android:fontFamily="@font/grandstander_semi_bold"
-        android:textAllCaps="false"
-        android:textColor="@color/black"
-        android:textSize="20sp"
-        android:backgroundTint="@color/light_gray"/>
+        android:orientation="vertical">
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/focus_location_button"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
-        android:layout_marginEnd="20dp"
-        android:layout_marginBottom="80dp"
-        android:src="@drawable/my_location"
-        app:tint="@color/black"
-        android:backgroundTint="@color/light_gray"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="true"/>
+        <com.mapbox.maps.plugin.compass.CompassViewImpl
+            android:id="@+id/compass_icon"
+            android:layout_width="55dp"
+            android:layout_height="55dp"
+            android:layout_gravity="end"
+            android:layout_marginEnd="20dp"
+            android:layout_marginBottom="10dp" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/focus_location_button"
+            android:layout_width="55dp"
+            android:layout_height="55dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginBottom="20dp"
+            android:layout_gravity="end"
+            android:backgroundTint="@color/light_purple"
+            android:src="@drawable/my_location"
+            app:tint="@color/black" />
+
+        <RelativeLayout
+            android:id="@+id/container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:background="@drawable/main_user_box_background"
+            android:visibility="visible">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <RelativeLayout
+                        android:id="@+id/walking_button_layout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/driving_profile_button_background_not_choosen"
+                        android:layout_marginTop="20dp"
+                        android:layout_marginEnd="10dp"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginBottom="10dp"
+                        android:layout_weight="1">
+
+                        <ImageView
+                            android:id="@+id/walking_icon"
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:layout_centerVertical="true"
+                            android:layout_centerHorizontal="true"
+                            android:src="@drawable/walk"
+                            app:tint="@color/black"/>
+
+                        <androidx.appcompat.widget.AppCompatButton
+                            android:id="@+id/walking_button"
+                            android:layout_width="70dp"
+                            android:layout_height="50dp"
+                            android:background="@android:color/transparent"
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:text="" />
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                        android:id="@+id/cycling_button_layout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/driving_profile_button_background_not_choosen"
+                        android:layout_marginTop="20dp"
+                        android:layout_marginEnd="10dp"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginBottom="10dp"
+                        android:layout_weight="1">
+
+                        <ImageView
+                            android:id="@+id/cycling_icon"
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:layout_centerVertical="true"
+                            android:layout_centerHorizontal="true"
+                            android:src="@drawable/bike"
+                            app:tint="@color/black"/>
+
+                        <androidx.appcompat.widget.AppCompatButton
+                            android:id="@+id/cycling_button"
+                            android:layout_width="70dp"
+                            android:layout_height="50dp"
+                            android:background="@android:color/transparent"
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:text="" />
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                        android:id="@+id/driving_button_layout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/driving_profile_button_background_choosen"
+                        android:layout_marginTop="20dp"
+                        android:layout_marginEnd="10dp"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginBottom="10dp"
+                        android:layout_weight="1">
+
+                        <ImageView
+                            android:id="@+id/driving_icon"
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:layout_centerVertical="true"
+                            android:layout_centerHorizontal="true"
+                            android:src="@drawable/car"
+                            app:tint="@color/black"/>
+
+                        <androidx.appcompat.widget.AppCompatButton
+                            android:id="@+id/driving_button"
+                            android:layout_width="70dp"
+                            android:layout_height="50dp"
+                            android:background="@android:color/transparent"
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:text="" />
+                    </RelativeLayout>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/route_button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="60dp"
+                        android:layout_marginStart="20dp"
+                        android:layout_marginEnd="10dp"
+                        android:layout_marginBottom="20dp"
+                        android:layout_weight="1"
+                        android:backgroundTint="@color/light_purple"
+                        android:fontFamily="@font/grandstander_semi_bold"
+                        android:text="@string/set_route"
+                        android:textAllCaps="false"
+                        android:textColor="@color/black"
+                        android:textSize="20sp"
+                        app:strokeColor="@color/magenta"
+                        app:strokeWidth="2dp" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/navigate_button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="60dp"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginEnd="20dp"
+                        android:layout_marginBottom="20dp"
+                        android:layout_weight="1"
+                        android:backgroundTint="@color/light_purple"
+                        android:fontFamily="@font/grandstander_semi_bold"
+                        android:text="@string/navigate"
+                        android:textAllCaps="false"
+                        android:textColor="@color/black"
+                        android:textSize="20sp"
+                        app:strokeColor="@color/magenta"
+                        app:strokeWidth="2dp" />
+                </LinearLayout>
+            </LinearLayout>
+        </RelativeLayout>
+    </LinearLayout>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/debug_detail_point"

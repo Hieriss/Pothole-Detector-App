@@ -1311,5 +1311,3 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
         }
     }
 }
-
-// force commit
