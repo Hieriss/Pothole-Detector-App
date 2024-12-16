@@ -23,6 +23,8 @@ import android.graphics.Color;
 import android.graphics.Rect;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
 import android.media.RingtoneManager;
@@ -158,6 +160,7 @@ import com.mapbox.search.ui.view.SearchResultsView;
 import com.mapbox.turf.TurfMeasurement;
 import com.mapbox.turf.TurfMisc;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -356,35 +359,30 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
 
     //---------------------------------------------------------------------------------
     private void fetchRoadName(Point point, final RoadNameCallback callback) {
-        MapboxGeocoding mapboxGeocoding = MapboxGeocoding.builder()
-                .accessToken(getString(R.string.mapbox_access_token))
-                .query(Point.fromLngLat(point.longitude(), point.latitude()))
-                .geocodingTypes(GeocodingCriteria.TYPE_ADDRESS)
-                .build();
-
-        mapboxGeocoding.enqueueCall(new Callback<GeocodingResponse>() {
-            @Override
-            public void onResponse(Call<GeocodingResponse> call, Response<GeocodingResponse> response) {
-                if (response.body() != null) {
-                    Log.d("GeocodingResponse", "Response: " + response.body().toString());
-                    if (!response.body().features().isEmpty()) {
-                        String roadName = response.body().features().get(0).placeName();
-                        callback.onRoadNameFetched(roadName);
-                    } else {
-                        callback.onRoadNameFetched("Unknown road");
-                    }
+        Geocoder geocoder = new Geocoder(this, Locale.getDefault());
+        try {
+            List<Address> addresses = geocoder.getFromLocation(point.latitude(), point.longitude(), 1);
+            if (addresses != null && !addresses.isEmpty()) {
+                Address address = addresses.get(0);
+                String roadName = address.getThoroughfare();
+                if (roadName == null) {
+                    roadName = address.getFeatureName(); // Try to get the feature name if thoroughfare is null
+                }
+                if (roadName == null) {
+                    roadName = address.getSubLocality(); // Try to get the sub-locality if feature name is null
+                }
+                if (roadName != null) {
+                    callback.onRoadNameFetched(roadName);
                 } else {
-                    Log.d("GeocodingResponse", "Response body is null");
                     callback.onRoadNameFetched("Unknown road");
                 }
-            }
-
-            @Override
-            public void onFailure(Call<GeocodingResponse> call, Throwable t) {
-                Log.e("GeocodingResponse", "Error: " + t.getMessage());
+            } else {
                 callback.onRoadNameFetched("Unknown road");
             }
-        });
+        } catch (IOException e) {
+            e.printStackTrace();
+            callback.onRoadNameFetched("Unknown road");
+        }
     }
 
     interface RoadNameCallback {
@@ -437,11 +435,8 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
         @Override
         public void onMoveBegin(@NonNull MoveGestureDetector moveGestureDetector) {
             isOnNavigation = false;
+            navigateBtn.setBackgroundColor(getResources().getColor(R.color.light_purple));
             navigateBtn.setEnabled(true);
-            if (isRouteActive) {
-                navigateBtn.setBackgroundColor(getResources().getColor(R.color.light_purple));
-                isOnNavigation = false;
-            }
             getGestures(mapView).removeOnMoveListener(this);
             if (!isOnNavigation) focusLocationBtn.show();
             if (!potholeLocations.isEmpty()) {
