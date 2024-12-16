@@ -142,7 +142,7 @@
             android:layout_marginStart="10dp"
             android:layout_marginEnd="10dp"
             android:background="@drawable/main_user_box_background"
-            android:visibility="visible">
+            android:visibility="gone">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -153,27 +153,27 @@
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+                    android:visibility="visible">
 
                     <RelativeLayout
                         android:id="@+id/walking_button_layout"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:background="@drawable/driving_profile_button_background_not_choosen"
+                        android:layout_marginStart="10dp"
                         android:layout_marginTop="20dp"
                         android:layout_marginEnd="10dp"
-                        android:layout_marginStart="10dp"
-                        android:layout_marginBottom="10dp"
-                        android:layout_weight="1">
+                        android:layout_weight="1"
+                        android:background="@drawable/driving_profile_button_background_not_choosen">
 
                         <ImageView
                             android:id="@+id/walking_icon"
                             android:layout_width="24dp"
                             android:layout_height="24dp"
-                            android:layout_centerVertical="true"
                             android:layout_centerHorizontal="true"
+                            android:layout_centerVertical="true"
                             android:src="@drawable/walk"
-                            app:tint="@color/black"/>
+                            app:tint="@color/black" />
 
                         <androidx.appcompat.widget.AppCompatButton
                             android:id="@+id/walking_button"
@@ -189,21 +189,21 @@
                         android:id="@+id/cycling_button_layout"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:background="@drawable/driving_profile_button_background_not_choosen"
+                        android:layout_marginStart="10dp"
                         android:layout_marginTop="20dp"
                         android:layout_marginEnd="10dp"
-                        android:layout_marginStart="10dp"
-                        android:layout_marginBottom="10dp"
-                        android:layout_weight="1">
+                        android:layout_marginBottom="-10dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/driving_profile_button_background_not_choosen">
 
                         <ImageView
                             android:id="@+id/cycling_icon"
                             android:layout_width="24dp"
                             android:layout_height="24dp"
-                            android:layout_centerVertical="true"
                             android:layout_centerHorizontal="true"
+                            android:layout_centerVertical="true"
                             android:src="@drawable/bike"
-                            app:tint="@color/black"/>
+                            app:tint="@color/black" />
 
                         <androidx.appcompat.widget.AppCompatButton
                             android:id="@+id/cycling_button"
@@ -219,21 +219,20 @@
                         android:id="@+id/driving_button_layout"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:background="@drawable/driving_profile_button_background_choosen"
+                        android:layout_marginStart="10dp"
                         android:layout_marginTop="20dp"
                         android:layout_marginEnd="10dp"
-                        android:layout_marginStart="10dp"
-                        android:layout_marginBottom="10dp"
-                        android:layout_weight="1">
+                        android:layout_weight="1"
+                        android:background="@drawable/driving_profile_button_background_choosen">
 
                         <ImageView
                             android:id="@+id/driving_icon"
                             android:layout_width="24dp"
                             android:layout_height="24dp"
-                            android:layout_centerVertical="true"
                             android:layout_centerHorizontal="true"
+                            android:layout_centerVertical="true"
                             android:src="@drawable/car"
-                            app:tint="@color/black"/>
+                            app:tint="@color/black" />
 
                         <androidx.appcompat.widget.AppCompatButton
                             android:id="@+id/driving_button"
@@ -255,6 +254,7 @@
                         android:id="@+id/route_button"
                         android:layout_width="wrap_content"
                         android:layout_height="60dp"
+                        android:layout_marginTop="20dp"
                         android:layout_marginStart="20dp"
                         android:layout_marginEnd="10dp"
                         android:layout_marginBottom="20dp"
@@ -272,6 +272,7 @@
                         android:id="@+id/navigate_button"
                         android:layout_width="wrap_content"
                         android:layout_height="60dp"
+                        android:layout_marginTop="20dp"
                         android:layout_marginStart="10dp"
                         android:layout_marginEnd="20dp"
                         android:layout_marginBottom="20dp"

@@ -20,6 +20,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.Rect;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
 import android.location.Location;
@@ -35,6 +36,9 @@ import android.text.TextWatcher;
 import android.util.Log;
 import android.util.Pair;
 import android.view.View;
+import android.view.ViewTreeObserver;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.Manifest;
@@ -45,6 +49,7 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.AppCompatButton;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.core.graphics.Insets;
@@ -70,6 +75,7 @@ import com.mapbox.api.geocoding.v5.GeocodingCriteria;
 import com.mapbox.api.geocoding.v5.MapboxGeocoding;
 import com.mapbox.api.geocoding.v5.models.GeocodingResponse;
 import com.mapbox.bindgen.Expected;
+import com.mapbox.geojson.BoundingBox;
 import com.mapbox.geojson.LineString;
 import com.mapbox.geojson.Point;
 import com.mapbox.maps.CameraOptions;
@@ -178,11 +184,12 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
     // view && boolean
     static MapView mapView;
     MaterialButton setRoute;
+    MaterialButton navigateBtn;
     FloatingActionButton focusLocationBtn;
     FloatingActionButton addPotholeBtn;
     private Style mapStyle;
-    boolean focusLocation = true;
     private boolean isRouteActive = false;
+    private boolean isOnNavigation = true;
     private boolean isVoiceInstructionsMuted = false;
     private Point searchedPoint;
     private boolean manualAddActive = false;
@@ -190,6 +197,8 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
     private double iconSize = 1.1;
     private Handler handler = new Handler();
     private Runnable debounceRunnable = null;
+    private Runnable retrieveLocationsRunnable = null;
+    int routeType = 2;
 
     // map component
     private MapboxNavigation mapboxNavigation;
@@ -205,7 +214,17 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
     private PointAnnotationManager pointAnnotationManager;
     private MapboxManeuverView maneuverView;
     private MapboxManeuverApi maneuverApi;
-    CompassViewImpl compassView;
+    private CompassViewImpl compassView;
+    private RelativeLayout containterView;
+    private RelativeLayout walkingView;
+    private RelativeLayout cyclingView;
+    private RelativeLayout drivingView;
+    private RelativeLayout backBtnLayout;
+    private LinearLayout searchLayout;
+    private AppCompatButton walkingBtn;
+    private AppCompatButton cyclingBtn;
+    private AppCompatButton drivingBtn;
+    private AppCompatButton backBtn;
 
     // search variables
     private PlaceAutocomplete placeAutocomplete;
@@ -276,7 +295,7 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
         public void onNewLocationMatcherResult(@NonNull LocationMatcherResult locationMatcherResult) {
             Location location = locationMatcherResult.getEnhancedLocation();
             navigationLocationProvider.changePosition(location, locationMatcherResult.getKeyPoints(), null, null);
-            if (focusLocation) {
+            if (isOnNavigation) {
                 updateCamera(Point.fromLngLat(location.getLongitude(), location.getLatitude()), (double) location.getBearing());
             }
         }
@@ -322,8 +341,13 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
                 @NonNull
                 @Override
                 public Object invoke(@NonNull List<Maneuver> input) {
-                    maneuverView.setVisibility(View.VISIBLE);
-                    maneuverView.renderManeuvers(maneuverApi.getManeuvers(routeProgress));
+                    if (isOnNavigation) {
+                        maneuverView.setVisibility(View.VISIBLE);
+                        maneuverView.renderManeuvers(maneuverApi.getManeuvers(routeProgress));
+                    }
+                    else {
+                        maneuverView.setVisibility(View.GONE);
+                    }
                     return new Object();
                 }
             });
@@ -369,8 +393,8 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
 
     private void showNotification(String title, String message) {
         NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        String channelId = "nearby_annotation_channel";
-        Uri soundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+        String channelId = "pothole_ahead_channel";
+        Uri soundUri = Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.potholeahead);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel channel = new NotificationChannel(channelId, "Nearby Annotation", NotificationManager.IMPORTANCE_HIGH);
@@ -412,20 +436,27 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
     private final OnMoveListener onMoveListener = new OnMoveListener() {
         @Override
         public void onMoveBegin(@NonNull MoveGestureDetector moveGestureDetector) {
-            focusLocation = false;
+            isOnNavigation = false;
+            navigateBtn.setEnabled(true);
+            if (isRouteActive) {
+                navigateBtn.setBackgroundColor(getResources().getColor(R.color.light_purple));
+                isOnNavigation = false;
+            }
             getGestures(mapView).removeOnMoveListener(this);
-            focusLocationBtn.show();
-            for (Pair<Double, Double> location : potholeLocations) {
-                Point point = Point.fromLngLat(location.second, location.first);
-                Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.pothole_on_map);
-                PointAnnotationOptions pointAnnotationOptions = new PointAnnotationOptions()
-                        .withTextAnchor(TextAnchor.CENTER)
-                        .withIconAnchor(IconAnchor.CENTER)
-                        .withIconSize(iconSize)
-                        .withIconOpacity(0.95)
-                        .withIconImage(bitmap)
-                        .withPoint(point);
-                pointAnnotationManager.create(pointAnnotationOptions);
+            if (!isOnNavigation) focusLocationBtn.show();
+            if (!potholeLocations.isEmpty()) {
+                for (Pair<Double, Double> pLocation : potholeLocations) {
+                    Point point = Point.fromLngLat(pLocation.second, pLocation.first);
+                    Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.pothole_on_map);
+                    PointAnnotationOptions pointAnnotationOptions = new PointAnnotationOptions()
+                            .withTextAnchor(TextAnchor.CENTER)
+                            .withIconAnchor(IconAnchor.CENTER)
+                            .withIconSize(iconSize)
+                            .withIconOpacity(0.95)
+                            .withIconImage(bitmap)
+                            .withPoint(point);
+                    pointAnnotationManager.create(pointAnnotationOptions);
+                }
             }
         }
 
@@ -508,29 +539,49 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
         potholeLocations = new ArrayList<>();
 
         // Initialize LocationRetriever and retrieve locations from Firebase
-        LocationRetriever locationRetriever = new LocationRetriever(this);
-        locationRetriever.retrieveLocations(new LocationRetriever.LocationCallback() {
+        retrieveLocationsRunnable = new Runnable() {
             @Override
-            public void onLocationsRetrieved(List<Pair<Double, Double>> locations) {
-                // Log the retrieved locations
-                if (locations.isEmpty()) {
-                    Log.d(TAG, "No locations retrieved from local storage.");
-                } else {
-                    Log.d(TAG, "Retrieved " + locations.size() + " locations from local storage.");
-                    for (Pair<Double, Double> location : locations) {
-                        Log.d(TAG, "Latitude: " + location.first + ", Longitude: " + location.second);
+            public void run() {
+                LocationRetriever locationRetriever = new LocationRetriever(MapPage.this);
+                locationRetriever.retrieveLocations(new LocationRetriever.LocationCallback() {
+                    @Override
+                    public void onLocationsRetrieved(List<Pair<Double, Double>> locations) {
+                        // Log the retrieved locations
+                        if (locations.isEmpty()) {
+                            Log.d(TAG, "No locations retrieved from local storage.");
+                        } else {
+                            Log.d(TAG, "Retrieved " + locations.size() + " locations from local storage.");
+                            for (Pair<Double, Double> location : locations) {
+                                Log.d(TAG, "Latitude: " + location.first + ", Longitude: " + location.second);
+                            }
+                        }
+                        // get locations
+                        potholeLocations = locations;
                     }
+
+                    @Override
+                    public void onError(Exception e) {
+                        Log.e(TAG, "Failed to retrieve locations", e);
+                    }
+                });
+                for (Pair<Double, Double> location : potholeLocations) {
+                    Point point = Point.fromLngLat(location.second, location.first);
+                    Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.pothole_on_map);
+                    PointAnnotationOptions pointAnnotationOptions = new PointAnnotationOptions()
+                            .withTextAnchor(TextAnchor.CENTER)
+                            .withIconAnchor(IconAnchor.CENTER)
+                            .withIconSize(iconSize)
+                            .withIconOpacity(0.95)
+                            .withIconImage(bitmap)
+                            .withPoint(point);
+                    pointAnnotationManager.create(pointAnnotationOptions);
                 }
 
-                // get locations
-                potholeLocations = locations;
+                // Schedule the next update after 1 minute
+                handler.postDelayed(this, 60000);
             }
-
-            @Override
-            public void onError(Exception e) {
-                Log.e(TAG, "Failed to retrieve locations", e);
-            }
-        });
+        };
+        handler.post(retrieveLocationsRunnable);
 
         // Compass
         compassView = findViewById(R.id.compass_icon);
@@ -544,6 +595,18 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
         // Initialize addPotholeBtn
         addPotholeBtn = findViewById(R.id.debug_detail_point);
         addPotholeBtn.setVisibility(View.GONE);
+
+        // Navigate button
+        navigateBtn = findViewById(R.id.navigate_button);
+        containterView = findViewById(R.id.container);
+        walkingBtn = findViewById(R.id.walking_button);
+        cyclingBtn = findViewById(R.id.cycling_button);
+        drivingBtn = findViewById(R.id.driving_button);
+        walkingView = findViewById(R.id.walking_button_layout);
+        cyclingView = findViewById(R.id.cycling_button_layout);
+        drivingView = findViewById(R.id.driving_button_layout);
+        searchLayout = findViewById(R.id.search_bar_layout);
+        backBtnLayout = findViewById(R.id.back_button_layout);
 
         // Initialize LocationManager
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
@@ -596,12 +659,11 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
         mapView = findViewById(R.id.mapView);
         focusLocationBtn = findViewById(R.id.focus_location_button);
         setRoute = findViewById(R.id.route_button);
-        //setRoute.setVisibility(View.GONE);
 
         // route line color resources
         RouteLineColorResources routeLineColorResources = new RouteLineColorResources.Builder()
-//                .routeDefaultColor(Color.TRANSPARENT)
-//                .routeCasingColor(Color.TRANSPARENT)
+//                .routeDefaultColor(getResources().getColor(R.color.light_purple))
+//                .routeCasingColor(getResources().getColor(R.color.magenta))
                 .routeLineTraveledColor(Color.GRAY)
                 .routeLineTraveledCasingColor(Color.DKGRAY)  //mau vien
                 .routeUnknownCongestionColor(Color.TRANSPARENT)
@@ -691,15 +753,31 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
         // search
         placeAutocomplete = PlaceAutocomplete.create(getString(R.string.mapbox_access_token));
         searchET = findViewById(R.id.search_bar_text);
+        backBtn = findViewById(R.id.back_button);
+        backBtn.setOnClickListener(v -> finish());
         searchResultsView = findViewById(R.id.search_results_view);
         searchResultsView.initialize(new SearchResultsView.Configuration(new CommonSearchViewConfiguration()));
         placeAutocompleteUiAdapter = new PlaceAutocompleteUiAdapter(searchResultsView, placeAutocomplete, LocationEngineProvider.getBestLocationEngine(MapPage.this));
 
+        View rootView = findViewById(android.R.id.content);
+        rootView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                Rect r = new Rect();
+                rootView.getWindowVisibleDisplayFrame(r);
+                int screenHeight = rootView.getRootView().getHeight();
+                int keypadHeight = screenHeight - r.bottom;
+                if (keypadHeight > screenHeight * 0.15) { // 0.15 ratio is used to determine if the keyboard is shown
+                    backBtnLayout.setVisibility(View.GONE);
+                } else {
+                    backBtnLayout.setVisibility(View.VISIBLE);
+                }
+            }
+        });
+
         searchET.addTextChangedListener(new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -727,9 +805,7 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
             }
 
             @Override
-            public void afterTextChanged(Editable editable) {
-
-            }
+            public void afterTextChanged(Editable editable) {}
         });
 
         mapView.getMapboxMap().loadStyleUri(Style.OUTDOORS, new Style.OnStyleLoaded() {
@@ -761,19 +837,6 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
                 pointAnnotationManager = PointAnnotationManagerKt.createPointAnnotationManager(annotationPlugin, mapView);
                 pointAnnotationManager.setIconAllowOverlap(false);
 
-                for (Pair<Double, Double> location : potholeLocations) {
-                    Point point = Point.fromLngLat(location.second, location.first);
-                    Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.pothole_on_map);
-                    PointAnnotationOptions pointAnnotationOptions = new PointAnnotationOptions()
-                            .withTextAnchor(TextAnchor.CENTER)
-                            .withIconAnchor(IconAnchor.CENTER)
-                            .withIconSize(iconSize)
-                            .withIconOpacity(0.95)
-                            .withIconImage(bitmap)
-                            .withPoint(point);
-                    pointAnnotationManager.create(pointAnnotationOptions);
-                }
-
                 addOnMapClickListener(mapView.getMapboxMap(), new OnMapClickListener() {
                     @Override
                     public boolean onMapClick(@NonNull Point point) {
@@ -804,7 +867,6 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
                                         .withIconSize(1)
                                         .withIconImage(bitmap)
                                         .withIconOpacity(1.0)
-                                        .withDraggable(true)
                                         .withPoint(point);
                                 pointAnnotationManager.create(pointAnnotationOptions);
                             }
@@ -835,6 +897,14 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
                                 }
                                 else {
                                     isRouteActive = false;
+                                    isOnNavigation = false;
+                                    searchLayout.setVisibility(View.VISIBLE);
+                                    containterView.setVisibility(View.GONE);
+                                    walkingView.setVisibility(View.VISIBLE);
+                                    cyclingView.setVisibility(View.VISIBLE);
+                                    drivingView.setVisibility(View.VISIBLE);
+                                    navigateBtn.setEnabled(false);
+                                    navigateBtn.setBackgroundColor(getResources().getColor(R.color.light_gray));
                                     maneuverView.setVisibility(View.GONE);
                                     searchET.setVisibility(View.VISIBLE);
                                     mapboxNavigation.setNavigationRoutes(Collections.emptyList());
@@ -863,17 +933,54 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
                     }
                 });
 
-                // focus button
-                focusLocationBtn.setOnClickListener(new View.OnClickListener() {
+                // navigate button
+                navigateBtn.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        focusLocation = true;
+                        isOnNavigation = true;
+                        searchLayout.setVisibility(View.GONE);
+                        walkingView.setVisibility(View.GONE);
+                        cyclingView.setVisibility(View.GONE);
+                        drivingView.setVisibility(View.GONE);
                         getGestures(mapView).addOnMoveListener(onMoveListener);
                         focusLocationBtn.hide();
+                        navigateBtn.setEnabled(false);
+                        navigateBtn.setBackgroundColor(getResources().getColor(R.color.light_gray));
                     }
                 });
 
-                // search
+                // focus button
+                focusLocationBtn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (ActivityCompat.checkSelfPermission(MapPage.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(MapPage.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                            // Request location permissions if not granted
+                            ActivityCompat.requestPermissions(MapPage.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, REQUEST_LOCATION_PERMISSION);
+                            return;
+                        }
+                        LocationEngine locationEngine = LocationEngineProvider.getBestLocationEngine(MapPage.this);
+                        locationEngine.getLastLocation(new LocationEngineCallback<LocationEngineResult>() {
+                            @Override
+                            public void onSuccess(LocationEngineResult result) {
+                                Location location = result.getLastLocation();
+                                if (location != null) {
+                                    Point currentLocation = Point.fromLngLat(location.getLongitude(), location.getLatitude());
+                                    MapAnimationOptions animationOptions = new MapAnimationOptions.Builder().duration(1500L).build();
+                                    CameraOptions cameraOptions = new CameraOptions.Builder().center(currentLocation).zoom(18.0).pitch(0.0)
+                                            .padding(new EdgeInsets(1000.0, 0.0, 0.0, 0.0)).build();
+                                    getCamera(mapView).easeTo(cameraOptions, animationOptions);
+                                }
+                            }
+
+                            @Override
+                            public void onFailure(@NonNull Exception exception) {
+                                Log.e(TAG, "Failed to get current location", exception);
+                            }
+                        });
+                    }
+                });
+
+                    // search
                 placeAutocompleteUiAdapter.addSearchListener(new PlaceAutocompleteUiAdapter.SearchListener() {
                     @Override
                     public void onSuggestionsShown(@NonNull List<PlaceAutocompleteSuggestion> list) {
@@ -883,10 +990,13 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
                     @Override
                     public void onSuggestionSelected(@NonNull PlaceAutocompleteSuggestion placeAutocompleteSuggestion) {
                         ignoreNextQueryUpdate = true;
-                        focusLocation = false;
+                        isOnNavigation = false;
                         searchET.setText(placeAutocompleteSuggestion.getName());
                         searchResultsView.setVisibility(View.GONE);
                         searchedPoint = placeAutocompleteSuggestion.getCoordinate();
+                        containterView.setVisibility(View.VISIBLE);
+                        navigateBtn.setEnabled(false);
+                        navigateBtn.setBackgroundColor(getResources().getColor(R.color.light_gray));
 
                         List<PointAnnotation> annotations = pointAnnotationManager.getAnnotations();
                         for (PointAnnotation annotation : annotations) {
@@ -908,13 +1018,61 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
 
                         updateCamera(searchedPoint, 0.0);
 
+                        walkingBtn.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                walkingView.setBackground(getResources().getDrawable(R.drawable.driving_profile_button_background_choosen));
+                                cyclingView.setBackground(getResources().getDrawable(R.drawable.driving_profile_button_background_not_choosen));
+                                drivingView.setBackground(getResources().getDrawable(R.drawable.driving_profile_button_background_not_choosen));
+                                routeType = 0;
+                                walkingBtn.setEnabled(false);
+                                cyclingBtn.setEnabled(true);
+                                drivingBtn.setEnabled(true);
+                            }
+                        });
+
+                        cyclingBtn.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                cyclingView.setBackground(getResources().getDrawable(R.drawable.driving_profile_button_background_choosen));
+                                walkingView.setBackground(getResources().getDrawable(R.drawable.driving_profile_button_background_not_choosen));
+                                drivingView.setBackground(getResources().getDrawable(R.drawable.driving_profile_button_background_not_choosen));
+                                routeType = 1;
+                                cyclingBtn.setEnabled(false);
+                                walkingBtn.setEnabled(true);
+                                drivingBtn.setEnabled(true);
+                            }
+                        });
+
+                        drivingBtn.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                drivingView.setBackground(getResources().getDrawable(R.drawable.driving_profile_button_background_choosen));
+                                walkingView.setBackground(getResources().getDrawable(R.drawable.driving_profile_button_background_not_choosen));
+                                cyclingView.setBackground(getResources().getDrawable(R.drawable.driving_profile_button_background_not_choosen));
+                                routeType = 2;
+                                drivingBtn.setEnabled(false);
+                                walkingBtn.setEnabled(true);
+                                cyclingBtn.setEnabled(true);
+                            }
+                        });
+
                         setRoute.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
+                                searchLayout.setVisibility(View.GONE);
                                 if (!isRouteActive)
                                     fetchRoute(searchedPoint);
                                 else {
                                     isRouteActive = false;
+                                    isOnNavigation = false;
+                                    searchLayout.setVisibility(View.VISIBLE);
+                                    containterView.setVisibility(View.GONE);
+                                    walkingView.setVisibility(View.VISIBLE);
+                                    cyclingView.setVisibility(View.VISIBLE);
+                                    drivingView.setVisibility(View.VISIBLE);
+                                    navigateBtn.setEnabled(false);
+                                    navigateBtn.setBackgroundColor(getResources().getColor(R.color.light_gray));
                                     maneuverView.setVisibility(View.GONE);
                                     searchET.setVisibility(View.VISIBLE);
                                     mapboxNavigation.setNavigationRoutes(Collections.emptyList());
@@ -953,12 +1111,16 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
                     @Override
                     public void run() {
                         double zoomLevel = mapView.getMapboxMap().getCameraState().getZoom();
-                        if (zoomLevel > 15 && zoomLevel < 17) {
-                            changeIconSize(0.6f);
-                        } else if (zoomLevel <= 15) {
-                            changeIconSize(0.3f);
-                        } else {
-                            changeIconSize(1.1f);
+                        float iconSize = 0.9f;
+                        if (zoomLevel > 15 && zoomLevel < 17 && iconSize != 0.6f) {
+                            iconSize = 0.6f;
+                            changeIconSize(iconSize);
+                        } else if (zoomLevel <= 15 && iconSize != 0.3f) {
+                            iconSize = 0.3f;
+                            changeIconSize(iconSize);
+                        } else if (iconSize != 1.1){
+                            iconSize = 0.9f;
+                            changeIconSize(iconSize);
                         }
                     }
                 };
@@ -987,28 +1149,9 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
         });
     }
     private void resetMapBearing() {
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // Request location permissions if not granted
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, REQUEST_LOCATION_PERMISSION);
-            return;
-        }
-
-        LocationEngine locationEngine = LocationEngineProvider.getBestLocationEngine(this);
-        locationEngine.getLastLocation(new LocationEngineCallback<LocationEngineResult>() {
-            @Override
-            public void onSuccess(LocationEngineResult result) {
-                Location location = result.getLastLocation();
-                if (location != null) {
-                    Point currentLocation = Point.fromLngLat(location.getLongitude(), location.getLatitude());
-                    updateCamera(currentLocation, 0.0);
-                }
-            }
-
-            @Override
-            public void onFailure(@NonNull Exception exception) {
-                Log.e(TAG, "Failed to get current location", exception);
-            }
-        });
+        MapAnimationOptions animationOptions = new MapAnimationOptions.Builder().duration(1500L).build();
+        CameraOptions cameraOptions = new CameraOptions.Builder().bearing(0.0).build();
+        getCamera(mapView).easeTo(cameraOptions, animationOptions);
     }
     private void animateIconSizeChange(final PointAnnotation annotation, final float startSize, final float endSize) {
         ValueAnimator animator = ValueAnimator.ofFloat((float) startSize, (float) endSize);
@@ -1043,12 +1186,24 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
             public void onSuccess(LocationEngineResult result) {
                 Location location = result.getLastLocation();
                 setRoute.setEnabled(false);
-                setRoute.setText("Fetching route...");
+                navigateBtn.setEnabled(true);
+                navigateBtn.setBackgroundColor(getResources().getColor(R.color.light_purple));
+                setRoute.setText("Routing...");
                 RouteOptions.Builder builder = RouteOptions.builder();
                 Point origin = Point.fromLngLat(Objects.requireNonNull(location).getLongitude(), location.getLatitude());
                 builder.coordinatesList(Arrays.asList(origin, point));
                 builder.alternatives(true); // alternative
-                builder.profile(DirectionsCriteria.PROFILE_DRIVING); // driving options
+
+                if (routeType == 0) {
+                    builder.profile(DirectionsCriteria.PROFILE_WALKING); // walking options ()
+                }
+                else if (routeType == 1) {
+                    builder.profile(DirectionsCriteria.PROFILE_CYCLING); // cycling options)
+                }
+                else {
+                    builder.profile(DirectionsCriteria.PROFILE_DRIVING); // driving options
+                }
+
                 builder.bearingsList(Arrays.asList(Bearing.builder().angle(location.getBearing()).degrees(45.0).build(), null));
                 applyDefaultNavigationOptions(builder);
 
@@ -1057,11 +1212,16 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
                     public void onRoutesReady(@NonNull List<NavigationRoute> list, @NonNull RouterOrigin routerOrigin) {
                         mapboxNavigation.setNavigationRoutes(list);
                         selectedRoute = list.get(0);
-                        focusLocationBtn.performClick();
                         setRoute.setEnabled(true);
                         setRoute.setText("Stop route");
                         searchET.setVisibility(View.GONE);
                         isRouteActive = true;
+
+                        // Set camera to fit the bounding box
+                        List<Point> routePoints = LineString.fromPolyline(selectedRoute.getDirectionsRoute().geometry(), 6).coordinates();
+                        CameraOptions cameraOptions = mapView.getMapboxMap().cameraForCoordinates(routePoints, new EdgeInsets(100.0, 100.0, 100.0, 100.0), 0.0, 0.0);
+                        MapAnimationOptions animationOptions = new MapAnimationOptions.Builder().duration(2000L).build();
+                        getCamera(mapView).easeTo(cameraOptions, animationOptions);
 
                         // click on map to change to alternative route
                         addOnMapClickListener(mapView.getMapboxMap(), new OnMapClickListener() {
@@ -1088,18 +1248,69 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
                             }
                         });
 
+                        // change route type
+                        walkingBtn.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                walkingView.setBackground(getResources().getDrawable(R.drawable.driving_profile_button_background_choosen));
+                                cyclingView.setBackground(getResources().getDrawable(R.drawable.driving_profile_button_background_not_choosen));
+                                drivingView.setBackground(getResources().getDrawable(R.drawable.driving_profile_button_background_not_choosen));
+                                builder.profile(DirectionsCriteria.PROFILE_WALKING);
+                                walkingBtn.setEnabled(false);
+                                cyclingBtn.setEnabled(true);
+                                drivingBtn.setEnabled(true);
+                                fetchRoute(point);
+                            }
+                        });
+
+                        cyclingBtn.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                cyclingView.setBackground(getResources().getDrawable(R.drawable.driving_profile_button_background_choosen));
+                                walkingView.setBackground(getResources().getDrawable(R.drawable.driving_profile_button_background_not_choosen));
+                                drivingView.setBackground(getResources().getDrawable(R.drawable.driving_profile_button_background_not_choosen));
+                                routeType = 1;
+                                cyclingBtn.setEnabled(false);
+                                walkingBtn.setEnabled(true);
+                                drivingBtn.setEnabled(true);
+                                fetchRoute(point);
+                            }
+                        });
+
+                        drivingBtn.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                drivingView.setBackground(getResources().getDrawable(R.drawable.driving_profile_button_background_choosen));
+                                walkingView.setBackground(getResources().getDrawable(R.drawable.driving_profile_button_background_not_choosen));
+                                cyclingView.setBackground(getResources().getDrawable(R.drawable.driving_profile_button_background_not_choosen));
+                                routeType = 2;
+                                drivingBtn.setEnabled(false);
+                                walkingBtn.setEnabled(true);
+                                cyclingBtn.setEnabled(true);
+                                fetchRoute(point);
+                            }
+                        });
+
                         // set route btn
                         setRoute.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
                                 if (isRouteActive) {
+                                    isRouteActive = false;
+                                    isOnNavigation = false;
+                                    searchLayout.setVisibility(View.VISIBLE);
+                                    containterView.setVisibility(View.GONE);
+                                    walkingView.setVisibility(View.VISIBLE);
+                                    cyclingView.setVisibility(View.VISIBLE);
+                                    drivingView.setVisibility(View.VISIBLE);
+                                    navigateBtn.setEnabled(false);
+                                    navigateBtn.setBackgroundColor(getResources().getColor(R.color.light_gray));
+                                    maneuverView.setVisibility(View.GONE);
+                                    searchET.setVisibility(View.VISIBLE);
                                     mapboxNavigation.setNavigationRoutes(Collections.emptyList());
                                     ArrowVisibilityChangeValue tmp = routeArrowApi.hideManeuverArrow();
                                     routeArrowView.render(mapStyle, tmp);
                                     setRoute.setText("Set route");
-                                    isRouteActive = false;
-                                    maneuverView.setVisibility(View.GONE);
-                                    searchET.setVisibility(View.VISIBLE);
                                 } else {
                                     fetchRoute(searchedPoint);
                                 }
@@ -1149,7 +1360,6 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
             mapboxNavigation.onDestroy();
             mapboxNavigation = null;
         }
-
         handler.removeCallbacks(pushDataRunnable);
         LocationComponentPlugin locationComponentPlugin = getLocationComponent(mapView);
         locationComponentPlugin.removeOnIndicatorPositionChangedListener(onPositionChangedListener);
@@ -1163,21 +1373,17 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
             deltaX = Math.abs(lastX - event.values[0]);
             deltaY = Math.abs(lastY - event.values[1]);
             deltaZ = Math.abs(lastZ - event.values[2]);
-
             if (deltaX < 2) deltaX = 0;
             if (deltaY < 2) deltaY = 0;
             if (deltaZ < 2) deltaZ = 0;
-
             lastX = event.values[0];
             lastY = event.values[1];
             lastZ = event.values[2];
-
             vibrate();
         } else if (event.sensor.getType() == Sensor.TYPE_ROTATION_VECTOR) {
             // Handle rotation vector data
             SensorManager.getRotationMatrixFromVector(rotationMatrix, event.values);
             SensorManager.getOrientation(rotationMatrix, orientationAngles);
-
             pitch = (double) Math.toDegrees(orientationAngles[1]);
             roll = (double) Math.toDegrees(orientationAngles[2]);
 
@@ -1206,7 +1412,6 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
         float speed = location.getSpeed();
         // Convert to km/h
         speedKmh = speed * 3.6f;
-
         latitude = location.getLatitude();
         longitude = location.getLongitude();
 
@@ -1296,10 +1501,8 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
 
     public void calcPoint(){
         double rielZ;
-
         if (deltaZ != 0){
             rielZ = deltaZ * (1 / Math.cos(Math.toRadians(pitch))) * (1 / Math.cos(Math.toRadians(roll)));
-
             if (speedKmh <= 7){
                 point = 0d;
             }
