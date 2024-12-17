@@ -4,7 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 
-import com.example.prj.IntroPage;
+import com.example.prj.Authen.IntroPage;
 import com.example.prj.Authen.SignIn;
 
 import java.util.HashMap;
@@ -22,7 +22,7 @@ public class SessionManager {
     public static final String KEY_NAME = "name";
     public static final String KEY_PASSWORD = "password";
 
-    public SessionManager (Context context) {
+    public SessionManager(Context context) {
         this.context = context;
         sharedPreferences = context.getSharedPreferences(PREF_NAME, private_mode);
         editor = sharedPreferences.edit();
@@ -48,15 +48,14 @@ public class SessionManager {
         editor.apply();
     }
 
-    public void checkPassIntro() {
+    /*public void checkPassIntro() {
         if (!this.PassedIntro()) {
             Intent intent = new Intent(context, IntroPage.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-
             context.startActivity(intent);
         }
-    }
+    }*/
 
     public void checkLogin() {
         if (!this.isLoggedIn()) {
@@ -68,10 +67,9 @@ public class SessionManager {
     }
 
     public HashMap<String, String> getUserDetails() {
-        HashMap<String, String> user = new HashMap<String, String>();
+        HashMap<String, String> user = new HashMap<>();
         user.put(KEY_NAME, sharedPreferences.getString(KEY_NAME, null));
         user.put(KEY_PASSWORD, sharedPreferences.getString(KEY_PASSWORD, null));
-
         return user;
     }
 
@@ -83,7 +81,6 @@ public class SessionManager {
         Intent intent = new Intent(context, SignIn.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-
         context.startActivity(intent);
     }
 }

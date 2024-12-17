@@ -1,4 +1,4 @@
-package com.example.prj;
+package com.example.prj.Authen;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -17,10 +17,12 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-import com.example.prj.Authen.SignIn;
+import com.example.prj.Dashboard.MainPage;
+import com.example.prj.R;
+import com.example.prj.Session.SessionManager;
 
 public class IntroPage extends AppCompatActivity {
-
+    SessionManager sessionManager;
     TextView textView;
     final String[] texts = {"Give you real-time pothole warnings", "Detect potholes with high accuracy", "Earn rewards for reporting potholes", "Find the best route to your destination"};
     int currentIndex = 0;
@@ -38,12 +40,30 @@ public class IntroPage extends AppCompatActivity {
             return insets;
         });
 
+        sessionManager = new SessionManager(this);
+        if (sessionManager.PassedIntro()) {
+            // Intro has been passed, check login status
+            if (sessionManager.isLoggedIn()) {
+                // User is logged in, redirect to MainPage
+                Intent intent = new Intent(IntroPage.this, MainPage.class);
+                startActivity(intent);
+                finish();
+            } else {
+                // User is not logged in, redirect to SignIn
+                Intent intent = new Intent(IntroPage.this, SignIn.class);
+                startActivity(intent);
+                finish();
+            }
+        }
+
         introButton = findViewById(R.id.intro_button);
         introButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                sessionManager.setIntroPassed(true);
                 Intent intent = new Intent(view.getContext(), SignIn.class);
                 view.getContext().startActivity(intent);
+                finish();
             }
         });
 

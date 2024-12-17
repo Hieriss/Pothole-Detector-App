@@ -1,7 +1,7 @@
 package com.example.prj.Authen;
 
 public class UserData {
-    String username, password, email, phone, otp;
+    String username, password, email, phone;
 
     public String getUsername() {
         return username;
@@ -40,7 +40,6 @@ public class UserData {
         this.password = password;
         this.email = email;
         this.phone = phone;
-        this.otp = "";
     }
 
     public UserData() {

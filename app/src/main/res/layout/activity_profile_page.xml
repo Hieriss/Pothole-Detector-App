@@ -5,7 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ProfilePage"
+    tools:context=".Profile.ProfilePage"
     android:background="@drawable/main_background">
 
     <LinearLayout
@@ -15,8 +15,9 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="10"
+            android:layout_height="wrap_content"
+
+            android:layout_marginTop="20dp"
             android:orientation="horizontal">
 
             <RelativeLayout
@@ -39,6 +40,7 @@
                         android:id="@+id/setting_home_button"
                         android:layout_width="20dp"
                         android:layout_height="20dp"
+                        android:paddingTop="5dp"
                         android:background="@android:color/transparent"
                         android:clickable="true"
                         android:focusable="true"
@@ -57,213 +59,211 @@
                     android:textColor="@color/black"
                     android:textSize="26sp" />
             </RelativeLayout>
-
         </LinearLayout>
 
-        <ScrollView
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1">
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginBottom="20dp"
+            android:background="@drawable/main_user_box_background">
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical" >
-
-                <TextView
-                    android:id="@+id/profile_text1"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="20dp"
-                    android:layout_marginTop="10dp"
-                    android:fontFamily="@font/grandstander_medium"
-                    android:text="@string/about_you"
-                    android:textColor="@color/black"
-                    android:textSize="16sp" />
-
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="400dp"
-                    android:layout_marginStart="5dp"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginEnd="5dp">
+                    android:orientation="vertical">
 
                     <ImageView
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        app:srcCompat="@drawable/setting_box_background" />
+                        android:id="@+id/profile_user_image"
+                        android:layout_width="150dp"
+                        android:layout_height="150dp"
+                        android:layout_gravity="center"
+                        android:layout_marginTop="30dp"
+                        android:layout_marginBottom="30dp"
+                        android:layout_marginStart="30dp"
+                        android:layout_marginEnd="20dp"
+                        app:srcCompat="@drawable/profile_image_background" />
 
-                    <RelativeLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent">
-
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:orientation="vertical">
-
-                            <ImageView
-                                android:id="@+id/profile_user_image"
-                                android:layout_width="150dp"
-                                android:layout_height="150dp"
-                                android:layout_gravity="center"
-                                android:layout_marginTop="30dp"
-                                android:layout_marginBottom="20dp"
-                                android:layout_marginStart="30dp"
-                                android:layout_marginEnd="20dp"
-                                app:srcCompat="@drawable/profile_image_background" />
-
-                            <LinearLayout
-                                android:layout_width="match_parent"
-                                android:layout_height="50dp"
-                                android:orientation="horizontal">
-
-                                <TextView
-                                    android:id="@+id/profile_nickname_text"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="match_parent"
-                                    android:layout_marginStart="10dp"
-                                    android:fontFamily="@font/grandstander_regular"
-                                    android:gravity="center_vertical"
-                                    android:text="@string/nickname"
-                                    android:textSize="20sp" />
-
-                                <TextView
-                                    android:id="@+id/profile_nickname"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="match_parent"
-                                    android:layout_gravity="end"
-                                    android:layout_marginStart="10dp"
-                                    android:layout_marginEnd="20dp"
-                                    android:fontFamily="@font/grandstander_regular"
-                                    android:gravity="end|center_vertical"
-                                    android:text="hehehehe"
-                                    android:textSize="20sp" />
-                            </LinearLayout>
-
-                            <LinearLayout
-                                android:layout_width="match_parent"
-                                android:layout_height="50dp"
-                                android:orientation="horizontal">
-
-                                <TextView
-                                    android:id="@+id/profile_username_text"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="match_parent"
-                                    android:layout_marginStart="10dp"
-                                    android:fontFamily="@font/grandstander_regular"
-                                    android:gravity="center_vertical"
-                                    android:text="@string/username2"
-                                    android:textSize="20sp" />
-
-                                <TextView
-                                    android:id="@+id/profile_username"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="match_parent"
-                                    android:layout_gravity="end"
-                                    android:layout_marginStart="10dp"
-                                    android:layout_marginEnd="20dp"
-                                    android:fontFamily="@font/grandstander_regular"
-                                    android:gravity="end|center_vertical"
-                                    android:text="hehe"
-                                    android:textSize="20sp" />
-                            </LinearLayout>
-
-                            <LinearLayout
-                                android:layout_width="match_parent"
-                                android:layout_height="50dp"
-                                android:orientation="horizontal">
-
-                                <TextView
-                                    android:id="@+id/profile_email_text"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="match_parent"
-                                    android:layout_marginStart="10dp"
-                                    android:fontFamily="@font/grandstander_regular"
-                                    android:gravity="center_vertical"
-                                    android:text="@string/prompt_email2"
-                                    android:textSize="20sp" />
-
-                                <TextView
-                                    android:id="@+id/profile_email"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="match_parent"
-                                    android:layout_gravity="end"
-                                    android:layout_marginStart="10dp"
-                                    android:layout_marginEnd="20dp"
-                                    android:fontFamily="@font/grandstander_regular"
-                                    android:gravity="end|center_vertical"
-                                    android:text="225****n"
-                                    android:textSize="20sp" />
-                            </LinearLayout>
-
-                            <LinearLayout
-                                android:layout_width="match_parent"
-                                android:layout_height="50dp"
-                                android:orientation="horizontal">
-
-                                <TextView
-                                    android:id="@+id/profile_phone_text"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="match_parent"
-                                    android:layout_marginStart="10dp"
-                                    android:fontFamily="@font/grandstander_regular"
-                                    android:gravity="center_vertical"
-                                    android:text="@string/phone_number2"
-                                    android:textSize="20sp" />
-
-                                <TextView
-                                    android:id="@+id/profile_phone"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="match_parent"
-                                    android:layout_gravity="end"
-                                    android:layout_marginStart="10dp"
-                                    android:layout_marginEnd="20dp"
-                                    android:fontFamily="@font/grandstander_regular"
-                                    android:gravity="end|center_vertical"
-                                    android:text="097****868"
-                                    android:textSize="20sp" />
-                            </LinearLayout>
-                        </LinearLayout>
-                    </RelativeLayout>
-
-
-                </RelativeLayout>
-
-                <TextView
-                    android:id="@+id/profile_text2"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="20dp"
-                    android:layout_marginTop="10dp"
-                    android:fontFamily="@font/grandstander_medium"
-                    android:text="@string/your_stats"
-                    android:textColor="@color/black"
-                    android:textSize="16sp" />
-
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="250dp"
-                    android:layout_marginStart="5dp"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginEnd="5dp">
+                    <TextView
+                        android:id="@+id/profile_nickname_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:fontFamily="@font/grandstander_regular"
+                        android:gravity="center_vertical"
+                        android:text="@string/nickname"
+                        android:textSize="16sp" />
 
                     <LinearLayout
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:orientation="vertical" >
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="20dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginEnd="20dp"
+                        android:layout_marginBottom="10dp"
+                        android:orientation="horizontal">
 
-                        <com.github.mikephil.charting.charts.LineChart
-                            android:id="@+id/line_chart_ngu"
+                        <TextView
+                            android:id="@+id/profile_nickname"
                             android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:layout_margin="10dp"
-                            android:layout_marginBottom="10dp"/>
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:fontFamily="@font/grandstander_regular"
+                            android:text=""
+                            android:textSize="22sp" />
+
+                        <EditText
+                            android:id="@+id/profile_nickname_edit"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:fontFamily="@font/grandstander_regular"
+                            android:text=""
+                            android:hint="@string/nickname"
+                            android:textSize="22sp"
+                            android:visibility="gone" />
+
+                        <RelativeLayout
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:layout_marginEnd="5dp">
+
+                            <ImageView
+                                android:layout_width="24dp"
+                                android:layout_height="24dp"
+                                android:layout_centerInParent="true"
+                                app:srcCompat="@drawable/edit"
+                                app:tint="@color/black" />
+
+                            <androidx.appcompat.widget.AppCompatButton
+                                android:id="@+id/edit_nickname"
+                                android:layout_width="24dp"
+                                android:layout_height="24dp"
+                                android:background="@android:color/transparent"
+                                android:clickable="true"
+                                android:focusable="true"
+                                android:paddingTop="5dp"
+                                android:text="" />
+                        </RelativeLayout>
                     </LinearLayout>
-                </RelativeLayout>
-            </LinearLayout>
-        </ScrollView>
 
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginEnd="10dp"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginBottom="5dp"
+                        android:alpha="1"
+                        android:background="@color/magenta"/>
 
+                    <TextView
+                        android:id="@+id/profile_username_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginStart="10dp"
+                        android:fontFamily="@font/grandstander_regular"
+                        android:gravity="center_vertical"
+                        android:text="@string/username2"
+                        android:textSize="16sp" />
+
+                    <TextView
+                        android:id="@+id/profile_username"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginStart="20dp"
+                        android:layout_marginEnd="20dp"
+                        android:layout_marginBottom="10dp"
+                        android:fontFamily="@font/grandstander_regular"
+                        android:text=""
+                        android:textSize="22sp"/>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginEnd="10dp"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginBottom="5dp"
+                        android:alpha="1"
+                        android:background="@color/magenta"/>
+
+                    <TextView
+                        android:id="@+id/profile_email_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginStart="10dp"
+                        android:fontFamily="@font/grandstander_regular"
+                        android:gravity="center_vertical"
+                        android:text="@string/prompt_email2"
+                        android:textSize="16sp" />
+
+                    <TextView
+                        android:id="@+id/profile_email"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginStart="20dp"
+                        android:layout_marginEnd="20dp"
+                        android:layout_marginBottom="10dp"
+                        android:fontFamily="@font/grandstander_regular"
+                        android:text=""
+                        android:textSize="22sp"/>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginEnd="10dp"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginBottom="5dp"
+                        android:alpha="1"
+                        android:background="@color/magenta"/>
+
+                    <TextView
+                        android:id="@+id/profile_phone_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginStart="10dp"
+                        android:fontFamily="@font/grandstander_regular"
+                        android:gravity="center_vertical"
+                        android:text="@string/phone_number2"
+                        android:textSize="16sp" />
+
+                    <TextView
+                        android:id="@+id/profile_phone"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginStart="20dp"
+                        android:layout_marginEnd="20dp"
+                        android:layout_marginBottom="20dp"
+                        android:fontFamily="@font/grandstander_regular"
+                        android:text=""
+                        android:textSize="22sp" />
+                </LinearLayout>
+
+        </RelativeLayout>
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/upload_image_button"
+            android:layout_width="230dp"
+            android:layout_height="50dp"
+            android:layout_marginTop="50dp"
+            android:layout_gravity="center"
+            android:background="@drawable/signin_button_background"
+            android:fontFamily="@font/grandstander_semi_bold"
+            android:text="Upload Image"
+            android:textAllCaps="false"
+            android:textColor="@color/black"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:visibility="visible" />
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

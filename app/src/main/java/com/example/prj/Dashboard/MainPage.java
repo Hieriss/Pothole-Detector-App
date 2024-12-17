@@ -6,9 +6,16 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.Environment;
+import android.util.Base64;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -18,15 +25,10 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-import com.example.prj.MenuPage;
 import com.example.prj.Authen.SignIn;
-import com.example.prj.HistoryPage;
 import com.example.prj.Map.MapPage;
-import com.example.prj.NotificationPage;
-import com.example.prj.ProfilePage;
 import com.example.prj.R;
 import com.example.prj.Session.SessionManager;
-import com.example.prj.SettingPage;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.Description;
 import com.github.mikephil.charting.components.XAxis;
@@ -37,9 +39,15 @@ import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -53,12 +61,15 @@ public class MainPage extends AppCompatActivity {
     private LineChart lineChart1, lineChart2;
     private List<String> xValues1, yValues1, xValues2, yValues2;
     public TextView nameTextView;
+    public ImageView userImageView;
+
+    public String username, usernameText;
+    private boolean isImageSaved = false;
 
     // session
     private BroadcastReceiver logoutReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            // Finish the MainPage activity
             finish();
         }
     };
@@ -79,7 +90,7 @@ public class MainPage extends AppCompatActivity {
         sessionManager = new SessionManager(this);
         sessionManager.checkLogin();
         HashMap<String, String> userDetails = sessionManager.getUserDetails();
-        String username = userDetails.get(SessionManager.KEY_NAME);
+        usernameText = userDetails.get(SessionManager.KEY_NAME);
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
@@ -87,13 +98,13 @@ public class MainPage extends AppCompatActivity {
             return insets;
         });
 
-        if (username != null) {
+        if (usernameText != null) {
             // Set the username to the name_text TextView
-            nameTextView.setText(username);
+            nameTextView.setText(usernameText);
         } else {
             // Set the username to the name_text TextView
-            String usernameqr = getIntent().getStringExtra("USERNAMEQR");
-            nameTextView.setText(usernameqr);
+            usernameText = getIntent().getStringExtra("USERNAMEQR"); // Ensure username is set
+            nameTextView.setText(usernameText);
         }
 
         // Check if the digital otp is null
@@ -209,15 +220,6 @@ public class MainPage extends AppCompatActivity {
         lineChart2.setPinchZoom(false);
         lineChart2.setDoubleTapToZoomEnabled(false);
 
-        // Initialize buttons and listeners
-        logoutButton = findViewById(R.id.logout_button);
-        logoutButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                logoutUser();
-            }
-        });
-
         scanButton = findViewById(R.id.scan_button);
         scanButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -231,6 +233,7 @@ public class MainPage extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(MainPage.this, MenuPage.class);
+                intent.putExtra("USERNAME", username);
                 startActivity(intent);
             }
         });
@@ -243,20 +246,14 @@ public class MainPage extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-    }
 
-    // Function to handle user logout
-    public void logoutUser() {
-        SharedPreferences preferences = getSharedPreferences("user_session", MODE_PRIVATE);
-        SharedPreferences.Editor editor = preferences.edit();
-        editor.clear();  // Clear session data
-        editor.apply();
+        userImageView = findViewById(R.id.main_user_image_rounded);
 
-        // Navigate back to the login screen
-        Intent intent = new Intent(MainPage.this, SignIn.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(intent);
-        finish();
+        if (usernameText != null) {
+            downloadImage();
+        } else {
+            Toast.makeText(this, "Username is null", Toast.LENGTH_SHORT).show();
+        }
     }
 
     // QR Code Scanning Method
@@ -292,7 +289,7 @@ public class MainPage extends AppCompatActivity {
                 String status = task.getResult().getValue(String.class);
                 if ("waiting_for_login".equals(status)) {
                     // Update the session ID with user credentials
-                    String username = getIntent().getStringExtra("USERNAME");
+                    username = getIntent().getStringExtra("USERNAME");
                     ref.child(sessionId).child("username").setValue(username);
                     ref.child(sessionId).child("status").setValue("logged_in");
 
@@ -332,5 +329,49 @@ public class MainPage extends AppCompatActivity {
         SharedPreferences prefs = getSharedPreferences("Settings", MODE_PRIVATE);
         String language = prefs.getString("My_Lang", "");
         setLocale(language);
+    }
+
+    private void downloadImage() {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        db.collection("users").document(usernameText)
+                .get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    if (documentSnapshot.exists()) {
+                        String encodedImage = documentSnapshot.getString("userImage");
+
+                        if (encodedImage != null && !encodedImage.isEmpty()) {
+                            // Decode Base64 string to Bitmap
+                            byte[] decodedBytes = Base64.decode(encodedImage, Base64.DEFAULT);
+                            Bitmap imageBitmap = BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.length);
+
+                            // Set the image to userImageView
+                            userImageView.setImageBitmap(imageBitmap);
+
+                            // Save to local storage
+                            saveImageToLocalStorage(imageBitmap, usernameText + ".jpg");
+                        }
+                    }
+                });
+    }
+
+
+    private void saveImageToLocalStorage(Bitmap bitmap, String fileName) {
+        FileOutputStream fos = null;
+        try {
+            // Save the image in app-specific storage
+            File file = new File(getExternalFilesDir(Environment.DIRECTORY_PICTURES), fileName);
+            fos = new FileOutputStream(file);
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
+            Log.d("SaveImage", "Image saved at: " + file.getAbsolutePath());
+        } catch (Exception e) {
+            Log.e("SaveImage", "Error: ", e);
+        } finally {
+            try {
+                if (fos != null) fos.close();
+            } catch (IOException e) {
+                Log.e("SaveImage", "Failed to close FileOutputStream", e);
+            }
+        }
     }
 }

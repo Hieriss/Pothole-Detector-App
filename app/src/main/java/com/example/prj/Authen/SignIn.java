@@ -50,9 +50,7 @@ public class SignIn extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_sign_in);
 
-        sessionManager = new SessionManager(getApplicationContext());
         sessionManager = new SessionManager(this);
-        sessionManager.checkPassIntro();
 
         databaseReference = FirebaseDatabase.getInstance().getReference("qrCodes");
 
