@@ -30,79 +30,102 @@
         <activity
             android:name=".Dashboard.SetDigital"
             android:exported="false"
+            android:screenOrientation="portrait"
             android:theme="@style/TransparentActivityTheme" />
         <activity
             android:name=".Authen.DigitalVerify"
             android:exported="false"
+            android:screenOrientation="portrait"
             android:theme="@style/TransparentActivityTheme" />
         <activity
             android:name=".Authen.VerifySignUp"
             android:exported="false"
+            android:screenOrientation="portrait"
             android:theme="@style/TransparentActivityTheme" />
         <activity
             android:name=".AccountSettingPage"
+            android:screenOrientation="portrait"
             android:exported="false" />
         <activity
             android:name=".TermsAndPoliciesPage"
+            android:screenOrientation="portrait"
             android:exported="false" />
         <activity
             android:name=".SupportPage"
+            android:screenOrientation="portrait"
             android:exported="false" />
         <activity
             android:name=".ReportbugsSettingPage"
+            android:screenOrientation="portrait"
             android:exported="false" />
         <activity
             android:name=".ActivitycenterSettingPage"
+            android:screenOrientation="portrait"
             android:exported="false" />
         <activity
             android:name=".DisplaySettingPage"
+            android:screenOrientation="portrait"
             android:exported="false" />
         <activity
             android:name=".ThemeSettingPage"
+            android:screenOrientation="portrait"
             android:exported="false" />
         <activity
             android:name=".SecuritySettingPage"
+            android:screenOrientation="portrait"
             android:exported="false" />
         <activity
             android:name=".NotificationSettingPage"
+            android:screenOrientation="portrait"
             android:exported="false" />
         <activity
             android:name=".Authen.ForgotPassword"
             android:exported="false"
+            android:screenOrientation="portrait"
             android:launchMode="singleTask" />
         <activity
             android:name=".Map.MapPage"
+            android:screenOrientation="portrait"
             android:exported="false" />
         <activity
             android:name=".Profile.ProfilePage"
+            android:screenOrientation="portrait"
             android:exported="false" />
         <activity
             android:name=".HistoryPage"
+            android:screenOrientation="portrait"
             android:exported="false" />
         <activity
             android:name=".NotificationPage"
+            android:screenOrientation="portrait"
             android:exported="false" />
         <activity
             android:name=".Dashboard.MenuPage"
             android:exported="false"
+            android:screenOrientation="portrait"
             android:theme="@style/TransparentActivityTheme" />
         <activity
             android:name=".SettingPage"
+            android:screenOrientation="portrait"
             android:exported="false" />
         <activity
             android:name=".Authen.SignIn"
             android:exported="false"
+            android:screenOrientation="portrait"
             android:launchMode="singleTask" />
         <activity
             android:name=".Dashboard.MainPage"
             android:exported="false"
+            android:screenOrientation="portrait"
             android:launchMode="singleTask" />
         <activity
             android:name=".Authen.SignUp"
             android:exported="false"
+            android:screenOrientation="portrait"
             android:launchMode="singleTask" />
         <activity
             android:name=".Authen.IntroPage"
+            android:screenOrientation="portrait"
             android:exported="true" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

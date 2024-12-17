@@ -197,7 +197,7 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
     private Point searchedPoint;
     private boolean manualAddActive = false;
     Bitmap bitmap;
-    private double iconSize = 1.1;
+    private double iconSize = 1.0;
     private Handler handler = new Handler();
     private Runnable debounceRunnable = null;
     private Runnable retrieveLocationsRunnable = null;
@@ -276,7 +276,7 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
 
     private final OnIndicatorPositionChangedListener onPositionChangedListener = new OnIndicatorPositionChangedListener() {
         @Override
-        public void onIndicatorPositionChanged(Point point) {
+        public void onIndicatorPositionChanged(@NonNull Point point) {
             // Only update if a route exists
             if (isRouteActive) {
                 Expected<RouteLineError, RouteLineUpdateValue> result =
@@ -380,7 +380,7 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
                 callback.onRoadNameFetched("Unknown road");
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            // do nothing
             callback.onRoadNameFetched("Unknown road");
         }
     }
@@ -434,9 +434,11 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
     private final OnMoveListener onMoveListener = new OnMoveListener() {
         @Override
         public void onMoveBegin(@NonNull MoveGestureDetector moveGestureDetector) {
-            isOnNavigation = false;
-            navigateBtn.setBackgroundColor(getResources().getColor(R.color.light_purple));
-            navigateBtn.setEnabled(true);
+            if (isOnNavigation) {
+                isOnNavigation = false;
+                navigateBtn.setBackgroundColor(getResources().getColor(R.color.light_purple));
+                navigateBtn.setEnabled(true);
+            }
             getGestures(mapView).removeOnMoveListener(this);
             if (!isOnNavigation) focusLocationBtn.show();
             if (!potholeLocations.isEmpty()) {
@@ -476,7 +478,7 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
         }
     });
 
-    private MapboxNavigationConsumer<Expected<SpeechError, SpeechValue>> speechCallback = new MapboxNavigationConsumer<Expected<SpeechError, SpeechValue>>() {
+    private final MapboxNavigationConsumer<Expected<SpeechError, SpeechValue>> speechCallback = new MapboxNavigationConsumer<Expected<SpeechError, SpeechValue>>() {
         @Override
         public void accept(Expected<SpeechError, SpeechValue> speechErrorSpeechValueExpected) {
             speechErrorSpeechValueExpected.fold(new Expected.Transformer<SpeechError, Unit>() {
@@ -846,6 +848,21 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
                                         .withIconImage(bitmap)
                                         .withPoint(point);
                                 pointAnnotationManager.create(pointAnnotationOptions);
+                                long timestamp = System.currentTimeMillis();
+                                Date date = new Date(timestamp);
+                                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+                                String formattedDate = sdf.format(date);
+                                SensorData sensorData = new SensorData(deltaX, deltaY, deltaZ, pitch, roll, speedKmh, latitude, longitude, 0.938689541231339, formattedDate);
+                                Log.d(TAG, "Pushing data to Firebase: " + sensorData.toString());
+                                database.child("sensorData").push().setValue(sensorData)
+                                        .addOnSuccessListener(aVoid -> {
+                                            Log.d(TAG, "Data pushed successfully");
+                                        })
+                                        .addOnFailureListener(e -> {
+                                            Log.e(TAG, "Failed to push data", e);
+                                        });
+
+                                retrieveLocationsRunnable.run();
                             }
                             else {
                                 mapboxNavigation.setNavigationRoutes(Collections.emptyList());
@@ -864,6 +881,8 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
                                         .withIconOpacity(1.0)
                                         .withPoint(point);
                                 pointAnnotationManager.create(pointAnnotationOptions);
+
+                                containterView.setVisibility(View.VISIBLE);
                             }
                         }
 
@@ -891,21 +910,7 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
                                     }
                                 }
                                 else {
-                                    isRouteActive = false;
-                                    isOnNavigation = false;
-                                    searchLayout.setVisibility(View.VISIBLE);
-                                    containterView.setVisibility(View.GONE);
-                                    walkingView.setVisibility(View.VISIBLE);
-                                    cyclingView.setVisibility(View.VISIBLE);
-                                    drivingView.setVisibility(View.VISIBLE);
-                                    navigateBtn.setEnabled(false);
-                                    navigateBtn.setBackgroundColor(getResources().getColor(R.color.light_gray));
-                                    maneuverView.setVisibility(View.GONE);
-                                    searchET.setVisibility(View.VISIBLE);
-                                    mapboxNavigation.setNavigationRoutes(Collections.emptyList());
-                                    ArrowVisibilityChangeValue tmp = routeArrowApi.hideManeuverArrow();
-                                    routeArrowView.render(mapStyle, tmp);
-                                    setRoute.setText("Set route");
+                                    QuitRouting();
                                 }
                             }
                         });
@@ -975,7 +980,7 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
                     }
                 });
 
-                    // search
+                // search
                 placeAutocompleteUiAdapter.addSearchListener(new PlaceAutocompleteUiAdapter.SearchListener() {
                     @Override
                     public void onSuggestionsShown(@NonNull List<PlaceAutocompleteSuggestion> list) {
@@ -1059,21 +1064,7 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
                                 if (!isRouteActive)
                                     fetchRoute(searchedPoint);
                                 else {
-                                    isRouteActive = false;
-                                    isOnNavigation = false;
-                                    searchLayout.setVisibility(View.VISIBLE);
-                                    containterView.setVisibility(View.GONE);
-                                    walkingView.setVisibility(View.VISIBLE);
-                                    cyclingView.setVisibility(View.VISIBLE);
-                                    drivingView.setVisibility(View.VISIBLE);
-                                    navigateBtn.setEnabled(false);
-                                    navigateBtn.setBackgroundColor(getResources().getColor(R.color.light_gray));
-                                    maneuverView.setVisibility(View.GONE);
-                                    searchET.setVisibility(View.VISIBLE);
-                                    mapboxNavigation.setNavigationRoutes(Collections.emptyList());
-                                    ArrowVisibilityChangeValue tmp = routeArrowApi.hideManeuverArrow();
-                                    routeArrowView.render(mapStyle, tmp);
-                                    setRoute.setText("Set route");
+                                    QuitRouting();
                                 }
                             }
                         });
@@ -1089,8 +1080,6 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
 
                     }
                 });
-
-
             }
         });
 
@@ -1107,19 +1096,23 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
                     public void run() {
                         double zoomLevel = mapView.getMapboxMap().getCameraState().getZoom();
                         float iconSize = 0.9f;
+                        //Toast.makeText(MapPage.this, "Zoom level: " + zoomLevel, Toast.LENGTH_SHORT).show();
                         if (zoomLevel > 15 && zoomLevel < 17 && iconSize != 0.6f) {
                             iconSize = 0.6f;
                             changeIconSize(iconSize);
                         } else if (zoomLevel <= 15 && iconSize != 0.3f) {
                             iconSize = 0.3f;
                             changeIconSize(iconSize);
-                        } else if (iconSize != 1.1){
-                            iconSize = 0.9f;
+                        } else if (zoomLevel > 20 && iconSize != 1.5f) {
+                            iconSize = 1.5f;
+                            changeIconSize(iconSize);
+                        } else if (iconSize != 1.0f){
+                            iconSize = 1.0f;
                             changeIconSize(iconSize);
                         }
                     }
                 };
-                camHandler.postDelayed(debounceRunnable, 300); // Adjust the delay as needed
+                camHandler.postDelayed(debounceRunnable, 200); // Adjust the delay as needed
             }
         });
 
@@ -1291,21 +1284,7 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
                             @Override
                             public void onClick(View view) {
                                 if (isRouteActive) {
-                                    isRouteActive = false;
-                                    isOnNavigation = false;
-                                    searchLayout.setVisibility(View.VISIBLE);
-                                    containterView.setVisibility(View.GONE);
-                                    walkingView.setVisibility(View.VISIBLE);
-                                    cyclingView.setVisibility(View.VISIBLE);
-                                    drivingView.setVisibility(View.VISIBLE);
-                                    navigateBtn.setEnabled(false);
-                                    navigateBtn.setBackgroundColor(getResources().getColor(R.color.light_gray));
-                                    maneuverView.setVisibility(View.GONE);
-                                    searchET.setVisibility(View.VISIBLE);
-                                    mapboxNavigation.setNavigationRoutes(Collections.emptyList());
-                                    ArrowVisibilityChangeValue tmp = routeArrowApi.hideManeuverArrow();
-                                    routeArrowView.render(mapStyle, tmp);
-                                    setRoute.setText("Set route");
+                                    QuitRouting();
                                 } else {
                                     fetchRoute(searchedPoint);
                                 }
@@ -1434,14 +1413,36 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
                         }
                     }
                 }
-
+            }
+        }
+    }
+    private void QuitRouting() {
+        isRouteActive = false;
+        isOnNavigation = false;
+        searchLayout.setVisibility(View.VISIBLE);
+        containterView.setVisibility(View.GONE);
+        walkingView.setVisibility(View.VISIBLE);
+        cyclingView.setVisibility(View.VISIBLE);
+        drivingView.setVisibility(View.VISIBLE);
+        navigateBtn.setEnabled(false);
+        navigateBtn.setBackgroundColor(getResources().getColor(R.color.light_gray));
+        maneuverView.setVisibility(View.GONE);
+        searchET.setVisibility(View.VISIBLE);
+        mapboxNavigation.setNavigationRoutes(Collections.emptyList());
+        ArrowVisibilityChangeValue tmp = routeArrowApi.hideManeuverArrow();
+        routeArrowView.render(mapStyle, tmp);
+        setRoute.setText("Set route");
+        mapboxNavigation.setNavigationRoutes(Collections.emptyList());
+        List<PointAnnotation> annotations = pointAnnotationManager.getAnnotations();
+        for (PointAnnotation annotation : annotations) {
+            if (annotation.getIconOpacity() != 0.95) {
+                pointAnnotationManager.delete(annotation);
             }
         }
     }
 
     private void pushData() {
         calcPoint();
-
         if (point != 0 && speedKmh > SPEED_THRESHOLD && deltaZ > DELTA_Z_THRESHOLD) {
             long timestamp = System.currentTimeMillis();
             Date date = new Date(timestamp);
@@ -1457,6 +1458,7 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
                     .addOnFailureListener(e -> {
                         Log.e(TAG, "Failed to push data", e);
                     });
+            retrieveLocationsRunnable.run();
         }
     }
 
