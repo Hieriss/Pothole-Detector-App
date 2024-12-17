@@ -53,6 +53,10 @@ public class MenuPage extends AppCompatActivity {
                 Intent intent = new Intent(MenuPage.this, ProfilePage.class);
                 intent.putExtra("USERNAME", username);
                 startActivity(intent);
+                finish();
+
+                Intent closeMainPageIntent = new Intent("CLOSE_MAIN_PAGE");
+                sendBroadcast(closeMainPageIntent);
             }
         });
 

@@ -22,8 +22,11 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-import com.bumptech.glide.Glide;
+import com.example.prj.Dashboard.MainPage;
+import com.example.prj.Dashboard.MenuPage;
 import com.example.prj.R;
+import com.example.prj.Session.SessionManager;
+import com.example.prj.SettingPage;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -42,7 +45,9 @@ public class ProfilePage extends AppCompatActivity {
     EditText editNickname;
     ImageView profileUserImage;
     Button quitButton, uploadButton, editButton;
-    public String username, nickname, email, phone;
+    public String username, nickname, email, phone, usernameText;
+
+    SessionManager sessionManager;
 
     private Uri imageUri;
 
@@ -57,18 +62,28 @@ public class ProfilePage extends AppCompatActivity {
             return insets;
         });
 
+        sessionManager = new SessionManager(this);
+        HashMap<String, String> userDetails = sessionManager.getUserDetails();
+        usernameText = userDetails.get(SessionManager.KEY_NAME);
+
         username = getIntent().getStringExtra("USERNAME");
         textUsername = findViewById(R.id.profile_username);
-        textUsername.setText(username);
+        textUsername.setText(usernameText);
 
         textEmail = findViewById(R.id.profile_email);
         textPhone = findViewById(R.id.profile_phone);
-        profileUserImage = findViewById(R.id.profile_user_image);
+        profileUserImage = findViewById(R.id.profile_user_image_rounded);
 
         quitButton = findViewById(R.id.setting_home_button);
-        quitButton.setOnClickListener(v -> finish());
+        quitButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(ProfilePage.this, MainPage.class);
+                startActivity(intent);
+            }
+        });
 
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("user").child(username);
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("user").child(usernameText);
 
         reference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -80,9 +95,6 @@ public class ProfilePage extends AppCompatActivity {
 
                     textEmail.setText(email);
                     textPhone.setText(phone);
-                    if (imageUrl != null) {
-                        Glide.with(ProfilePage.this).load(imageUrl).into(profileUserImage);
-                    }
                 }
             }
 
@@ -98,6 +110,8 @@ public class ProfilePage extends AppCompatActivity {
                 openFileChooser();
             }
         });
+
+        downloadImage();
     }
 
     private void openFileChooser() {
@@ -141,9 +155,32 @@ public class ProfilePage extends AppCompatActivity {
         Map<String, Object> user = new HashMap<>();
         user.put("userImage", encodedImage);
 
-        db.collection("users").document(username)
+        db.collection("users").document(usernameText)
                 .set(user)
                 .addOnSuccessListener(aVoid -> Toast.makeText(ProfilePage.this, "Image stored successfully", Toast.LENGTH_SHORT).show())
                 .addOnFailureListener(e -> Toast.makeText(ProfilePage.this, "Failed to store image: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+
+        downloadImage();
+    }
+
+    private void downloadImage() {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        db.collection("users").document(usernameText)
+                .get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    if (documentSnapshot.exists()) {
+                        String encodedImage = documentSnapshot.getString("userImage");
+
+                        if (encodedImage != null && !encodedImage.isEmpty()) {
+                            // Decode Base64 string to Bitmap
+                            byte[] decodedBytes = Base64.decode(encodedImage, Base64.DEFAULT);
+                            Bitmap imageBitmap = BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.length);
+
+                            // Set the image to userImageView
+                            profileUserImage.setImageBitmap(imageBitmap);
+                        }
+                    }
+                });
     }
 }

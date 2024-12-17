@@ -81,6 +81,9 @@ public class MainPage extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main_page);
 
+        IntentFilter filter_close = new IntentFilter("CLOSE_MAIN_PAGE");
+        registerReceiver(closeReceiver, filter_close);
+
         // Register the logout receiver
         IntentFilter filter = new IntentFilter("com.example.prj.LOGOUT");
         registerReceiver(logoutReceiver, filter);
@@ -309,10 +312,18 @@ public class MainPage extends AppCompatActivity {
         startActivity(intent);
     }*/
 
+    private BroadcastReceiver closeReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            finish();
+        }
+    };
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
         // Unregister the logout receiver
+        unregisterReceiver(closeReceiver);
         unregisterReceiver(logoutReceiver);
     }
     private void setLocale(String lang) {
