@@ -35,10 +35,13 @@ import android.os.Handler;
 import android.os.Vibrator;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Base64;
 import android.util.Log;
 import android.util.Pair;
 import android.view.View;
 import android.view.ViewTreeObserver;
+import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -59,11 +62,13 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.example.prj.R;
+import com.example.prj.Session.SessionManager;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.mapbox.android.core.location.LocationEngine;
 import com.mapbox.android.core.location.LocationEngineCallback;
 import com.mapbox.android.core.location.LocationEngineProvider;
@@ -164,6 +169,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
@@ -266,11 +272,14 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
     // other sensors' variables
     private DatabaseReference database;
     private Handler camHandler = new Handler();
+    SessionManager sessionManager;
+    private String username;
+    double rielZ;
     private Runnable pushDataRunnable;
     private static final int REQUEST_LOCATION_PERMISSION = 1;
     private List<Pair<Double, Double>> potholeLocations;
-    private static final float SPEED_THRESHOLD = 0f;
-    private static final float DELTA_Z_THRESHOLD = 7.0f;
+    private static final float SPEED_THRESHOLD = 15f;
+    private static final float DELTA_Z_THRESHOLD = 100.0f;
 
     //--------------------------Navigation Register--------------------------------
 
@@ -523,6 +532,10 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
+        sessionManager = new SessionManager(this);
+        HashMap<String, String> userDetails = sessionManager.getUserDetails();
+        username = userDetails.get(SessionManager.KEY_NAME);
 
         // Initialize Firebase
         if (database == null) {
@@ -852,7 +865,7 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
                                 Date date = new Date(timestamp);
                                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
                                 String formattedDate = sdf.format(date);
-                                SensorData sensorData = new SensorData(deltaX, deltaY, deltaZ, pitch, roll, speedKmh, latitude, longitude, 0.938689541231339, formattedDate);
+                                SensorData sensorData = new SensorData(deltaX, deltaY, deltaZ, pitch, roll, speedKmh, latitude, longitude, 0.938689541231339,username, formattedDate);
                                 Log.d(TAG, "Pushing data to Firebase: " + sensorData.toString());
                                 database.child("sensorData").push().setValue(sensorData)
                                         .addOnSuccessListener(aVoid -> {
@@ -1121,6 +1134,7 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
         maneuverApi = new MapboxManeuverApi(new MapboxDistanceFormatter(new DistanceFormatterOptions.Builder(MapPage.this).build()));
         routeArrowView = new MapboxRouteArrowView(new RouteArrowOptions.Builder(MapPage.this).build());
     }
+
     private void showModalPopup(Point point) {
         fetchRoadName(point, new RoadNameCallback() {
             @Override
@@ -1129,10 +1143,37 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
                 dialog.setContentView(R.layout.modal_popup);
                 dialog.setCancelable(true);
 
+                Button closeBtn = dialog.findViewById(R.id.quit_button);
+                closeBtn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        dialog.dismiss();
+                    }
+                });
+
                 TextView roadNameTextView = dialog.findViewById(R.id.road_name_text_view);
                 roadNameTextView.setText(roadName);
 
                 dialog.show();
+
+                ImageView potholeImage = dialog.findViewById(R.id.pothole_image);
+                /*FirebaseFirestore db = FirebaseFirestore.getInstance();
+                db.collection("potholes").document()
+                        .get()
+                        .addOnSuccessListener(documentSnapshot -> {
+                            if (documentSnapshot.exists()) {
+                                String encodedImage = documentSnapshot.getString("userImage");
+
+                                if (encodedImage != null && !encodedImage.isEmpty()) {
+                                    // Decode Base64 string to Bitmap
+                                    byte[] decodedBytes = Base64.decode(encodedImage, Base64.DEFAULT);
+                                    Bitmap imageBitmap = BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.length);
+
+                                    // Set the image to userImageView
+                                    potholeImage.setImageBitmap(imageBitmap);
+                                }
+                            }
+                        });*/
             }
         });
     }
@@ -1141,7 +1182,7 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
         CameraOptions cameraOptions = new CameraOptions.Builder().bearing(0.0).build();
         getCamera(mapView).easeTo(cameraOptions, animationOptions);
     }
-    private void animateIconSizeChange(final PointAnnotation annotation, final float startSize, final float endSize) {
+    /*private void animateIconSizeChange(final PointAnnotation annotation, final float startSize, final float endSize) {
         ValueAnimator animator = ValueAnimator.ofFloat((float) startSize, (float) endSize);
         animator.setDuration(300); // Duration of the animation in milliseconds
         animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
@@ -1153,14 +1194,14 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
             }
         });
         animator.start();
-    }
+    }*/
     private void changeIconSize(float iconSize) {
         if (pointAnnotationManager != null) {
             List<PointAnnotation> annotations = pointAnnotationManager.getAnnotations();
             for (PointAnnotation annotation : annotations) {
                 if (annotation.getIconOpacity() == 0.95) { // Check if it's a pothole point
-                    double currentSize = annotation.getIconSize();
-                    animateIconSizeChange(annotation, (float) currentSize, iconSize);
+                    annotation.setIconSize((double) iconSize);
+                    pointAnnotationManager.update(annotation);
                 }
             }
         }
@@ -1443,13 +1484,13 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
 
     private void pushData() {
         calcPoint();
-        if (point != 0 && speedKmh > SPEED_THRESHOLD && deltaZ > DELTA_Z_THRESHOLD) {
+        if (point != 0 && speedKmh > SPEED_THRESHOLD && rielZ > DELTA_Z_THRESHOLD) {
             long timestamp = System.currentTimeMillis();
             Date date = new Date(timestamp);
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
             String formattedDate = sdf.format(date);
 
-            SensorData sensorData = new SensorData(deltaX, deltaY, deltaZ, pitch, roll, speedKmh, latitude, longitude, point, formattedDate);
+            SensorData sensorData = new SensorData(deltaX, deltaY, (float) rielZ, pitch, roll, speedKmh, latitude, longitude, point, username, formattedDate);
             Log.d(TAG, "Pushing data to Firebase: " + sensorData.toString());
             database.child("sensorData").push().setValue(sensorData)
                     .addOnSuccessListener(aVoid -> {
@@ -1497,7 +1538,6 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
     }
 
     public void calcPoint(){
-        double rielZ;
         if (deltaZ != 0){
             rielZ = deltaZ * (1 / Math.cos(Math.toRadians(pitch))) * (1 / Math.cos(Math.toRadians(roll)));
             if (speedKmh <= 7){

@@ -35,10 +35,14 @@ public class LocationRetriever {
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     Double latitude = snapshot.child("latitude").getValue(Double.class);
                     Double longitude = snapshot.child("longitude").getValue(Double.class);
+                    Long timestamp = snapshot.child("timestamp").getValue(Long.class);
+                    String id = snapshot.getKey();
                     if (latitude != null && longitude != null) {
                         locationList.add(new Pair<>(latitude, longitude));
+                        Log.d("LocationRetriever", "ID: " + id + ", Timestamp: " + timestamp);
                     }
                 }
+
                 saveLocationsToLocalStorage(locationList);
                 callback.onLocationsRetrieved(locationList);
             }
