@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/main_background"
-    tools:context=".SettingPage">
+    tools:context=".Setting.SettingPage">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -164,7 +164,7 @@
                                     android:background="@color/magenta"/>
 
                                 <RelativeLayout
-                                    android:id="@+id/security_layout"
+                                    android:id="@+id/resetpw_layout"
                                     android:layout_width="match_parent"
                                     android:layout_height="match_parent"
                                     android:layout_weight="1">
@@ -175,7 +175,7 @@
                                         android:orientation="horizontal">
 
                                         <ImageView
-                                            android:id="@+id/setting_security_icon"
+                                            android:id="@+id/setting_resetpw_icon"
                                             android:layout_width="20dp"
                                             android:layout_height="20dp"
                                             android:layout_gravity="center"
@@ -185,7 +185,7 @@
                                             android:src="@drawable/lock" />
 
                                         <TextView
-                                            android:id="@+id/setting_security"
+                                            android:id="@+id/setting_resetpw"
                                             android:layout_width="match_parent"
                                             android:layout_height="match_parent"
                                             android:layout_marginStart="10dp"
@@ -197,7 +197,7 @@
                                     </LinearLayout>
 
                                     <androidx.appcompat.widget.AppCompatButton
-                                        android:id="@+id/setting_security_button"
+                                        android:id="@+id/setting_resetpw_button"
                                         android:layout_width="match_parent"
                                         android:layout_height="match_parent"
                                         android:background="@android:color/transparent"
@@ -250,7 +250,7 @@
                                     </LinearLayout>
 
                                     <androidx.appcompat.widget.AppCompatButton
-                                        android:id="@+id/anonymous_button"
+                                        android:id="@+id/setting_anonymous_button"
                                         android:layout_width="match_parent"
                                         android:layout_height="match_parent"
                                         android:background="@android:color/transparent"
@@ -305,7 +305,7 @@
                                     </LinearLayout>
 
                                     <androidx.appcompat.widget.AppCompatButton
-                                        android:id="@+id/delete_button"
+                                        android:id="@+id/setting_delete_button"
                                         android:layout_width="match_parent"
                                         android:layout_height="match_parent"
                                         android:background="@android:color/transparent"
@@ -492,7 +492,7 @@
                                     </LinearLayout>
 
                                     <androidx.appcompat.widget.AppCompatButton
-                                        android:id="@+id/warn_notification_button"
+                                        android:id="@+id/setting_warn_notification_button"
                                         android:layout_width="match_parent"
                                         android:layout_height="match_parent"
                                         android:background="@android:color/transparent"
@@ -776,7 +776,7 @@
                                     </LinearLayout>
 
                                     <androidx.appcompat.widget.AppCompatButton
-                                        android:id="@+id/theme_button"
+                                        android:id="@+id/setting_theme_button"
                                         android:layout_width="match_parent"
                                         android:layout_height="match_parent"
                                         android:background="@android:color/transparent"
@@ -835,9 +835,10 @@
                                             android:layout_width="20dp"
                                             android:layout_height="20dp"
                                             android:layout_gravity="center"
+                                            android:paddingTop="5dp"
                                             android:layout_marginStart="20dp"
                                             android:layout_marginEnd="5dp"
-                                            android:src="@drawable/lock" />
+                                            android:src="@drawable/support" />
 
                                         <TextView
                                             android:id="@+id/setting_support"
@@ -886,9 +887,10 @@
                                             android:layout_width="20dp"
                                             android:layout_height="20dp"
                                             android:layout_gravity="center"
+                                            android:paddingTop="5dp"
                                             android:layout_marginStart="20dp"
                                             android:layout_marginEnd="5dp"
-                                            android:src="@drawable/lock" />
+                                            android:src="@drawable/document" />
 
                                         <TextView
                                             android:id="@+id/setting_term"

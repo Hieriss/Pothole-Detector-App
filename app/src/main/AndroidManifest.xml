@@ -6,8 +6,9 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission
+        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
         android:maxSdkVersion="32" />
 
     <application
@@ -22,6 +23,12 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Prj"
         tools:targetApi="31" >
+        <activity
+            android:name=".Setting.DeleteAccountRequest"
+            android:exported="false" />
+        <activity
+            android:name=".Setting.LogoutRequest"
+            android:exported="false" />
 
         <meta-data
             android:name="com.mapbox.maps.location.gms.SKIP_IF_INVALID_VERSION"
@@ -44,91 +51,92 @@
             android:theme="@style/TransparentActivityTheme" />
         <activity
             android:name=".AccountSettingPage"
-            android:screenOrientation="portrait"
-            android:exported="false" />
+            android:exported="false"
+            android:screenOrientation="portrait" />
         <activity
-            android:name=".TermsAndPoliciesPage"
-            android:screenOrientation="portrait"
-            android:exported="false" />
+            android:name=".Setting.TermsAndPoliciesPage"
+            android:exported="false"
+            android:screenOrientation="portrait" />
         <activity
-            android:name=".SupportPage"
-            android:screenOrientation="portrait"
-            android:exported="false" />
+            android:name=".Setting.SupportPage"
+            android:exported="false"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".ReportbugsSettingPage"
-            android:screenOrientation="portrait"
-            android:exported="false" />
+            android:exported="false"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".ActivitycenterSettingPage"
-            android:screenOrientation="portrait"
-            android:exported="false" />
+            android:exported="false"
+            android:screenOrientation="portrait" />
         <activity
-            android:name=".DisplaySettingPage"
-            android:screenOrientation="portrait"
-            android:exported="false" />
+            android:name=".Setting.DisplaySettingPage"
+            android:exported="false"
+            android:screenOrientation="portrait" />
         <activity
-            android:name=".ThemeSettingPage"
-            android:screenOrientation="portrait"
-            android:exported="false" />
+            android:name=".Setting.ThemeSettingPage"
+            android:exported="false"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".SecuritySettingPage"
-            android:screenOrientation="portrait"
-            android:exported="false" />
+            android:exported="false"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".NotificationSettingPage"
-            android:screenOrientation="portrait"
-            android:exported="false" />
+            android:exported="false"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".Authen.ForgotPassword"
             android:exported="false"
-            android:screenOrientation="portrait"
-            android:launchMode="singleTask" />
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".Map.MapPage"
-            android:screenOrientation="portrait"
-            android:exported="false" />
+            android:exported="false"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".Profile.ProfilePage"
-            android:screenOrientation="portrait"
-            android:exported="false" />
+            android:exported="false"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".HistoryPage"
-            android:screenOrientation="portrait"
-            android:exported="false" />
+            android:exported="false"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".NotificationPage"
-            android:screenOrientation="portrait"
-            android:exported="false" />
+            android:exported="false"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".Dashboard.MenuPage"
             android:exported="false"
             android:screenOrientation="portrait"
             android:theme="@style/TransparentActivityTheme" />
         <activity
-            android:name=".SettingPage"
-            android:screenOrientation="portrait"
-            android:exported="false" />
+            android:name=".Setting.SettingPage"
+            android:exported="false"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".Authen.SignIn"
             android:exported="false"
-            android:screenOrientation="portrait"
-            android:launchMode="singleTask" />
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".Dashboard.MainPage"
             android:exported="false"
-            android:screenOrientation="portrait"
-            android:launchMode="singleTask" />
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".Authen.SignUp"
             android:exported="false"
-            android:screenOrientation="portrait"
-            android:launchMode="singleTask" />
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".Authen.IntroPage"
-            android:screenOrientation="portrait"
-            android:exported="true" >
+            android:exported="true"
+            android:screenOrientation="portrait" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>

@@ -12,11 +12,10 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.example.prj.HistoryPage;
-import com.example.prj.Map.MapPage;
 import com.example.prj.NotificationPage;
 import com.example.prj.Profile.ProfilePage;
 import com.example.prj.R;
-import com.example.prj.SettingPage;
+import com.example.prj.Setting.SettingPage;
 
 public class MenuPage extends AppCompatActivity {
     Button quitButton, settingButton, profileButton, notificationButton, historyButton;

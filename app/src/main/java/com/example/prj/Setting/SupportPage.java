@@ -1,4 +1,4 @@
-package com.example.prj;
+package com.example.prj.Setting;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -11,7 +11,9 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-public class ActivitycenterSettingPage extends AppCompatActivity {
+import com.example.prj.R;
+
+public class SupportPage extends AppCompatActivity {
 
     Button backButton;
 
@@ -19,7 +21,7 @@ public class ActivitycenterSettingPage extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_activitycenter_setting_page);
+        setContentView(R.layout.activity_support_page);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
@@ -30,7 +32,7 @@ public class ActivitycenterSettingPage extends AppCompatActivity {
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(ActivitycenterSettingPage.this, SettingPage.class);
+                Intent intent = new Intent(SupportPage.this, SettingPage.class);
                 startActivity(intent);
             }
         });

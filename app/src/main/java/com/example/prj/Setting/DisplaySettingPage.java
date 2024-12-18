@@ -1,4 +1,4 @@
-package com.example.prj;
+package com.example.prj.Setting;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
@@ -11,18 +11,14 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
-import android.content.Context;
-import android.content.res.Resources;
+
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import java.util.Locale;
-import androidx.appcompat.app.AlertDialog;
-import android.content.DialogInterface;
-import android.os.Bundle;
-import android.util.Log;
-import android.view.View;
-import android.widget.RelativeLayout;
+
 import android.widget.TextView;
+
+import com.example.prj.R;
 
 public class DisplaySettingPage extends AppCompatActivity {
 

@@ -119,8 +119,12 @@
     <string name="notification_text">Thông báo</string>
     <string name="history_text">Lịch sử phát hiện</string>
     <string name="navigate">Dẫn đường</string>
-
-
+    <string name="logout_title">Bạn có muốn đăng xuất?</string>
+    <string name="logout_description">Xác nhận rằng bạn muốn đăng xuất</string>
+    <string name="logout_confirm">Đúng, tôi muốn</string>
+    <string name="logout_decline">Không</string>
+    <string name="delete_account_title">Bạn có muốn xóa tài khoản của mình không?</string>
+    <string name="delete_account_description">Xoá tài khoản đồng nghĩa với việc xóa hết thông tin!\n Bạn có thực sự muốn xóa?</string>
 
 
 

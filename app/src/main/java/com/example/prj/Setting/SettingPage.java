@@ -1,7 +1,6 @@
-package com.example.prj;
+package com.example.prj.Setting;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -12,13 +11,14 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-import com.example.prj.Authen.SignIn;
+import com.example.prj.Authen.ForgotPassword;
 import com.example.prj.Dashboard.MainPage;
-import com.example.prj.Session.SessionManager;
+import com.example.prj.Profile.ProfilePage;
+import com.example.prj.R;
 
 public class SettingPage extends AppCompatActivity {
 
-    Button homeButton, accountButton, securityButton, notificationButton, displayButton, activityCenterButton, reportBugsButton, supportButton, termButton, switchAccountButton, logoutButton, themeButton;
+    Button homeButton, accountButton, resetPasswordButton, anonymousUserButton, logoutButton, deleteAccountButton, detectNotificationButton, warnNotificationButton, languageButton, themeButton, supportButton, termButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,6 +37,7 @@ public class SettingPage extends AppCompatActivity {
             public void onClick(View view) {
                 Intent intent = new Intent(SettingPage.this, MainPage.class);
                 startActivity(intent);
+                finish();
             }
         });
 
@@ -44,60 +45,71 @@ public class SettingPage extends AppCompatActivity {
         accountButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(SettingPage.this, AccountSettingPage.class);
+                Intent intent = new Intent(SettingPage.this, ProfilePage.class);
                 startActivity(intent);
+                finish();
             }
         });
 
-        securityButton = findViewById(R.id.setting_security_button);
-        securityButton.setOnClickListener(new View.OnClickListener() {
+        resetPasswordButton = findViewById(R.id.setting_resetpw_button);
+        resetPasswordButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(SettingPage.this, SecuritySettingPage.class);
+                Intent intent = new Intent(SettingPage.this, ForgotPassword.class);
                 startActivity(intent);
+                finish();
             }
         });
 
-        notificationButton = findViewById(R.id.setting_notification_button);
-        notificationButton.setOnClickListener(new View.OnClickListener() {
+        anonymousUserButton = findViewById(R.id.setting_anonymous_button);
+        anonymousUserButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(SettingPage.this, NotificationSettingPage.class);
-                startActivity(intent);
+
             }
         });
 
-        displayButton = findViewById(R.id.setting_display_button);
-        displayButton.setOnClickListener(new View.OnClickListener() {
+        deleteAccountButton = findViewById(R.id.setting_delete_button);
+        deleteAccountButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(SettingPage.this, DeleteAccountRequest.class);
+                startActivity(intent);
+                finish();
+            }
+        });
+
+        detectNotificationButton = findViewById(R.id.setting_detect_notification_button);
+        detectNotificationButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+            }
+        });
+
+        warnNotificationButton = findViewById(R.id.setting_warn_notification_button);
+        warnNotificationButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+            }
+        });
+
+        languageButton = findViewById(R.id.setting_language_button);
+        languageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(SettingPage.this, DisplaySettingPage.class);
                 startActivity(intent);
+                finish();
             }
         });
+
         themeButton = findViewById(R.id.setting_theme_button);
         themeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(SettingPage.this, ThemeSettingPage.class);
                 startActivity(intent);
-            }
-        });
-        activityCenterButton = findViewById(R.id.setting_activity_center_button);
-        activityCenterButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(SettingPage.this, ActivitycenterSettingPage.class);
-                startActivity(intent);
-            }
-        });
-
-        reportBugsButton = findViewById(R.id.setting_report_bugs_button);
-        reportBugsButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(SettingPage.this, ReportbugsSettingPage.class);
-                startActivity(intent);
+                finish();
             }
         });
 
@@ -107,6 +119,7 @@ public class SettingPage extends AppCompatActivity {
             public void onClick(View view) {
                 Intent intent = new Intent(SettingPage.this, SupportPage.class);
                 startActivity(intent);
+                finish();
             }
         });
 
@@ -116,6 +129,7 @@ public class SettingPage extends AppCompatActivity {
             public void onClick(View view) {
                 Intent intent = new Intent(SettingPage.this, TermsAndPoliciesPage.class);
                 startActivity(intent);
+                finish();
             }
         });
 
@@ -123,16 +137,7 @@ public class SettingPage extends AppCompatActivity {
         logoutButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                SessionManager sessionManager = new SessionManager(SettingPage.this);
-                sessionManager.logoutUser();
-
-                // Send broadcast to destroy MainPage activity
-                Intent broadcastIntent = new Intent("com.example.prj.LOGOUT");
-                sendBroadcast(broadcastIntent);
-
-                // Navigate back to the login screen
-                Intent intent = new Intent(SettingPage.this, SignIn.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                Intent intent = new Intent(SettingPage.this, LogoutRequest.class);
                 startActivity(intent);
                 finish();
             }

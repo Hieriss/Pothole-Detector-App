@@ -119,6 +119,13 @@
     <string name="notification_text">Notification</string>
     <string name="history_text">History</string>
     <string name="navigate">Navigate</string>
+    <string name="logout_title">Do you want to logout?</string>
+    <string name="logout_description">Confirm that you want to logout</string>
+    <string name="logout_confirm">Yes I do</string>
+    <string name="logout_decline">Nuh uh</string>
+    <string name="delete_account_title">Do you want to delete your account?</string>
+    <string name="delete_account_description">Delete account means delete all your infomation!\n Do you really want to delete?</string>
+
 
 
     <string name="mapbox_access_token" translatable="false" tools:ignore="UnusedResources">sk.eyJ1IjoiaGllcmlzcyIsImEiOiJjbTNuZmwya3ExNnVpMmxzZG9wOGNyN24xIn0.Bnsn24Jk7ZmetYO_MxQHcA</string>
