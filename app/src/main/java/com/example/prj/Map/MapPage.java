@@ -373,26 +373,34 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
             List<Address> addresses = geocoder.getFromLocation(point.latitude(), point.longitude(), 1);
             if (addresses != null && !addresses.isEmpty()) {
                 Address address = addresses.get(0);
-                String roadName = address.getThoroughfare();
-                if (roadName == null) {
-                    roadName = address.getFeatureName(); // Try to get the feature name if thoroughfare is null
-                }
-                if (roadName == null) {
-                    roadName = address.getSubLocality(); // Try to get the sub-locality if feature name is null
-                }
-                if (roadName != null) {
-                    callback.onRoadNameFetched(roadName);
-                } else {
-                    callback.onRoadNameFetched("Unknown road");
-                }
+                String roadName = extractMostAccurateRoadName(address);
+                callback.onRoadNameFetched(roadName != null ? roadName : "Unknown road");
             } else {
                 callback.onRoadNameFetched("Unknown road");
             }
         } catch (IOException e) {
-            // do nothing
             callback.onRoadNameFetched("Unknown road");
         }
     }
+
+    private String extractMostAccurateRoadName(Address address) {
+        // Check for the most accurate fields in priority order
+        String roadName = address.getThoroughfare(); // Main road name
+        if (roadName == null) {
+            roadName = address.getSubThoroughfare(); // House number + road
+        }
+        if (roadName == null) {
+            roadName = address.getFeatureName().toString(); // Landmark or feature name
+        }
+        if (roadName == null) {
+            roadName = address.getSubLocality(); // Sub-locality
+        }
+        if (roadName == null) {
+            roadName = address.getLocality(); // Locality (city, town, etc.)
+        }
+        return roadName;
+    }
+
 
     interface RoadNameCallback {
         void onRoadNameFetched(String roadName);
@@ -906,6 +914,48 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
                                 pointAnnotationManager.create(pointAnnotationOptions);
 
                                 containterView.setVisibility(View.VISIBLE);
+                                if (!isRouteActive) {
+                                    navigateBtn.setText("Focus On");
+                                }
+
+                                walkingBtn.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View view) {
+                                        walkingView.setBackground(getResources().getDrawable(R.drawable.driving_profile_button_background_choosen));
+                                        cyclingView.setBackground(getResources().getDrawable(R.drawable.driving_profile_button_background_not_choosen));
+                                        drivingView.setBackground(getResources().getDrawable(R.drawable.driving_profile_button_background_not_choosen));
+                                        routeType = 0;
+                                        walkingBtn.setEnabled(false);
+                                        cyclingBtn.setEnabled(true);
+                                        drivingBtn.setEnabled(true);
+                                    }
+                                });
+
+                                cyclingBtn.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View view) {
+                                        cyclingView.setBackground(getResources().getDrawable(R.drawable.driving_profile_button_background_choosen));
+                                        walkingView.setBackground(getResources().getDrawable(R.drawable.driving_profile_button_background_not_choosen));
+                                        drivingView.setBackground(getResources().getDrawable(R.drawable.driving_profile_button_background_not_choosen));
+                                        routeType = 1;
+                                        cyclingBtn.setEnabled(false);
+                                        walkingBtn.setEnabled(true);
+                                        drivingBtn.setEnabled(true);
+                                    }
+                                });
+
+                                drivingBtn.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View view) {
+                                        drivingView.setBackground(getResources().getDrawable(R.drawable.driving_profile_button_background_choosen));
+                                        walkingView.setBackground(getResources().getDrawable(R.drawable.driving_profile_button_background_not_choosen));
+                                        cyclingView.setBackground(getResources().getDrawable(R.drawable.driving_profile_button_background_not_choosen));
+                                        routeType = 2;
+                                        drivingBtn.setEnabled(false);
+                                        walkingBtn.setEnabled(true);
+                                        cyclingBtn.setEnabled(true);
+                                    }
+                                });
                             }
                         }
 
@@ -928,6 +978,7 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
                                 if (!isRouteActive) {
                                     if (!manualAddActive) {
                                         fetchRoute(point);
+                                        navigateBtn.setText("Navigate");
                                     } else {
                                         Toast.makeText(MapPage.this, "Turn off debug add pothole", Toast.LENGTH_SHORT).show();
                                     }
@@ -1162,38 +1213,32 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
                 });
 
                 TextView roadNameTextView = dialog.findViewById(R.id.road_name_text_view);
-                if (roadName == "Tô Vĩnh Diện") {
+                if (roadName.equals("Tô Vĩnh Diện")) {
                     roadName = "Đường Mạc Đĩnh Chi";
-                }
-                else if (roadName == "Hiệp Bình" || roadName == "VQJV+2F9" || roadName == "33, 99, 53" || roadName == "VQJW+5FH") {
+                } else if (roadName.equals("Hiệp Bình") || roadName.equals("VQJV+2F9") || roadName.equals("33, 99, 53") || roadName.equals("VQJW+5FH")) {
                     roadName = "Đường Nguyễn Du";
-                }
-                else if (roadName == "VRH2+74C" || roadName == "VRH2+27J" || roadName == "VRG2+G3M") {
+                } else if (roadName.equals("VRH2+74C") || roadName.equals("VRH2+27J") || roadName.equals("VRG2+G3M")) {
                     roadName = "Đường William Shakespeare";
-                }
-                else if (roadName == "VRG2+CFW") {
-                    roadName = "Lưu Hữu Phước";
-                }
-                else if (roadName == "VRF3+46J" || roadName == "VRC3+V7G") {
+                } else if (roadName.equals("VRG2+CFW") || roadName.equals("VRG3+PC8")) {
+                    roadName = "Đường Lưu Hữu Phước";
+                } else if (roadName.equals("VRF3+46J ") || roadName.equals("VRC3+V7G")) {
                     roadName = "Đường Hàn Thuyên";
+                } else if (roadName.equals("A2 / A1")) {
+                    roadName = "Đường Lê Quý Đôn";
+                } else {
+                    roadName = "Unknown Road";
                 }
                 roadNameTextView.setText(roadName);
-
-
                 dialog.show();
-
                 Quadruple<Double, Double, String, String> location = findQuadrupleByPoint(point);
                 if (location == null) {
                     Log.e(TAG, "Location not found for the given point.");
                     return;
                 }
-
                 String timestamp = location.third;
                 String id = location.fourth;
-
                 TextView timeTextView = dialog.findViewById(R.id.time_text_view);
                 timeTextView.setText(timestamp);
-
                 ImageView potholeImage = dialog.findViewById(R.id.pothole_image);
 
                 // download image
