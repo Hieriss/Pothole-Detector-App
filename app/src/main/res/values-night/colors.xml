@@ -8,6 +8,6 @@
     <color name="light_gray">#ABABAB</color>
     <color name="magenta">#790A83</color>
     <color name="light_purple">#FEC5FF</color>
-    <color name="user_icon_color">#000000</color>
-    <color name="box_background">#FFFFFF</color>
+    <color name="user_icon_color">#FFFFFF</color>
+    <color name="box_background">#000000</color>
 </resources>

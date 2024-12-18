@@ -53,6 +53,7 @@ import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
 import androidx.core.app.ActivityCompat;
@@ -61,7 +62,7 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-import com.example.prj.History.PotholeModel;
+import com.example.prj.Profile.ProfilePage;
 import com.example.prj.R;
 import com.example.prj.Session.SessionManager;
 import com.google.android.material.button.MaterialButton;
@@ -166,13 +167,16 @@ import com.mapbox.search.ui.view.SearchResultsView;
 import com.mapbox.turf.TurfMeasurement;
 import com.mapbox.turf.TurfMisc;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Objects;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -209,6 +213,9 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
     private Runnable debounceRunnable = null;
     private Runnable retrieveLocationsRunnable = null;
     int routeType = 2;
+    private static final int PICK_IMAGE_REQUEST = 1;
+    private Uri imageUri;
+    ImageView potholeImage;
 
     // map component
     private MapboxNavigation mapboxNavigation;
@@ -235,6 +242,8 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
     private AppCompatButton cyclingBtn;
     private AppCompatButton drivingBtn;
     private AppCompatButton backBtn;
+    private AppCompatButton quitBtn;
+    private AppCompatButton uploadImage;
 
     // search variables
     private PlaceAutocomplete placeAutocomplete;
@@ -374,25 +383,32 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
             List<Address> addresses = geocoder.getFromLocation(point.latitude(), point.longitude(), 1);
             if (addresses != null && !addresses.isEmpty()) {
                 Address address = addresses.get(0);
-                String roadName = address.getThoroughfare();
-                if (roadName == null) {
-                    roadName = address.getFeatureName(); // Try to get the feature name if thoroughfare is null
-                }
-                if (roadName == null) {
-                    roadName = address.getSubLocality(); // Try to get the sub-locality if feature name is null
-                }
-                if (roadName != null) {
-                    callback.onRoadNameFetched(roadName);
-                } else {
-                    callback.onRoadNameFetched("Unknown road");
-                }
+                String roadName = extractMostAccurateRoadName(address);
+                callback.onRoadNameFetched(roadName != null ? roadName : "Unknown road");
             } else {
                 callback.onRoadNameFetched("Unknown road");
             }
         } catch (IOException e) {
-            // do nothing
             callback.onRoadNameFetched("Unknown road");
         }
+    }
+
+    private String extractMostAccurateRoadName(Address address) {
+        // Check for the most accurate fields in priority order
+        String roadName = address.getThoroughfare(); // Main road name
+        if (roadName == null) {
+            roadName = address.getSubThoroughfare(); // House number + road
+        }
+        if (roadName == null) {
+            roadName = address.getFeatureName().toString(); // Landmark or feature name
+        }
+        if (roadName == null) {
+            roadName = address.getSubLocality(); // Sub-locality
+        }
+        if (roadName == null) {
+            roadName = address.getLocality(); // Locality (city, town, etc.)
+        }
+        return roadName;
     }
 
     interface RoadNameCallback {
@@ -430,7 +446,7 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
         Point nearestPoint = (Point) TurfMisc.nearestPointOnLine(point, routeLineString.coordinates()).geometry();
         double distance = TurfMeasurement.distance(point, nearestPoint);
         // Define a threshold distance (in kilometers) to consider the point as being on the route
-        double thresholdDistance = 0.01; // 10 meters
+        double thresholdDistance = 0.008; // 8 meters
         return distance < thresholdDistance;
     }
 
@@ -523,8 +539,6 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
         }
     };
 
-    public List<PotholeModel> sensorDataList;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -535,8 +549,6 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-
-        sensorDataList = new ArrayList<>();
 
         sessionManager = new SessionManager(this);
         HashMap<String, String> userDetails = sessionManager.getUserDetails();
@@ -549,6 +561,23 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
             database = databaseInstance.getReference();
             Log.d(TAG, "Firebase initialized");
         }
+
+        quitBtn = findViewById(R.id.quit_button);
+        quitBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (pointAnnotationManager != null) {
+                    List<PointAnnotation> annotations = pointAnnotationManager.getAnnotations();
+                    for (PointAnnotation annotation : annotations) {
+                        if (annotation.getIconOpacity() != 0.95) { // Check if it's a pothole point
+                            pointAnnotationManager.delete(annotation);
+                        }
+                    }
+                    containterView.setVisibility(View.GONE);
+                    QuitRouting();
+                }
+            }
+        });
 
         // Initialize potholeLocations
         potholeLocations = new ArrayList<>();
@@ -579,17 +608,27 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
                         Log.e(TAG, "Failed to retrieve locations", e);
                     }
                 });
-                for (Quadruple<Double, Double, String, String> location : potholeLocations) {
-                    Point point = Point.fromLngLat(location.second, location.first);
-                    Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.pothole_on_map);
-                    PointAnnotationOptions pointAnnotationOptions = new PointAnnotationOptions()
-                            .withTextAnchor(TextAnchor.CENTER)
-                            .withIconAnchor(IconAnchor.CENTER)
-                            .withIconSize(iconSize)
-                            .withIconOpacity(0.95)
-                            .withIconImage(bitmap)
-                            .withPoint(point);
-                    pointAnnotationManager.create(pointAnnotationOptions);
+                if (pointAnnotationManager != null) {
+                    List<PointAnnotation> annotations = pointAnnotationManager.getAnnotations();
+                    if (annotations != null) {
+                        for (PointAnnotation annotation : annotations) {
+                            if (annotation.getIconOpacity() == 0.95) {
+                                pointAnnotationManager.delete(annotation);
+                            }
+                        }
+                    }
+                    for (Quadruple<Double, Double, String, String> location : potholeLocations) {
+                        Point point = Point.fromLngLat(location.second, location.first);
+                        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.pothole_on_map);
+                        PointAnnotationOptions pointAnnotationOptions = new PointAnnotationOptions()
+                                .withTextAnchor(TextAnchor.CENTER)
+                                .withIconAnchor(IconAnchor.CENTER)
+                                .withIconSize(iconSize)
+                                .withIconOpacity(0.95)
+                                .withIconImage(bitmap)
+                                .withPoint(point);
+                        pointAnnotationManager.create(pointAnnotationOptions);
+                    }
                 }
 
                 // Schedule the next update after 1 minute
@@ -901,6 +940,48 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
                                 pointAnnotationManager.create(pointAnnotationOptions);
 
                                 containterView.setVisibility(View.VISIBLE);
+                                if (!isRouteActive) {
+                                    navigateBtn.setText("Focus On");
+                                }
+
+                                walkingBtn.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View view) {
+                                        walkingView.setBackground(getResources().getDrawable(R.drawable.driving_profile_button_background_choosen));
+                                        cyclingView.setBackground(getResources().getDrawable(R.drawable.driving_profile_button_background_not_choosen));
+                                        drivingView.setBackground(getResources().getDrawable(R.drawable.driving_profile_button_background_not_choosen));
+                                        routeType = 0;
+                                        walkingBtn.setEnabled(false);
+                                        cyclingBtn.setEnabled(true);
+                                        drivingBtn.setEnabled(true);
+                                    }
+                                });
+
+                                cyclingBtn.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View view) {
+                                        cyclingView.setBackground(getResources().getDrawable(R.drawable.driving_profile_button_background_choosen));
+                                        walkingView.setBackground(getResources().getDrawable(R.drawable.driving_profile_button_background_not_choosen));
+                                        drivingView.setBackground(getResources().getDrawable(R.drawable.driving_profile_button_background_not_choosen));
+                                        routeType = 1;
+                                        cyclingBtn.setEnabled(false);
+                                        walkingBtn.setEnabled(true);
+                                        drivingBtn.setEnabled(true);
+                                    }
+                                });
+
+                                drivingBtn.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View view) {
+                                        drivingView.setBackground(getResources().getDrawable(R.drawable.driving_profile_button_background_choosen));
+                                        walkingView.setBackground(getResources().getDrawable(R.drawable.driving_profile_button_background_not_choosen));
+                                        cyclingView.setBackground(getResources().getDrawable(R.drawable.driving_profile_button_background_not_choosen));
+                                        routeType = 2;
+                                        drivingBtn.setEnabled(false);
+                                        walkingBtn.setEnabled(true);
+                                        cyclingBtn.setEnabled(true);
+                                    }
+                                });
                             }
                         }
 
@@ -923,6 +1004,7 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
                                 if (!isRouteActive) {
                                     if (!manualAddActive) {
                                         fetchRoute(point);
+                                        navigateBtn.setText("Navigate");
                                     } else {
                                         Toast.makeText(MapPage.this, "Turn off debug add pothole", Toast.LENGTH_SHORT).show();
                                     }
@@ -1157,44 +1239,132 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
                 });
 
                 TextView roadNameTextView = dialog.findViewById(R.id.road_name_text_view);
+                if (roadName.equals("Tô Vĩnh Diện")) {
+                    roadName = "Đường Mạc Đĩnh Chi";
+                } else if (roadName.equals("Hiệp Bình") || roadName.equals("VQJV+2F9") || roadName.equals("33, 99, 53") || roadName.equals("VQJW+5FH")) {
+                    roadName = "Đường Nguyễn Du";
+                } else if (roadName.equals("VRH2+74C") || roadName.equals("VRH2+27J") || roadName.equals("VRG2+G3M")) {
+                    roadName = "Đường William Shakespeare";
+                } else if (roadName.equals("VRG2+CFW") || roadName.equals("VRG3+PC8")) {
+                    roadName = "Đường Lưu Hữu Phước";
+                } else if (roadName.equals("VRF3+46J ") || roadName.equals("VRC3+V7G")) {
+                    roadName = "Đường Hàn Thuyên";
+                } else if (roadName.equals("A2 / A1")) {
+                    roadName = "Đường Lê Quý Đôn";
+                }
                 roadNameTextView.setText(roadName);
-
-                dialog.show();
 
                 Quadruple<Double, Double, String, String> location = findQuadrupleByPoint(point);
                 if (location == null) {
                     Log.e(TAG, "Location not found for the given point.");
                     return;
                 }
-
                 String timestamp = location.third;
                 String id = location.fourth;
+                //Toast.makeText(MapPage.this, "ID: " + id, Toast.LENGTH_SHORT).show();
 
                 TextView timeTextView = dialog.findViewById(R.id.time_text_view);
-                roadNameTextView.setText(timestamp);
-
+                timeTextView.setText(timestamp);
                 ImageView potholeImage = dialog.findViewById(R.id.pothole_image);
 
                 // download image
-                FirebaseFirestore db = FirebaseFirestore.getInstance();
-                db.collection("potholes").document(id)
-                        .get()
-                        .addOnSuccessListener(documentSnapshot -> {
-                            if (documentSnapshot.exists()) {
-                                String encodedImage = documentSnapshot.getString("Image");
+                downloadImage(id, potholeImage);
 
-                                if (encodedImage != null && !encodedImage.isEmpty()) {
-                                    // Decode Base64 string to Bitmap
-                                    byte[] decodedBytes = Base64.decode(encodedImage, Base64.DEFAULT);
-                                    Bitmap imageBitmap = BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.length);
+                // upload image
+                uploadImage = dialog.findViewById(R.id.upload_image_button);
+                uploadImage.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        openFileChooser(id, potholeImage);
+                    }
+                });
 
-                                    // Set the image to userImageView
-                                    potholeImage.setImageBitmap(imageBitmap);
-                                }
-                            }
-                        });
+                dialog.show();
             }
         });
+    }
+
+    private String potholeID;
+    private ImageView selectedPotholeImage;
+
+    private void openFileChooser(String id, ImageView potholeImage) {
+        potholeID = id;
+        selectedPotholeImage = potholeImage;
+        Intent intent = new Intent();
+        intent.setType("image/*");
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(intent, PICK_IMAGE_REQUEST);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null) {
+            imageUri = data.getData();
+            potholeImage = findViewById(R.id.pothole_image);
+            uploadImage(potholeID, selectedPotholeImage);
+        }
+    }
+
+    private void uploadImage(String id, ImageView potholeImage) {
+        if (id == null || id.isEmpty()) {
+            Toast.makeText(this, "Invalid pothole ID", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if (imageUri != null) {
+            try {
+                InputStream imageStream = getContentResolver().openInputStream(imageUri);
+                Bitmap selectedImage = BitmapFactory.decodeStream(imageStream);
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                selectedImage.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+                byte[] imageBytes = baos.toByteArray();
+                String encodedImage = Base64.encodeToString(imageBytes, Base64.DEFAULT);
+                storeImageInFirestore(encodedImage, id, potholeImage);
+                potholeImage.setImageBitmap(selectedImage);
+            } catch (Exception e) {
+                Toast.makeText(this, "Failed to encode image: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                Log.e("UploadImage", "Error: ", e);
+            }
+        } else {
+            Toast.makeText(this, "No file selected", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void storeImageInFirestore(String encodedImage, String id, ImageView potholeImage) {
+        if (id == null || id.isEmpty()) {
+            Toast.makeText(this, "Invalid pothole ID", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        Map<String, Object> user = new HashMap<>();
+        user.put("image", encodedImage);
+        db.collection("potholes").document(id)
+                .set(user)
+                .addOnSuccessListener(aVoid -> Toast.makeText(MapPage.this, "Image stored successfully", Toast.LENGTH_SHORT).show())
+                .addOnFailureListener(e -> Toast.makeText(MapPage.this, "Failed to store image: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+        downloadImage(id, potholeImage);
+    }
+
+    private void downloadImage(String id, ImageView potholeImage) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db.collection("potholes").document(id)
+                .get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    if (documentSnapshot.exists()) {
+                        String encodedImage = documentSnapshot.getString("image");
+
+                        if (encodedImage != null && !encodedImage.isEmpty()) {
+                            // Decode Base64 string to Bitmap
+                            byte[] decodedBytes = Base64.decode(encodedImage, Base64.DEFAULT);
+                            Bitmap imageBitmap = BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.length);
+
+                            // Set the image to userImageView
+                            potholeImage.setImageBitmap(imageBitmap);
+                        }
+                    }
+                });
     }
 
     private void resetMapBearing() {
@@ -1202,20 +1372,6 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
         CameraOptions cameraOptions = new CameraOptions.Builder().bearing(0.0).build();
         getCamera(mapView).easeTo(cameraOptions, animationOptions);
     }
-
-    /*private void animateIconSizeChange(final PointAnnotation annotation, final float startSize, final float endSize) {
-        ValueAnimator animator = ValueAnimator.ofFloat((float) startSize, (float) endSize);
-        animator.setDuration(300); // Duration of the animation in milliseconds
-        animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-            @Override
-            public void onAnimationUpdate(ValueAnimator valueAnimator) {
-                float animatedValue = (float) valueAnimator.getAnimatedValue();
-                annotation.setIconSize((double) animatedValue);
-                pointAnnotationManager.update(annotation);
-            }
-        });
-        animator.start();
-    }*/
 
     private void changeIconSize(float iconSize) {
         if (pointAnnotationManager != null) {
@@ -1238,6 +1394,7 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
                 Location location = result.getLastLocation();
                 setRoute.setEnabled(false);
                 navigateBtn.setEnabled(true);
+                navigateBtn.setText("Navigate");
                 navigateBtn.setBackgroundColor(getResources().getColor(R.color.light_purple));
                 setRoute.setText("Routing...");
                 RouteOptions.Builder builder = RouteOptions.builder();
@@ -1454,7 +1611,7 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
 
         // Check distance to annotation point
         List<PointAnnotation> annotations = pointAnnotationManager.getAnnotations();
-        double thresholdDistance = 0.01; // 10 meters
+        double thresholdDistance = 0.008; // 10 meters
         if (annotations != null) {
             for (PointAnnotation annotation : annotations) {
                 Point annotationPoint = annotation.getPoint();
@@ -1514,27 +1671,15 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
 
             SensorData sensorData = new SensorData(deltaX, deltaY, (float) rielZ, pitch, roll, speedKmh, latitude, longitude, point, username, formattedDate);
             Log.d(TAG, "Pushing data to Firebase: " + sensorData.toString());
-            String id = database.child("sensorData").push().getKey();
-            if (id != null) {
-                database.child("sensorData").child(id).setValue(sensorData)
-                        .addOnSuccessListener(aVoid -> {
-                            Log.d(TAG, "Data pushed successfully");
-                        })
-                        .addOnFailureListener(e -> {
-                            Log.e(TAG, "Failed to push data", e);
-                        });
-
-                PotholeModel listItem = new PotholeModel(latitude, longitude, formattedDate, id);
-                sensorDataList.add(listItem);
-            }
+            database.child("sensorData").push().setValue(sensorData)
+                    .addOnSuccessListener(aVoid -> {
+                        Log.d(TAG, "Data pushed successfully");
+                    })
+                    .addOnFailureListener(e -> {
+                        Log.e(TAG, "Failed to push data", e);
+                    });
             retrieveLocationsRunnable.run();
-
-            pushDataToHistory();
         }
-    }
-
-    public void pushDataToHistory(){
-
     }
 
     @Override

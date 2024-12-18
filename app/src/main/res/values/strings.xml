@@ -6,8 +6,8 @@
     <string name="already_have_account">"Already have an account ?"</string>
     <string name="re_pass">"Re-enter password"</string>
     <string name="phone_number">"Phone number"</string>
-    <string name="didnt_have_account">"Didn't have any account ?"</string>
-    <string name="forgot_password">"Forgot your password ?"</string>
+    <string name="didnt_have_account">"Didn't have any account?"</string>
+    <string name="forgot_password">"Forgot your password?"</string>
     <string name="forgot_password_description">"Please insert your username and recovery email of your account for verification"</string>
     <string name="title_activity_login">LoginActivity</string>
     <string name="prompt_email">Email</string>
@@ -17,22 +17,30 @@
     <string name="action_sign_in">Sign in or register</string>
     <string name="action_sign_in_short">Sign in</string>
     <string name="action_sign_up_short">Sign up</string>
+    <string name="action_sign_in1">Sign In</string>
+    <string name="action_sign_up1">Sign Up</string>
     <string name="welcome">"Welcome to Echinoidea"</string>
     <string name="invalid_username">Not a valid username</string>
-    <string name="invalid_password">Password must be >5 characters</string>
+    <string name="invalid_password">Password must be > 8 characters</string>
     <string name="login_failed">"Login failed"</string>
     <string name="language_title">"Language"</string>
     <string name="theme_title">"Theme"</string>
     <string name="setting_title">"Settings"</string>
-    <string name="setting_account">"Account"</string>
-    <string name="setting_security">"Security"</string>
+    <string name="setting_account">"Account Information"</string>
+    <string name="setting_account_title">"Account"</string>
+    <string name="setting_security">"Reset Password"</string>
+    <string name="setting_anonymous">"Anonymous User"</string>
+    <string name="setting_delete">"Delete Account"</string>
     <string name="setting_map">"Map"</string>
-    <string name="setting_notification">"Notification"</string>
-    <string name="setting_notification_title">"Notification &amp; Display"</string>
+    <string name="setting_detect_notification">"Detect Notification"</string>
+    <string name="setting_notification_title">" Notification"</string>
+    <string name="setting_warn_notification">"Warn Notification"</string>
     <string name="setting_support">"Support"</string>
     <string name="setting_report_bugs">"Report Bugs"</string>
     <string name="setting_terms_policy">"Terms &amp; Policy"</string>
-    <string name="setting_login">"Login"</string>
+    <string name="setting_display">"Display"</string>
+    <string name="setting_language">"Language"</string>
+    <string name="setting_theme">"Theme"</string>
     <string name="setting_switch_account">"Switch Account"</string>
     <string name="setting_logout">"Logout"</string>
     <string name="version">"Version 1.0.0 \n Made by hi3r1ss, harrylee02, Howf and Bacann"</string>
@@ -113,6 +121,14 @@
     <string name="notification_text">Notification</string>
     <string name="history_text">History</string>
     <string name="navigate">Navigate</string>
+    <string name="hello">Hello, </string>
+    <string name="logout_title">Do you want to logout?</string>
+    <string name="logout_description">Confirm that you want to logout</string>
+    <string name="logout_confirm">Yes I do</string>
+    <string name="logout_decline">Nuh uh</string>
+    <string name="delete_account_title">Do you want to delete your account?</string>
+    <string name="delete_account_description">Delete account means delete all your infomation!\n Do you really want to delete?</string>
+
 
 
     <string name="mapbox_access_token" translatable="false" tools:ignore="UnusedResources">sk.eyJ1IjoiaGllcmlzcyIsImEiOiJjbTNuZmwya3ExNnVpMmxzZG9wOGNyN24xIn0.Bnsn24Jk7ZmetYO_MxQHcA</string>

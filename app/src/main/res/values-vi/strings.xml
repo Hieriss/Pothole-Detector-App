@@ -6,11 +6,13 @@
     <string name="already_have_account">"Đã có tài khoản ?"</string>
     <string name="re_pass">"Nhập lại mật khẩu"</string>
     <string name="phone_number">"Số điện thoại"</string>
-    <string name="didnt_have_account">"Chưa có tài khoản ?"</string>
-    <string name="forgot_password">"Quên mật khẩu ?"</string>
+    <string name="didnt_have_account">"Chưa có tài khoản?"</string>
+    <string name="forgot_password">"Quên mật khẩu?"</string>
     <string name="title_activity_login">Màn hình đăng nhập</string>
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Mật khẩu</string>
+    <string name="action_sign_in1">Đăng Nhập</string>
+    <string name="action_sign_up1">Đăng Kí</string>
     <string name="forgot_password_description">"Vui lòng nhập tên người dùng và email khôi phục của tài khoản để xác minh"</string>
     <string name="reset_password">"Đặt lại mật khẩu"</string>
     <string name="verify_password">"Xác minh"</string>
@@ -19,20 +21,26 @@
     <string name="action_sign_up_short">Đăng kí</string>
     <string name="welcome">"Chào mừng đến với Echinoidea"</string>
     <string name="invalid_username">Tên người dùng không hợp lệ</string>
-    <string name="invalid_password">Mật khẩu phải trên 5 kí tự</string>
+    <string name="invalid_password">Mật khẩu phải trên 8 kí tự</string>
     <string name="login_failed">"Đăng nhập thất bại"</string>
     <string name="language_title">"Ngôn ngữ"</string>
     <string name="theme_title">"Chủ đề"</string>
     <string name="setting_title">"Cài đặt"</string>
-    <string name="setting_account">"Tài khoản"</string>
-    <string name="setting_security">"Bảo mật"</string>
+    <string name="setting_account">Cài đặt tài khoản"</string>
+    <string name="setting_account_title">"Tài khoản"</string>
+    <string name="setting_security">"Thay đổi mật khẩu"</string>
+    <string name="setting_anonymous">"Người dùng ẩn danh"</string>
+    <string name="setting_delete">"Xóa tài khoản"</string>
     <string name="setting_map">"Bản đồ"</string>
-    <string name="setting_notification">"Thông báo"</string>
-    <string name="setting_notification_title">"Thông báo &amp; Hiển thị"</string>
+    <string name="setting_detect_notification">"Thông báo phát hiện"</string>
+    <string name="setting_notification_title">"Thông báo"</string>
+    <string name="setting_warn_notification">"Thông báo cảnh báo"</string>
     <string name="setting_support">"Hỗ trợ"</string>
     <string name="setting_report_bugs">"Báo lỗi"</string>
     <string name="setting_terms_policy">"Điều khoản &amp; Chính sách"</string>
-    <string name="setting_login">"Đăng nhập"</string>
+    <string name="setting_display">"Hiển thị"</string>
+    <string name="setting_language">"Ngôn ngữ"</string>
+    <string name="setting_theme">"Chủ đề"</string>
     <string name="setting_switch_account">"Đổi tài khoản"</string>
     <string name="setting_logout">"Đăng xuất"</string>
     <string name="version">"Phiên bản 1.0.0 \n Sở hữu bởi hi3r1ss, harrylee02, Howf and Bacann"</string>
@@ -113,8 +121,16 @@
     <string name="notification_text">Thông báo</string>
     <string name="history_text">Lịch sử phát hiện</string>
     <string name="navigate">Dẫn đường</string>
+    <string name="hello">Xin chào, </string>
 
 
+
+    <string name="logout_title">Bạn có muốn đăng xuất?</string>
+    <string name="logout_description">Xác nhận rằng bạn muốn đăng xuất</string>
+    <string name="logout_confirm">Đúng, tôi muốn</string>
+    <string name="logout_decline">Không</string>
+    <string name="delete_account_title">Bạn có muốn xóa tài khoản của mình không?</string>
+    <string name="delete_account_description">Xoá tài khoản đồng nghĩa với việc xóa hết thông tin!\n Bạn có thực sự muốn xóa?</string>
 
 
 

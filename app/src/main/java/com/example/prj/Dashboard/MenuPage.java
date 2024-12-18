@@ -11,11 +11,11 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-import com.example.prj.History.HistoryPage;
+import com.example.prj.HistoryPage;
 import com.example.prj.NotificationPage;
 import com.example.prj.Profile.ProfilePage;
 import com.example.prj.R;
-import com.example.prj.SettingPage;
+import com.example.prj.Setting.SettingPage;
 
 public class MenuPage extends AppCompatActivity {
     Button quitButton, settingButton, profileButton, notificationButton, historyButton;
@@ -70,7 +70,12 @@ public class MenuPage extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(MenuPage.this, NotificationPage.class);
+                intent.putExtra("USERNAME", username);
                 startActivity(intent);
+                finish();
+
+                Intent closeMainPageIntent = new Intent("CLOSE_MAIN_PAGE");
+                sendBroadcast(closeMainPageIntent);
             }
         });
 
@@ -79,7 +84,12 @@ public class MenuPage extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(MenuPage.this, HistoryPage.class);
+                intent.putExtra("USERNAME", username);
                 startActivity(intent);
+                finish();
+
+                Intent closeMainPageIntent = new Intent("CLOSE_MAIN_PAGE");
+                sendBroadcast(closeMainPageIntent);
             }
         });
     }

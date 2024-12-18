@@ -27,7 +27,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="60dp"
                     android:layout_marginTop="40dp"
-                    android:text="@string/action_sign_up_short"
+                    android:text="@string/action_sign_up1"
                     android:textAlignment="center"
                     android:fontFamily="@font/grandstander_bold"
                     android:textColor="@color/black"

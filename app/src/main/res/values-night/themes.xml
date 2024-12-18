@@ -4,4 +4,14 @@
         <!-- Customize your dark theme here. -->
         <!-- <item name="colorPrimary">@color/my_dark_primary</item> -->
     </style>
+    <!-- Dark mode -->
+
+    <style name="TEXT">
+        <item name="android:textColor">#FFF</item>
+    </style>
+
+    <style name="bg_line">
+        <item name="android:background">#FFFFFF</item>
+    </style>
+
 </resources>
