@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -14,9 +15,12 @@ import androidx.core.view.WindowInsetsCompat;
 import com.example.prj.Authen.SignIn;
 import com.example.prj.R;
 import com.example.prj.Session.SessionManager;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 public class DeleteAccountRequest extends AppCompatActivity {
     Button backButton, confirmButton, declineButton;
+    DatabaseReference databaseReference;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,6 +33,9 @@ public class DeleteAccountRequest extends AppCompatActivity {
             return insets;
         });
 
+        // Initialize Firebase Database reference
+        databaseReference = FirebaseDatabase.getInstance().getReference("user");
+
         backButton = findViewById(R.id.quit_button);
         backButton.setOnClickListener(view -> finish());
 
@@ -37,6 +44,7 @@ public class DeleteAccountRequest extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 SessionManager sessionManager = new SessionManager(DeleteAccountRequest.this);
+                deleteUser();
                 sessionManager.logoutUser();
 
                 // Send broadcast to destroy MainPage activity
@@ -61,6 +69,18 @@ public class DeleteAccountRequest extends AppCompatActivity {
                 finish();
             }
         });
+    }
 
+    private void deleteUser() {
+        String userId = new SessionManager(this).getUserId();
+        databaseReference.child(userId).removeValue().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                // User deleted successfully
+                Toast.makeText(this, "User deleted successfully", Toast.LENGTH_SHORT).show();
+            } else {
+                // Failed to delete user
+                Toast.makeText(this, "Failed to delete user", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 }

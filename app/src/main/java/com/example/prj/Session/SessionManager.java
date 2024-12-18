@@ -83,4 +83,8 @@ public class SessionManager {
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         context.startActivity(intent);
     }
+
+    public String getUserId() { // Add this method
+        return sharedPreferences.getString(KEY_NAME, null);
+    }
 }
