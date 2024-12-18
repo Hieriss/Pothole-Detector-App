@@ -5,7 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/main"
+    android:background="@drawable/main_background"
     tools:context=".SettingPage">
 
     <LinearLayout
@@ -27,7 +27,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
-                    android:layout_marginStart="30dp">
+                    android:layout_marginStart="30dp"
+                    android:paddingTop="10dp">
 
                     <ImageView
                         android:layout_width="20dp"
@@ -82,13 +83,13 @@
                         android:layout_marginTop="10dp"
                         android:layout_marginStart="20dp"
                         android:fontFamily="@font/grandstander_medium"
-                        android:text="@string/setting_account"
+                        android:text="@string/setting_account_title"
                         android:textColor="@color/black"
                         android:textSize="16sp" />
 
                     <RelativeLayout
                         android:layout_width="match_parent"
-                        android:layout_height="105dp"
+                        android:layout_height="260dp"
                         android:layout_marginStart="10dp"
                         android:layout_marginTop="10dp"
                         android:layout_marginEnd="10dp">
@@ -100,7 +101,9 @@
 
                         <RelativeLayout
                             android:layout_width="match_parent"
-                            android:layout_height="match_parent">
+                            android:layout_height="match_parent"
+                            android:paddingTop="2dp"
+                            android:paddingBottom="2dp">
 
                             <LinearLayout
                                 android:layout_width="match_parent"
@@ -123,6 +126,7 @@
                                             android:layout_width="20dp"
                                             android:layout_height="20dp"
                                             android:layout_gravity="center"
+                                            android:paddingTop="5dp"
                                             android:layout_marginStart="20dp"
                                             android:layout_marginEnd="5dp"
                                             android:src="@drawable/user" />
@@ -156,8 +160,8 @@
                                     android:layout_marginEnd="10dp"
                                     android:layout_marginTop="2dp"
                                     android:layout_marginBottom="2dp"
-                                    android:alpha="0.2"
-                                    android:background="#000000"/>
+                                    android:alpha="1"
+                                    android:background="@color/magenta"/>
 
                                 <RelativeLayout
                                     android:id="@+id/security_layout"
@@ -175,6 +179,7 @@
                                             android:layout_width="20dp"
                                             android:layout_height="20dp"
                                             android:layout_gravity="center"
+                                            android:paddingTop="5dp"
                                             android:layout_marginStart="20dp"
                                             android:layout_marginEnd="5dp"
                                             android:src="@drawable/lock" />
@@ -200,6 +205,168 @@
                                         android:focusable="true"
                                         android:text="" />
                                 </RelativeLayout>
+
+                                <View
+                                    android:layout_width="match_parent"
+                                    android:layout_height="1dp"
+                                    android:layout_marginStart="10dp"
+                                    android:layout_marginEnd="10dp"
+                                    android:layout_marginTop="2dp"
+                                    android:layout_marginBottom="2dp"
+                                    android:alpha="1"
+                                    android:background="@color/magenta"/>
+
+                                <RelativeLayout
+                                    android:id="@+id/anonymous_layout"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:layout_weight="1">
+
+                                    <LinearLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:orientation="horizontal">
+
+                                        <ImageView
+                                            android:id="@+id/anonymous_icon"
+                                            android:layout_width="20dp"
+                                            android:layout_height="20dp"
+                                            android:layout_gravity="center"
+                                            android:paddingTop="5dp"
+                                            android:layout_marginStart="20dp"
+                                            android:layout_marginEnd="5dp"
+                                            android:src="@drawable/incognito" />
+
+                                        <TextView
+                                            android:id="@+id/anonymous"
+                                            android:layout_width="match_parent"
+                                            android:layout_height="match_parent"
+                                            android:layout_marginStart="10dp"
+                                            android:layout_weight="1"
+                                            android:fontFamily="@font/grandstander_regular"
+                                            android:gravity="center_vertical"
+                                            android:text="@string/setting_anonymous"
+                                            android:textSize="20sp" />
+                                    </LinearLayout>
+
+                                    <androidx.appcompat.widget.AppCompatButton
+                                        android:id="@+id/anonymous_button"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:background="@android:color/transparent"
+                                        android:clickable="true"
+                                        android:focusable="true"
+                                        android:text="" />
+                                </RelativeLayout>
+
+                                <View
+                                    android:layout_width="match_parent"
+                                    android:layout_height="1dp"
+                                    android:layout_marginStart="10dp"
+                                    android:layout_marginEnd="10dp"
+                                    android:layout_marginTop="2dp"
+                                    android:layout_marginBottom="2dp"
+                                    android:alpha="1"
+                                    android:background="@color/magenta"/>
+
+                                <RelativeLayout
+                                    android:id="@+id/delete_layout"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:layout_weight="1">
+
+                                    <LinearLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:orientation="horizontal">
+
+                                        <ImageView
+                                            android:id="@+id/delete_icon"
+                                            android:layout_width="20dp"
+                                            android:layout_height="20dp"
+                                            android:layout_gravity="center"
+                                            android:paddingTop="5dp"
+                                            android:layout_marginStart="20dp"
+                                            android:layout_marginEnd="5dp"
+                                            android:src="@drawable/delete"
+                                            android:tint="@color/red"/>
+
+                                        <TextView
+                                            android:id="@+id/setting_delete"
+                                            android:layout_width="match_parent"
+                                            android:layout_height="match_parent"
+                                            android:layout_marginStart="10dp"
+                                            android:layout_weight="1"
+                                            android:fontFamily="@font/grandstander_regular"
+                                            android:gravity="center_vertical"
+                                            android:text="@string/setting_delete"
+                                            android:textColor="@color/red"
+                                            android:textSize="20sp" />
+                                    </LinearLayout>
+
+                                    <androidx.appcompat.widget.AppCompatButton
+                                        android:id="@+id/delete_button"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:background="@android:color/transparent"
+                                        android:clickable="true"
+                                        android:focusable="true"
+                                        android:text="" />
+                                </RelativeLayout>
+
+                                <View
+                                    android:layout_width="match_parent"
+                                    android:layout_height="1dp"
+                                    android:layout_marginStart="10dp"
+                                    android:layout_marginEnd="10dp"
+                                    android:layout_marginTop="2dp"
+                                    android:layout_marginBottom="2dp"
+                                    android:alpha="1"
+                                    android:background="@color/magenta"/>
+
+                                <RelativeLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:layout_weight="1">
+
+                                    <LinearLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:orientation="horizontal">
+
+                                        <ImageView
+                                            android:id="@+id/setting_logout_icon"
+                                            android:layout_width="20dp"
+                                            android:layout_height="20dp"
+                                            android:layout_gravity="center"
+                                            android:paddingTop="5dp"
+                                            android:layout_marginStart="20dp"
+                                            android:layout_marginEnd="5dp"
+                                            android:src="@drawable/exit"
+                                            android:tint="@color/red"/>
+
+                                        <TextView
+                                            android:id="@+id/setting_logout"
+                                            android:layout_width="match_parent"
+                                            android:layout_height="match_parent"
+                                            android:layout_marginStart="10dp"
+                                            android:layout_weight="1"
+                                            android:fontFamily="@font/grandstander_regular"
+                                            android:gravity="center_vertical"
+                                            android:text="@string/setting_logout"
+                                            android:textColor="@color/red"
+                                            android:textSize="20sp" />
+                                    </LinearLayout>
+
+                                    <androidx.appcompat.widget.AppCompatButton
+                                        android:id="@+id/setting_logout_button"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:background="@android:color/transparent"
+                                        android:clickable="true"
+                                        android:focusable="true"
+                                        android:text="" />
+                                </RelativeLayout>
                             </LinearLayout>
                         </RelativeLayout>
                     </RelativeLayout>
@@ -217,7 +384,7 @@
 
                     <RelativeLayout
                         android:layout_width="match_parent"
-                        android:layout_height="160dp"
+                        android:layout_height="105dp"
                         android:layout_marginStart="10dp"
                         android:layout_marginTop="10dp"
                         android:layout_marginEnd="10dp">
@@ -229,7 +396,9 @@
 
                         <RelativeLayout
                             android:layout_width="match_parent"
-                            android:layout_height="match_parent">
+                            android:layout_height="match_parent"
+                            android:paddingTop="2dp"
+                            android:paddingBottom="2dp">
 
                             <LinearLayout
                                 android:layout_width="match_parent"
@@ -237,6 +406,7 @@
                                 android:orientation="vertical">
 
                                 <RelativeLayout
+                                    android:id="@+id/detect_notification_layout"
                                     android:layout_width="match_parent"
                                     android:layout_height="match_parent"
                                     android:layout_weight="1">
@@ -247,28 +417,29 @@
                                         android:orientation="horizontal">
 
                                         <ImageView
-                                            android:id="@+id/setting_notification_icon"
+                                            android:id="@+id/setting_detect_notification_icon"
                                             android:layout_width="20dp"
                                             android:layout_height="20dp"
                                             android:layout_gravity="center"
+                                            android:paddingTop="5dp"
                                             android:layout_marginStart="20dp"
                                             android:layout_marginEnd="5dp"
                                             android:src="@drawable/notification" />
 
                                         <TextView
-                                            android:id="@+id/setting_notification"
+                                            android:id="@+id/setting_detect_notification"
                                             android:layout_width="match_parent"
                                             android:layout_height="match_parent"
                                             android:layout_marginStart="10dp"
                                             android:layout_weight="1"
                                             android:fontFamily="@font/grandstander_regular"
                                             android:gravity="center_vertical"
-                                            android:text="@string/setting_notification"
+                                            android:text="@string/setting_detect_notification"
                                             android:textSize="20sp" />
                                     </LinearLayout>
 
                                     <androidx.appcompat.widget.AppCompatButton
-                                        android:id="@+id/setting_notification_button"
+                                        android:id="@+id/setting_detect_notification_button"
                                         android:layout_width="match_parent"
                                         android:layout_height="match_parent"
                                         android:background="@android:color/transparent"
@@ -278,6 +449,59 @@
                                 </RelativeLayout>
 
                                 <View
+                                    android:layout_width="match_parent"
+                                    android:layout_height="1dp"
+                                    android:layout_marginStart="10dp"
+                                    android:layout_marginEnd="10dp"
+                                    android:layout_marginTop="2dp"
+                                    android:layout_marginBottom="2dp"
+                                    android:alpha="1"
+                                    android:background="@color/magenta"/>
+
+                                <RelativeLayout
+                                    android:id="@+id/warn_notification_layout"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:layout_weight="1">
+
+                                    <LinearLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:orientation="horizontal">
+
+                                        <ImageView
+                                            android:id="@+id/warn_notification_icon"
+                                            android:layout_width="20dp"
+                                            android:layout_height="20dp"
+                                            android:layout_gravity="center"
+                                            android:paddingTop="5dp"
+                                            android:layout_marginStart="20dp"
+                                            android:layout_marginEnd="5dp"
+                                            android:src="@drawable/notification" />
+
+                                        <TextView
+                                            android:id="@+id/setting_warn_notification"
+                                            android:layout_width="match_parent"
+                                            android:layout_height="match_parent"
+                                            android:layout_marginStart="10dp"
+                                            android:layout_weight="1"
+                                            android:fontFamily="@font/grandstander_regular"
+                                            android:gravity="center_vertical"
+                                            android:text="@string/setting_warn_notification"
+                                            android:textSize="20sp" />
+                                    </LinearLayout>
+
+                                    <androidx.appcompat.widget.AppCompatButton
+                                        android:id="@+id/warn_notification_button"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:background="@android:color/transparent"
+                                        android:clickable="true"
+                                        android:focusable="true"
+                                        android:text="" />
+                                </RelativeLayout>
+
+                                <!--<View
                                     android:layout_width="match_parent"
                                     android:layout_height="1dp"
                                     android:layout_marginStart="10dp"
@@ -426,6 +650,139 @@
                                         android:clickable="true"
                                         android:focusable="true"
                                         android:text="" />
+                                </RelativeLayout>-->
+                            </LinearLayout>
+                        </RelativeLayout>
+                    </RelativeLayout>
+
+                    <TextView
+                        android:id="@+id/setting_text_option4"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="20dp"
+                        android:layout_marginTop="10dp"
+                        android:fontFamily="@font/grandstander_medium"
+                        android:text="@string/setting_display"
+                        android:textColor="@color/black"
+                        android:textSize="16sp" />
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="105dp"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginEnd="10dp">
+
+                        <ImageView
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            app:srcCompat="@drawable/setting_box_background" />
+
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:paddingTop="2dp"
+                            android:paddingBottom="2dp">
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:orientation="vertical">
+
+                                <RelativeLayout
+                                    android:id="@+id/language_layout"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:layout_weight="1">
+
+                                    <LinearLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:orientation="horizontal">
+
+                                        <ImageView
+                                            android:id="@+id/language_icon"
+                                            android:layout_width="20dp"
+                                            android:layout_height="20dp"
+                                            android:layout_gravity="center"
+                                            android:paddingTop="5dp"
+                                            android:layout_marginStart="20dp"
+                                            android:layout_marginEnd="5dp"
+                                            android:src="@drawable/language" />
+
+                                        <TextView
+                                            android:id="@+id/setting_language"
+                                            android:layout_width="match_parent"
+                                            android:layout_height="match_parent"
+                                            android:layout_marginStart="10dp"
+                                            android:layout_weight="1"
+                                            android:fontFamily="@font/grandstander_regular"
+                                            android:gravity="center_vertical"
+                                            android:text="@string/setting_language"
+                                            android:textSize="20sp" />
+                                    </LinearLayout>
+
+                                    <androidx.appcompat.widget.AppCompatButton
+                                        android:id="@+id/setting_language_button"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:background="@android:color/transparent"
+                                        android:clickable="true"
+                                        android:focusable="true"
+                                        android:text="" />
+                                </RelativeLayout>
+
+                                <View
+                                    android:layout_width="match_parent"
+                                    android:layout_height="1dp"
+                                    android:layout_marginStart="10dp"
+                                    android:layout_marginEnd="10dp"
+                                    android:layout_marginTop="2dp"
+                                    android:layout_marginBottom="2dp"
+                                    android:alpha="1"
+                                    android:background="@color/magenta"/>
+
+                                <RelativeLayout
+                                    android:id="@+id/theme_layout"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:layout_weight="1">
+
+                                    <LinearLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:orientation="horizontal">
+
+                                        <ImageView
+                                            android:id="@+id/theme_icon"
+                                            android:layout_width="20dp"
+                                            android:layout_height="20dp"
+                                            android:layout_gravity="center"
+                                            android:paddingTop="5dp"
+                                            android:layout_marginStart="20dp"
+                                            android:layout_marginEnd="5dp"
+                                            android:src="@drawable/theme" />
+
+                                        <TextView
+                                            android:id="@+id/setting_theme"
+                                            android:layout_width="match_parent"
+                                            android:layout_height="match_parent"
+                                            android:layout_marginStart="10dp"
+                                            android:layout_weight="1"
+                                            android:fontFamily="@font/grandstander_regular"
+                                            android:gravity="center_vertical"
+                                            android:text="@string/setting_theme"
+                                            android:textSize="20sp" />
+                                    </LinearLayout>
+
+                                    <androidx.appcompat.widget.AppCompatButton
+                                        android:id="@+id/theme_button"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:background="@android:color/transparent"
+                                        android:clickable="true"
+                                        android:focusable="true"
+                                        android:text="" />
                                 </RelativeLayout>
                             </LinearLayout>
                         </RelativeLayout>
@@ -444,7 +801,7 @@
 
                     <RelativeLayout
                         android:layout_width="match_parent"
-                        android:layout_height="160dp"
+                        android:layout_height="105dp"
                         android:layout_marginStart="10dp"
                         android:layout_marginTop="10dp"
                         android:layout_marginEnd="10dp">
@@ -462,57 +819,6 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
                                 android:orientation="vertical">
-
-                                <RelativeLayout
-                                    android:layout_width="match_parent"
-                                    android:layout_height="match_parent"
-                                    android:layout_weight="1">
-
-                                    <LinearLayout
-                                        android:layout_width="match_parent"
-                                        android:layout_height="match_parent"
-                                        android:orientation="horizontal">
-
-                                        <ImageView
-                                            android:id="@+id/setting_report_bugs_icon"
-                                            android:layout_width="20dp"
-                                            android:layout_height="20dp"
-                                            android:layout_gravity="center"
-                                            android:layout_marginStart="20dp"
-                                            android:layout_marginEnd="5dp"
-                                            android:src="@drawable/notification" />
-
-                                        <TextView
-                                            android:id="@+id/setting_report_bugs"
-                                            android:layout_width="match_parent"
-                                            android:layout_height="match_parent"
-                                            android:layout_marginStart="10dp"
-                                            android:layout_weight="1"
-                                            android:fontFamily="@font/grandstander_regular"
-                                            android:gravity="center_vertical"
-                                            android:text="@string/setting_report_bugs"
-                                            android:textSize="20sp" />
-                                    </LinearLayout>
-
-                                    <androidx.appcompat.widget.AppCompatButton
-                                        android:id="@+id/setting_report_bugs_button"
-                                        android:layout_width="match_parent"
-                                        android:layout_height="match_parent"
-                                        android:background="@android:color/transparent"
-                                        android:clickable="true"
-                                        android:focusable="true"
-                                        android:text="" />
-                                </RelativeLayout>
-
-                                <View
-                                    android:layout_width="match_parent"
-                                    android:layout_height="1dp"
-                                    android:layout_marginStart="10dp"
-                                    android:layout_marginEnd="10dp"
-                                    android:layout_marginTop="2dp"
-                                    android:layout_marginBottom="2dp"
-                                    android:alpha="0.2"
-                                    android:background="#000000"/>
 
                                 <RelativeLayout
                                     android:layout_width="match_parent"
@@ -562,8 +868,8 @@
                                     android:layout_marginEnd="10dp"
                                     android:layout_marginTop="2dp"
                                     android:layout_marginBottom="2dp"
-                                    android:alpha="0.2"
-                                    android:background="#000000"/>
+                                    android:alpha="1"
+                                    android:background="@color/magenta"/>
 
                                 <RelativeLayout
                                     android:layout_width="match_parent"
@@ -598,133 +904,6 @@
 
                                     <androidx.appcompat.widget.AppCompatButton
                                         android:id="@+id/setting_term_button"
-                                        android:layout_width="match_parent"
-                                        android:layout_height="match_parent"
-                                        android:background="@android:color/transparent"
-                                        android:clickable="true"
-                                        android:focusable="true"
-                                        android:text="" />
-                                </RelativeLayout>
-                            </LinearLayout>
-                        </RelativeLayout>
-                    </RelativeLayout>
-
-                    <TextView
-                        android:id="@+id/setting_text_option4"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="20dp"
-                        android:layout_marginTop="10dp"
-                        android:fontFamily="@font/grandstander_medium"
-                        android:text="@string/setting_login"
-                        android:textColor="@color/black"
-                        android:textSize="16sp" />
-
-                    <RelativeLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="105dp"
-                        android:layout_marginStart="10dp"
-                        android:layout_marginTop="10dp"
-                        android:layout_marginEnd="10dp">
-
-                        <ImageView
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            app:srcCompat="@drawable/setting_box_background" />
-
-                        <RelativeLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent">
-
-                            <LinearLayout
-                                android:layout_width="match_parent"
-                                android:layout_height="match_parent"
-                                android:orientation="vertical">
-
-                                <RelativeLayout
-                                    android:layout_width="match_parent"
-                                    android:layout_height="match_parent"
-                                    android:layout_weight="1">
-
-                                    <LinearLayout
-                                        android:layout_width="match_parent"
-                                        android:layout_height="match_parent"
-                                        android:orientation="horizontal">
-
-                                        <ImageView
-                                            android:id="@+id/setting_switch_account_icon"
-                                            android:layout_width="20dp"
-                                            android:layout_height="20dp"
-                                            android:layout_gravity="center"
-                                            android:layout_marginStart="20dp"
-                                            android:layout_marginEnd="5dp"
-                                            android:src="@drawable/user" />
-
-                                        <TextView
-                                            android:id="@+id/setting_switch_account"
-                                            android:layout_width="match_parent"
-                                            android:layout_height="match_parent"
-                                            android:layout_marginStart="10dp"
-                                            android:layout_weight="1"
-                                            android:fontFamily="@font/grandstander_regular"
-                                            android:gravity="center_vertical"
-                                            android:text="@string/setting_switch_account"
-                                            android:textSize="20sp" />
-                                    </LinearLayout>
-
-                                    <androidx.appcompat.widget.AppCompatButton
-                                        android:id="@+id/setting_switch_account_button"
-                                        android:layout_width="match_parent"
-                                        android:layout_height="match_parent"
-                                        android:background="@android:color/transparent"
-                                        android:clickable="true"
-                                        android:focusable="true"
-                                        android:text="" />
-                                </RelativeLayout>
-
-                                <View
-                                    android:layout_width="match_parent"
-                                    android:layout_height="1dp"
-                                    android:layout_marginStart="10dp"
-                                    android:layout_marginEnd="10dp"
-                                    android:layout_marginTop="2dp"
-                                    android:layout_marginBottom="2dp"
-                                    android:alpha="0.2"
-                                    android:background="#000000"/>
-
-                                <RelativeLayout
-                                    android:layout_width="match_parent"
-                                    android:layout_height="match_parent"
-                                    android:layout_weight="1">
-
-                                    <LinearLayout
-                                        android:layout_width="match_parent"
-                                        android:layout_height="match_parent"
-                                        android:orientation="horizontal">
-
-                                        <ImageView
-                                            android:id="@+id/setting_logout_icon"
-                                            android:layout_width="20dp"
-                                            android:layout_height="20dp"
-                                            android:layout_gravity="center"
-                                            android:layout_marginStart="20dp"
-                                            android:layout_marginEnd="5dp"
-                                            android:src="@drawable/lock" />
-
-                                        <TextView
-                                            android:id="@+id/setting_logout"
-                                            android:layout_width="match_parent"
-                                            android:layout_height="match_parent"
-                                            android:layout_marginStart="10dp"
-                                            android:layout_weight="1"
-                                            android:fontFamily="@font/grandstander_regular"
-                                            android:gravity="center_vertical"
-                                            android:text="@string/setting_logout"
-                                            android:textSize="20sp" />
-                                    </LinearLayout>
-
-                                    <androidx.appcompat.widget.AppCompatButton
-                                        android:id="@+id/setting_logout_button"
                                         android:layout_width="match_parent"
                                         android:layout_height="match_parent"
                                         android:background="@android:color/transparent"

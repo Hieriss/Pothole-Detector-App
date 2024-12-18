@@ -234,6 +234,7 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
     private AppCompatButton cyclingBtn;
     private AppCompatButton drivingBtn;
     private AppCompatButton backBtn;
+    private AppCompatButton quitBtn;
 
     // search variables
     private PlaceAutocomplete placeAutocomplete;
@@ -552,6 +553,8 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
             database = databaseInstance.getReference();
             Log.d(TAG, "Firebase initialized");
         }
+
+        quitBtn = findViewById(R.id.quit_button);
 
         // Initialize potholeLocations
         potholeLocations = new ArrayList<>();
