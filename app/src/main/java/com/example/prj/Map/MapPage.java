@@ -429,7 +429,7 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
         Point nearestPoint = (Point) TurfMisc.nearestPointOnLine(point, routeLineString.coordinates()).geometry();
         double distance = TurfMeasurement.distance(point, nearestPoint);
         // Define a threshold distance (in kilometers) to consider the point as being on the route
-        double thresholdDistance = 0.01; // 10 meters
+        double thresholdDistance = 0.008; // 8 meters
         return distance < thresholdDistance;
     }
 
@@ -574,17 +574,27 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
                         Log.e(TAG, "Failed to retrieve locations", e);
                     }
                 });
-                for (Quadruple<Double, Double, String, String> location : potholeLocations) {
-                    Point point = Point.fromLngLat(location.second, location.first);
-                    Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.pothole_on_map);
-                    PointAnnotationOptions pointAnnotationOptions = new PointAnnotationOptions()
-                            .withTextAnchor(TextAnchor.CENTER)
-                            .withIconAnchor(IconAnchor.CENTER)
-                            .withIconSize(iconSize)
-                            .withIconOpacity(0.95)
-                            .withIconImage(bitmap)
-                            .withPoint(point);
-                    pointAnnotationManager.create(pointAnnotationOptions);
+                if (pointAnnotationManager != null) {
+                    List<PointAnnotation> annotations = pointAnnotationManager.getAnnotations();
+                    if (annotations != null) {
+                        for (PointAnnotation annotation : annotations) {
+                            if (annotation.getIconOpacity() == 0.95) {
+                                pointAnnotationManager.delete(annotation);
+                            }
+                        }
+                    }
+                    for (Quadruple<Double, Double, String, String> location : potholeLocations) {
+                        Point point = Point.fromLngLat(location.second, location.first);
+                        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.pothole_on_map);
+                        PointAnnotationOptions pointAnnotationOptions = new PointAnnotationOptions()
+                                .withTextAnchor(TextAnchor.CENTER)
+                                .withIconAnchor(IconAnchor.CENTER)
+                                .withIconSize(iconSize)
+                                .withIconOpacity(0.95)
+                                .withIconImage(bitmap)
+                                .withPoint(point);
+                        pointAnnotationManager.create(pointAnnotationOptions);
+                    }
                 }
 
                 // Schedule the next update after 1 minute
@@ -1152,7 +1162,23 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
                 });
 
                 TextView roadNameTextView = dialog.findViewById(R.id.road_name_text_view);
+                if (roadName == "Tô Vĩnh Diện") {
+                    roadName = "Đường Mạc Đĩnh Chi";
+                }
+                else if (roadName == "Hiệp Bình" || roadName == "VQJV+2F9" || roadName == "33, 99, 53" || roadName == "VQJW+5FH") {
+                    roadName = "Đường Nguyễn Du";
+                }
+                else if (roadName == "VRH2+74C" || roadName == "VRH2+27J" || roadName == "VRG2+G3M") {
+                    roadName = "Đường William Shakespeare";
+                }
+                else if (roadName == "VRG2+CFW") {
+                    roadName = "Lưu Hữu Phước";
+                }
+                else if (roadName == "VRF3+46J" || roadName == "VRC3+V7G") {
+                    roadName = "Đường Hàn Thuyên";
+                }
                 roadNameTextView.setText(roadName);
+
 
                 dialog.show();
 
@@ -1166,7 +1192,7 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
                 String id = location.fourth;
 
                 TextView timeTextView = dialog.findViewById(R.id.time_text_view);
-                roadNameTextView.setText(timestamp);
+                timeTextView.setText(timestamp);
 
                 ImageView potholeImage = dialog.findViewById(R.id.pothole_image);
 
@@ -1449,7 +1475,7 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
 
         // Check distance to annotation point
         List<PointAnnotation> annotations = pointAnnotationManager.getAnnotations();
-        double thresholdDistance = 0.01; // 10 meters
+        double thresholdDistance = 0.008; // 10 meters
         if (annotations != null) {
             for (PointAnnotation annotation : annotations) {
                 Point annotationPoint = annotation.getPoint();

@@ -63,7 +63,7 @@
             android:layout_height="wrap_content"
             android:fontFamily="@font/grandstander_regular"
             android:gravity="center_vertical"
-            android:text=""
+            android:text="Unknown Road"
             android:textSize="16sp"
             android:layout_marginTop="10dp"/>
     </LinearLayout>
