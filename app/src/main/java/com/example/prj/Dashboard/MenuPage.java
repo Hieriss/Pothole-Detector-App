@@ -42,7 +42,12 @@ public class MenuPage extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(MenuPage.this, SettingPage.class);
+                intent.putExtra("USERNAME", username);
                 startActivity(intent);
+                finish();
+
+                Intent closeMainPageIntent = new Intent("CLOSE_MAIN_PAGE");
+                sendBroadcast(closeMainPageIntent);
             }
         });
 

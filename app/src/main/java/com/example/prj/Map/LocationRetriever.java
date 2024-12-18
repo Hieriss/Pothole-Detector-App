@@ -3,7 +3,6 @@ package com.example.prj.Map;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
-import android.util.Pair;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -18,7 +17,7 @@ public class LocationRetriever {
     private static final String PREFS_NAME = "LocationPrefs";
     private static final String LOCATIONS_KEY = "locations";
     private DatabaseReference databaseReference;
-    private List<Pair<Double, Double>> locationList;
+    private List<Quadruple<Double, Double, String, String>> locationList;
     private SharedPreferences sharedPreferences;
 
     public LocationRetriever(Context context) {
@@ -35,10 +34,10 @@ public class LocationRetriever {
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     Double latitude = snapshot.child("latitude").getValue(Double.class);
                     Double longitude = snapshot.child("longitude").getValue(Double.class);
-                    Long timestamp = snapshot.child("timestamp").getValue(Long.class);
+                    String timestamp = snapshot.child("timestamp").getValue(String.class);
                     String id = snapshot.getKey();
-                    if (latitude != null && longitude != null) {
-                        locationList.add(new Pair<>(latitude, longitude));
+                    if (latitude != null && longitude != null && timestamp != null && id != null) {
+                        locationList.add(new Quadruple<>(latitude, longitude, timestamp, id));
                         Log.d("LocationRetriever", "ID: " + id + ", Timestamp: " + timestamp);
                     }
                 }
@@ -54,27 +53,32 @@ public class LocationRetriever {
         });
     }
 
-    private void saveLocationsToLocalStorage(List<Pair<Double, Double>> locations) {
+    private void saveLocationsToLocalStorage(List<Quadruple<Double, Double, String, String>> locations) {
         SharedPreferences.Editor editor = sharedPreferences.edit();
         StringBuilder sb = new StringBuilder();
-        for (Pair<Double, Double> location : locations) {
-            sb.append(location.first).append(",").append(location.second).append(";");
+        for (Quadruple<Double, Double, String, String> location : locations) {
+            sb.append(location.first).append(",")
+                    .append(location.second).append(",")
+                    .append(location.third).append(",")
+                    .append(location.fourth).append(";");
         }
         editor.putString(LOCATIONS_KEY, sb.toString());
         editor.apply();
     }
 
-    public List<Pair<Double, Double>> getLocationsFromLocalStorage() {
-        List<Pair<Double, Double>> locations = new ArrayList<>();
+    public List<Quadruple<Double, Double, String, String>> getLocationsFromLocalStorage() {
+        List<Quadruple<Double, Double, String, String>> locations = new ArrayList<>();
         String savedLocations = sharedPreferences.getString(LOCATIONS_KEY, "");
         if (!savedLocations.isEmpty()) {
             String[] locationPairs = savedLocations.split(";");
             for (String pair : locationPairs) {
-                String[] latLng = pair.split(",");
-                if (latLng.length == 2) {
-                    Double latitude = Double.parseDouble(latLng[0]);
-                    Double longitude = Double.parseDouble(latLng[1]);
-                    locations.add(new Pair<>(latitude, longitude));
+                String[] data = pair.split(",");
+                if (data.length == 4) {
+                    Double latitude = Double.parseDouble(data[0]);
+                    Double longitude = Double.parseDouble(data[1]);
+                    String timestamp = data[2];
+                    String id = data[3];
+                    locations.add(new Quadruple<>(latitude, longitude, timestamp, id));
                 }
             }
         }
@@ -82,14 +86,14 @@ public class LocationRetriever {
     }
 
     public void logStoredLocations() {
-        List<Pair<Double, Double>> locations = getLocationsFromLocalStorage();
-        for (Pair<Double, Double> location : locations) {
-            Log.d("LocationRetriever", "Latitude: " + location.first + ", Longitude: " + location.second);
+        List<Quadruple<Double, Double, String, String>> locations = getLocationsFromLocalStorage();
+        for (Quadruple<Double, Double, String, String> location : locations) {
+            Log.d("LocationRetriever", "Latitude: " + location.first + ", Longitude: " + location.second + ", Timestamp: " + location.third + ", ID: " + location.fourth);
         }
     }
 
     public interface LocationCallback {
-        void onLocationsRetrieved(List<Pair<Double, Double>> locations);
+        void onLocationsRetrieved(List<Quadruple<Double, Double, String, String>> locations);
         void onError(Exception e);
     }
 }

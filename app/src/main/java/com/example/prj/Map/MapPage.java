@@ -277,7 +277,7 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
     double rielZ;
     private Runnable pushDataRunnable;
     private static final int REQUEST_LOCATION_PERMISSION = 1;
-    private List<Pair<Double, Double>> potholeLocations;
+    private List<Quadruple<Double, Double, String, String>> potholeLocations;
     private static final float SPEED_THRESHOLD = 15f;
     private static final float DELTA_Z_THRESHOLD = 100.0f;
 
@@ -451,7 +451,7 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
             getGestures(mapView).removeOnMoveListener(this);
             if (!isOnNavigation) focusLocationBtn.show();
             if (!potholeLocations.isEmpty()) {
-                for (Pair<Double, Double> pLocation : potholeLocations) {
+                for (Quadruple<Double, Double, String, String> pLocation : potholeLocations) {
                     Point point = Point.fromLngLat(pLocation.second, pLocation.first);
                     Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.pothole_on_map);
                     PointAnnotationOptions pointAnnotationOptions = new PointAnnotationOptions()
@@ -555,13 +555,13 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
                 LocationRetriever locationRetriever = new LocationRetriever(MapPage.this);
                 locationRetriever.retrieveLocations(new LocationRetriever.LocationCallback() {
                     @Override
-                    public void onLocationsRetrieved(List<Pair<Double, Double>> locations) {
+                    public void onLocationsRetrieved(List<Quadruple<Double, Double, String, String>>locations) {
                         // Log the retrieved locations
                         if (locations.isEmpty()) {
                             Log.d(TAG, "No locations retrieved from local storage.");
                         } else {
                             Log.d(TAG, "Retrieved " + locations.size() + " locations from local storage.");
-                            for (Pair<Double, Double> location : locations) {
+                            for (Quadruple<Double, Double, String, String> location : locations) {
                                 Log.d(TAG, "Latitude: " + location.first + ", Longitude: " + location.second);
                             }
                         }
@@ -574,7 +574,7 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
                         Log.e(TAG, "Failed to retrieve locations", e);
                     }
                 });
-                for (Pair<Double, Double> location : potholeLocations) {
+                for (Quadruple<Double, Double, String, String> location : potholeLocations) {
                     Point point = Point.fromLngLat(location.second, location.first);
                     Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.pothole_on_map);
                     PointAnnotationOptions pointAnnotationOptions = new PointAnnotationOptions()
@@ -1156,13 +1156,27 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
 
                 dialog.show();
 
+                Quadruple<Double, Double, String, String> location = findQuadrupleByPoint(point);
+                if (location == null) {
+                    Log.e(TAG, "Location not found for the given point.");
+                    return;
+                }
+
+                String timestamp = location.third;
+                String id = location.fourth;
+
+                TextView timeTextView = dialog.findViewById(R.id.time_text_view);
+                roadNameTextView.setText(timestamp);
+
                 ImageView potholeImage = dialog.findViewById(R.id.pothole_image);
-                /*FirebaseFirestore db = FirebaseFirestore.getInstance();
-                db.collection("potholes").document()
+
+                // download image
+                FirebaseFirestore db = FirebaseFirestore.getInstance();
+                db.collection("potholes").document(id)
                         .get()
                         .addOnSuccessListener(documentSnapshot -> {
                             if (documentSnapshot.exists()) {
-                                String encodedImage = documentSnapshot.getString("userImage");
+                                String encodedImage = documentSnapshot.getString("Image");
 
                                 if (encodedImage != null && !encodedImage.isEmpty()) {
                                     // Decode Base64 string to Bitmap
@@ -1173,15 +1187,17 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
                                     potholeImage.setImageBitmap(imageBitmap);
                                 }
                             }
-                        });*/
+                        });
             }
         });
     }
+
     private void resetMapBearing() {
         MapAnimationOptions animationOptions = new MapAnimationOptions.Builder().duration(1500L).build();
         CameraOptions cameraOptions = new CameraOptions.Builder().bearing(0.0).build();
         getCamera(mapView).easeTo(cameraOptions, animationOptions);
     }
+
     /*private void animateIconSizeChange(final PointAnnotation annotation, final float startSize, final float endSize) {
         ValueAnimator animator = ValueAnimator.ofFloat((float) startSize, (float) endSize);
         animator.setDuration(300); // Duration of the animation in milliseconds
@@ -1195,6 +1211,7 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
         });
         animator.start();
     }*/
+
     private void changeIconSize(float iconSize) {
         if (pointAnnotationManager != null) {
             List<PointAnnotation> annotations = pointAnnotationManager.getAnnotations();
@@ -1549,5 +1566,14 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
         } else {
             point = 0d;
         }
+    }
+
+    private Quadruple<Double, Double, String, String> findQuadrupleByPoint(Point point) {
+        for (Quadruple<Double, Double, String, String> location : potholeLocations) {
+            if (location.first.equals(point.latitude()) && location.second.equals(point.longitude())) {
+                return location;
+            }
+        }
+        return null;
     }
 }
