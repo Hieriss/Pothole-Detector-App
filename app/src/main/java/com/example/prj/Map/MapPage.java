@@ -574,6 +574,7 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
                         }
                     }
                     containterView.setVisibility(View.GONE);
+                    QuitRouting();
                 }
             }
         });
@@ -1393,6 +1394,7 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
                 Location location = result.getLastLocation();
                 setRoute.setEnabled(false);
                 navigateBtn.setEnabled(true);
+                navigateBtn.setText("Navigate");
                 navigateBtn.setBackgroundColor(getResources().getColor(R.color.light_purple));
                 setRoute.setText("Routing...");
                 RouteOptions.Builder builder = RouteOptions.builder();
