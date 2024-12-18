@@ -14,10 +14,10 @@ import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.prj.AccountSettingPage;
+
 import com.example.prj.Dashboard.MainPage;
 import com.example.prj.R;
-import com.example.prj.SettingPage;
+import com.example.prj.Setting.SettingPage;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
