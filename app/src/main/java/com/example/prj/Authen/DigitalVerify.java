@@ -113,7 +113,7 @@ public class DigitalVerify extends AppCompatActivity {
                 if (otp.length() == 6) {
                     validateOtp(otpBoxes);
                 } else {
-                    Toast.makeText(DigitalVerify.this, "Please enter a valid OTP", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(DigitalVerify.this, getString(R.string.invalid_otp), Toast.LENGTH_SHORT).show();
                 }
             }
         });

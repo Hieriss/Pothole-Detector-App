@@ -21,6 +21,7 @@ import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -336,10 +337,23 @@ public class MainPage extends AppCompatActivity {
         editor.putString("My_Lang", lang);
         editor.apply();
     }
+    private void setThemeMode(boolean isNightMode) {
+        if (isNightMode) {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+        } else {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+        }
+        SharedPreferences.Editor editor = getSharedPreferences("MODE", MODE_PRIVATE).edit();
+        editor.putBoolean("night", isNightMode);
+        editor.apply();
+    }
     public void loadLocale() {
         SharedPreferences prefs = getSharedPreferences("Settings", MODE_PRIVATE);
         String language = prefs.getString("My_Lang", "");
+        SharedPreferences sharedPreferences = getSharedPreferences("MODE", Context.MODE_PRIVATE);
+        boolean nightMode = sharedPreferences.getBoolean("night", false);
         setLocale(language);
+        setThemeMode(nightMode);
     }
 
     private void downloadImage() {

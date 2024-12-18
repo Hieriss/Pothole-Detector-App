@@ -33,8 +33,7 @@
                     <ImageView
                         android:layout_width="20dp"
                         android:layout_height="20dp"
-                        app:srcCompat="@drawable/back"
-                        app:tint="@android:color/black" />
+                        app:srcCompat="@drawable/back" />
 
                     <androidx.appcompat.widget.AppCompatButton
                         android:id="@+id/setting_back_button"
@@ -56,7 +55,7 @@
                     android:fontFamily="@font/grandstander_semi_bold"
                     android:text="@string/setting_terms_policy"
                     android:textAlignment="center"
-                    android:textColor="@color/black"
+                    style="@style/TEXT"
                     android:textSize="26sp" />
             </RelativeLayout>
         </LinearLayout>

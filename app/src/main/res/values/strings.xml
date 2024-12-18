@@ -6,8 +6,8 @@
     <string name="already_have_account">"Already have an account ?"</string>
     <string name="re_pass">"Re-enter password"</string>
     <string name="phone_number">"Phone number"</string>
-    <string name="didnt_have_account">"Didn't have any account ?"</string>
-    <string name="forgot_password">"Forgot your password ?"</string>
+    <string name="didnt_have_account">"Didn't have any account?"</string>
+    <string name="forgot_password">"Forgot your password?"</string>
     <string name="forgot_password_description">"Please insert your username and recovery email of your account for verification"</string>
     <string name="title_activity_login">LoginActivity</string>
     <string name="prompt_email">Email</string>
@@ -17,6 +17,8 @@
     <string name="action_sign_in">Sign in or register</string>
     <string name="action_sign_in_short">Sign in</string>
     <string name="action_sign_up_short">Sign up</string>
+    <string name="action_sign_in1">Sign In</string>
+    <string name="action_sign_up1">Sign Up</string>
     <string name="welcome">"Welcome to Echinoidea"</string>
     <string name="invalid_username">Not a valid username</string>
     <string name="invalid_password">Password must be > 8 characters</string>
@@ -119,6 +121,7 @@
     <string name="notification_text">Notification</string>
     <string name="history_text">History</string>
     <string name="navigate">Navigate</string>
+    <string name="hello">Hello, </string>
     <string name="logout_title">Do you want to logout?</string>
     <string name="logout_description">Confirm that you want to logout</string>
     <string name="logout_confirm">Yes I do</string>

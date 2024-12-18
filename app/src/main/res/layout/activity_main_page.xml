@@ -157,7 +157,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="end"
                         android:fontFamily="@font/grandstander_medium"
-                        android:text="Hello, "
+                        android:text="@string/hello"
                         android:textSize="24sp" />
 
                     <TextView

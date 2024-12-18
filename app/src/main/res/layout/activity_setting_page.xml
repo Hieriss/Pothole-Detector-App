@@ -33,8 +33,7 @@
                     <ImageView
                         android:layout_width="20dp"
                         android:layout_height="20dp"
-                        app:srcCompat="@drawable/home"
-                        app:tint="@color/black"/>
+                        app:srcCompat="@drawable/home"/>
 
                     <androidx.appcompat.widget.AppCompatButton
                         android:id="@+id/setting_home_button"
@@ -56,7 +55,7 @@
                     android:layout_centerVertical="true"
                     android:fontFamily="@font/grandstander_semi_bold"
                     android:text="@string/setting_title"
-                    android:textColor="@color/black"
+                    style="@style/TEXT"
                     android:textSize="26sp" />
             </RelativeLayout>
 
@@ -83,7 +82,7 @@
                         android:layout_marginTop="10dp"
                         android:layout_marginStart="20dp"
                         android:fontFamily="@font/grandstander_medium"
-                        android:text="@string/setting_account_title"
+                        android:text="@string/setting_account"
                         android:textColor="@color/black"
                         android:textSize="16sp" />
 
@@ -147,9 +146,9 @@
                                         android:id="@+id/setting_account_button"
                                         android:layout_width="match_parent"
                                         android:layout_height="match_parent"
-                                        android:background="@android:color/transparent"
                                         android:clickable="true"
                                         android:focusable="true"
+                                        android:background="@android:color/transparent"
                                         android:text="" />
                                 </RelativeLayout>
 
@@ -160,6 +159,8 @@
                                     android:layout_marginEnd="10dp"
                                     android:layout_marginTop="2dp"
                                     android:layout_marginBottom="2dp"
+                                    android:alpha="0.2"
+                                    style="@style/bg_line"/>
                                     android:alpha="1"
                                     android:background="@color/magenta"/>
 
@@ -509,7 +510,7 @@
                                     android:layout_marginTop="2dp"
                                     android:layout_marginBottom="2dp"
                                     android:alpha="0.2"
-                                    android:background="#000000"/>
+                                    style="@style/bg_line"/>
 
                                 <RelativeLayout
                                     android:layout_width="match_parent"
@@ -560,7 +561,7 @@
                                     android:layout_marginTop="2dp"
                                     android:layout_marginBottom="2dp"
                                     android:alpha="0.2"
-                                    android:background="#000000"/>
+                                    style="@style/bg_line"/>
                                 <RelativeLayout
                                     android:layout_width="match_parent"
                                     android:layout_height="match_parent"
@@ -610,7 +611,7 @@
                                     android:layout_marginTop="2dp"
                                     android:layout_marginBottom="2dp"
                                     android:alpha="0.2"
-                                    android:background="#000000"/>
+                                    style="@style/bg_line"/>
                                 <RelativeLayout
                                     android:layout_width="match_parent"
                                     android:layout_height="match_parent"
