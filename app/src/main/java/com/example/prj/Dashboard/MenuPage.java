@@ -11,7 +11,7 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-import com.example.prj.Map.MapPage;
+import com.example.prj.History.HistoryPage;
 import com.example.prj.NotificationPage;
 import com.example.prj.Profile.ProfilePage;
 import com.example.prj.R;
@@ -78,7 +78,7 @@ public class MenuPage extends AppCompatActivity {
         historyButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(MenuPage.this, MapPage.class);
+                Intent intent = new Intent(MenuPage.this, HistoryPage.class);
                 startActivity(intent);
             }
         });

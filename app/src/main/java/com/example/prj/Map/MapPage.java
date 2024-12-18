@@ -61,6 +61,7 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.example.prj.History.PotholeModel;
 import com.example.prj.R;
 import com.example.prj.Session.SessionManager;
 import com.google.android.material.button.MaterialButton;
@@ -522,6 +523,8 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
         }
     };
 
+    public List<PotholeModel> sensorDataList;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -532,6 +535,8 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
+        sensorDataList = new ArrayList<>();
 
         sessionManager = new SessionManager(this);
         HashMap<String, String> userDetails = sessionManager.getUserDetails();
@@ -1509,15 +1514,27 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
 
             SensorData sensorData = new SensorData(deltaX, deltaY, (float) rielZ, pitch, roll, speedKmh, latitude, longitude, point, username, formattedDate);
             Log.d(TAG, "Pushing data to Firebase: " + sensorData.toString());
-            database.child("sensorData").push().setValue(sensorData)
-                    .addOnSuccessListener(aVoid -> {
-                        Log.d(TAG, "Data pushed successfully");
-                    })
-                    .addOnFailureListener(e -> {
-                        Log.e(TAG, "Failed to push data", e);
-                    });
+            String id = database.child("sensorData").push().getKey();
+            if (id != null) {
+                database.child("sensorData").child(id).setValue(sensorData)
+                        .addOnSuccessListener(aVoid -> {
+                            Log.d(TAG, "Data pushed successfully");
+                        })
+                        .addOnFailureListener(e -> {
+                            Log.e(TAG, "Failed to push data", e);
+                        });
+
+                PotholeModel listItem = new PotholeModel(latitude, longitude, formattedDate, id);
+                sensorDataList.add(listItem);
+            }
             retrieveLocationsRunnable.run();
+
+            pushDataToHistory();
         }
+    }
+
+    public void pushDataToHistory(){
+
     }
 
     @Override
