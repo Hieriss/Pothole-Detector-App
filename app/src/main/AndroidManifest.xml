@@ -99,7 +99,7 @@
             android:exported="false"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".HistoryPage"
+            android:name=".History.HistoryPage"
             android:exported="false"
             android:screenOrientation="portrait" />
         <activity

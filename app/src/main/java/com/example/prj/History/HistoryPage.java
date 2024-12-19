@@ -71,7 +71,13 @@ public class HistoryPage extends AppCompatActivity {
         super.onStart();
         FirebaseRecyclerOptions<PotholeModel> options
                 = new FirebaseRecyclerOptions.Builder<PotholeModel>()
-                .setQuery(mbase, PotholeModel.class)
+                .setQuery(mbase, snapshot -> {
+                    PotholeModel model = snapshot.getValue(PotholeModel.class);
+                    if (model != null) {
+                        model.setId(snapshot.getKey()); // Set the key
+                    }
+                    return model;
+                })
                 .build();
 
         System.out.println("DatabaseReference: " + options);
