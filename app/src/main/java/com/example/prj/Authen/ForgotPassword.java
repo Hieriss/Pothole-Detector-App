@@ -1,7 +1,6 @@
 package com.example.prj.Authen;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -11,6 +10,7 @@ import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -26,21 +26,14 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.Objects;
 
-public class ForgotPassword extends DigitalVerify {
-    Button back_button, verify_button, change_password_button;
-    EditText forgot_password_email, forgot_password_username, forgot_password_newpw, forgot_password_confirmpw;
+public class ForgotPassword extends AppCompatActivity {
+    Button back_button, verify_button;
+    EditText forgot_password_email, forgot_password_username;
     TextView forgot_password_description;
 
-    DatabaseReference databaseReference;
     private FirebaseAuth mAuth;
 
     public String userUsername, userEmail;
-    public String OTP;
-    private static final int REQUEST_CODE_DIGITAL_VERIFY = 1;
-
-    private static final String PREFS_NAME = "MyPrefs";
-    private static final String IS_VERIFIED_KEY = "isVerified";
-    private boolean isVerified;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,11 +43,8 @@ public class ForgotPassword extends DigitalVerify {
 
         back_button = findViewById(R.id.back_button);
         verify_button = findViewById(R.id.verify_button);
-        change_password_button = findViewById(R.id.change_password_button);
         forgot_password_username = findViewById(R.id.forgot_password_username);
         forgot_password_email = findViewById(R.id.forgot_password_email);
-        forgot_password_newpw = findViewById(R.id.forgot_password_newpw);
-        forgot_password_confirmpw = findViewById(R.id.forgot_password_confirmpw);
         forgot_password_description = findViewById(R.id.forgot_password_description);
 
         mAuth = FirebaseAuth.getInstance();
@@ -79,13 +69,10 @@ public class ForgotPassword extends DigitalVerify {
                 if (!validateUsername() | !validateEmail()) {
                     return;
                 } else {
-                    checkInfo();
+                    sendEmail();
                 }
             }
         });
-
-        SharedPreferences sharedPreferences = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
-        isVerified = sharedPreferences.getBoolean(IS_VERIFIED_KEY, false);
     }
 
     private Boolean validateUsername() {
@@ -114,9 +101,8 @@ public class ForgotPassword extends DigitalVerify {
         }
     }
 
-    private void checkInfo() {
-        userUsername = forgot_password_username.getText().toString().trim();
-        userEmail = forgot_password_email.getText().toString().trim();
+    private void sendEmail() {
+        String userUsername = forgot_password_username.getText().toString().trim();
 
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("user");
         Query checkUserDatabase = reference.orderByChild("username").equalTo(userUsername);
@@ -127,18 +113,15 @@ public class ForgotPassword extends DigitalVerify {
                 if (snapshot.exists()) {
                     forgot_password_username.setError(null);
                     String emailFromDB = snapshot.child(userUsername).child("email").getValue(String.class);
-                    if (Objects.equals(emailFromDB, userEmail)) {
-                        forgot_password_username.setError(null);
 
-                        OTP = OTPGenerator.generateOTP();
-                        EmailSender emailSender = new EmailSender();
-                        emailSender.sendEmail(userEmail, OTP);
-
-                        checkDigitalOTP();
-                    } else {
-                        forgot_password_email.setError(getString(R.string.email_doesnt_match));
-                        forgot_password_email.requestFocus();
-                    }
+                    mAuth.sendPasswordResetEmail(emailFromDB)
+                            .addOnCompleteListener(task -> {
+                                if (task.isSuccessful()) {
+                                    Toast.makeText(ForgotPassword.this, "Reset link sent to your email", Toast.LENGTH_SHORT).show();
+                                } else {
+                                    Toast.makeText(ForgotPassword.this, "Failed to send reset link", Toast.LENGTH_SHORT).show();
+                                }
+                            });
                 } else {
                     forgot_password_username.setError(getString(R.string.account_doesnt_exist));
                     forgot_password_username.requestFocus();
@@ -152,106 +135,43 @@ public class ForgotPassword extends DigitalVerify {
         });
     }
 
-    public void checkDigitalOTP() {
-        SharedPreferences sharedPreferences = getSharedPreferences("MyPrefs", MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putBoolean("isChecked", false);
-        editor.apply();
+    private void authenticateUserWithUsername(String username, String newPassword) {
+        DatabaseReference database = FirebaseDatabase.getInstance().getReference();
 
-        Intent intent = new Intent(ForgotPassword.this, DigitalVerify.class);
-        intent.putExtra("otp", OTP);
-        intent.putExtra("userUsername", forgot_password_username.getText().toString().trim());
-        startActivityForResult(intent, REQUEST_CODE_DIGITAL_VERIFY);
+        // Find email from the database using the username
+        database.child("user").child(username).child("email").get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful() && task.getResult().exists()) {
+                        String email = task.getResult().getValue(String.class);
+
+                        // Sign in with email and new password
+                        FirebaseAuth auth = FirebaseAuth.getInstance();
+                        auth.signInWithEmailAndPassword(email, newPassword)
+                                .addOnCompleteListener(authTask -> {
+                                    if (authTask.isSuccessful()) {
+                                        updatePassword(username, newPassword); // Proceed to update password
+                                    } else {
+                                        Toast.makeText(this, "Login failed: " + authTask.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+                    } else {
+                        Toast.makeText(this, "Username not found.", Toast.LENGTH_SHORT).show();
+                    }
+                });
     }
 
-    public void changePassword() {
-        forgot_password_username.setVisibility(View.GONE);
-        forgot_password_email.setVisibility(View.GONE);
-        verify_button.setVisibility(View.GONE);
-
-        forgot_password_newpw.setVisibility(View.VISIBLE);
-        forgot_password_confirmpw.setVisibility(View.VISIBLE);
-        change_password_button.setVisibility(View.VISIBLE);
-
-        forgot_password_description.setText(getString(R.string.reset_pass_success));
-
-        change_password_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (!validateNewPassword() | !validateConfirmPassword()) {
-                    return;
-                } else {
-                    updatePassword();
-                }
-            }
-        });
-    }
-
-    private Boolean validateNewPassword() {
-        String val = forgot_password_newpw.getText().toString().trim();
-        if (val.isEmpty()) {
-            forgot_password_newpw.setError(getString(R.string.empty_password));
-            return false;
-        } else if (val.length() < 8) {
-            forgot_password_newpw.setError(getString(R.string.rule_password));
-            return false;
-        } else {
-            forgot_password_newpw.setError(null);
-            return true;
-        }
-    }
-
-    private Boolean validateConfirmPassword() {
-        String val = forgot_password_confirmpw.getText().toString().trim();
-        String password = forgot_password_newpw.getText().toString().trim();
-        if (val.isEmpty()) {
-            forgot_password_confirmpw.setError(getString(R.string.empty_confirm_pass));
-            return false;
-        } else if (!val.equals(password)) {
-            forgot_password_confirmpw.setError(getString(R.string.pass_didnt_match));
-            return false;
-        } else {
-            forgot_password_confirmpw.setError(null);
-            return true;
-        }
-    }
-
-    private void updatePassword() {
-        String userUsername = forgot_password_username.getText().toString().trim();
-        String userPassword = forgot_password_newpw.getText().toString().trim();
-        String hashedPassword = Encrypt.hashPassword(userPassword);
-
-        databaseReference = FirebaseDatabase.getInstance().getReference("user");
-        databaseReference.child(userUsername).child("password").setValue(hashedPassword);
-        databaseReference.child(userUsername).child("otp").removeValue();
-
-        Toast.makeText(ForgotPassword.this, getString(R.string.update_pass_success), Toast.LENGTH_SHORT).show();
-        Intent intent = new Intent(ForgotPassword.this, SignIn.class);
-        startActivity(intent);
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == REQUEST_CODE_DIGITAL_VERIFY) {
-            if (resultCode == RESULT_OK) {
-                isVerified = true;
-                SharedPreferences sharedPreferences = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
-                SharedPreferences.Editor editor = sharedPreferences.edit();
-                editor.putBoolean(IS_VERIFIED_KEY, isVerified);
-                editor.apply();
-                changePassword();
-            }
-        }
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        isVerified = false;
-        SharedPreferences sharedPreferences = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putBoolean(IS_VERIFIED_KEY, isVerified);
-        editor.apply();
+    private void updatePassword(String userUsername, String newPassword) {
+        String hashedPassword = Encrypt.hashPassword(newPassword);
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("user");
+        databaseReference.child(userUsername).child("password").setValue(hashedPassword)
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        Toast.makeText(ForgotPassword.this, getString(R.string.update_pass_success), Toast.LENGTH_SHORT).show();
+                        Intent intent = new Intent(ForgotPassword.this, SignIn.class);
+                        startActivity(intent);
+                    } else {
+                        Toast.makeText(ForgotPassword.this, "Failed to update password", Toast.LENGTH_SHORT).show();
+                    }
+                });
     }
 }

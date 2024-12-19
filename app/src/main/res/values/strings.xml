@@ -130,6 +130,5 @@
     <string name="delete_account_description">Delete account means delete all your infomation!\n Do you really want to delete?</string>
 
 
-
     <string name="mapbox_access_token" translatable="false" tools:ignore="UnusedResources">sk.eyJ1IjoiaGllcmlzcyIsImEiOiJjbTNuZmwya3ExNnVpMmxzZG9wOGNyN24xIn0.Bnsn24Jk7ZmetYO_MxQHcA</string>
 </resources>

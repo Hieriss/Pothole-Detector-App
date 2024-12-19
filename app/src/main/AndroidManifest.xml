@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools" >
+    xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
@@ -22,7 +22,7 @@
         android:screenOrientation="portrait"
         android:supportsRtl="true"
         android:theme="@style/Theme.Prj"
-        tools:targetApi="31" >
+        tools:targetApi="31">
         <activity
             android:name=".Setting.DeleteAccountRequest"
             android:exported="false" />
@@ -40,19 +40,10 @@
             android:screenOrientation="portrait"
             android:theme="@style/TransparentActivityTheme" />
         <activity
-            android:name=".Authen.DigitalVerify"
-            android:exported="false"
-            android:screenOrientation="portrait"
-            android:theme="@style/TransparentActivityTheme" />
-        <activity
             android:name=".Authen.VerifySignUp"
             android:exported="false"
             android:screenOrientation="portrait"
             android:theme="@style/TransparentActivityTheme" />
-        <activity
-            android:name=".AccountSettingPage"
-            android:exported="false"
-            android:screenOrientation="portrait" />
         <activity
             android:name=".Setting.TermsAndPoliciesPage"
             android:exported="false"
@@ -62,27 +53,11 @@
             android:exported="false"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ReportbugsSettingPage"
-            android:exported="false"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".ActivitycenterSettingPage"
-            android:exported="false"
-            android:screenOrientation="portrait" />
-        <activity
             android:name=".Setting.DisplaySettingPage"
             android:exported="false"
             android:screenOrientation="portrait" />
         <activity
             android:name=".Setting.ThemeSettingPage"
-            android:exported="false"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".SecuritySettingPage"
-            android:exported="false"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".NotificationSettingPage"
             android:exported="false"
             android:screenOrientation="portrait" />
         <activity
@@ -133,7 +108,7 @@
         <activity
             android:name=".Authen.IntroPage"
             android:exported="true"
-            android:screenOrientation="portrait" >
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

@@ -84,7 +84,7 @@ public class SetDigital extends AppCompatActivity {
         setButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Define the array of OTP boxes
+                // Define the array of ForgotPasswordStatus boxes
                 EditText[] otpBoxes = {
                         findViewById(R.id.otpBox1),
                         findViewById(R.id.otpBox2),
@@ -94,10 +94,10 @@ public class SetDigital extends AppCompatActivity {
                         findViewById(R.id.otpBox6)
                 };
 
-                // Get the full OTP
+                // Get the full ForgotPasswordStatus
                 otp = getOtp(otpBoxes);
 
-                // Do something with the OTP (e.g., validate or send to server)
+                // Do something with the ForgotPasswordStatus (e.g., validate or send to server)
                 if (otp.length() == 6) {
                     pushDigitalOTP();
                 }

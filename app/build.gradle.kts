@@ -54,14 +54,11 @@ dependencies {
     implementation(libs.firebase.database)
     implementation(libs.firebase.auth)
     implementation(libs.firebase.storage)
+    implementation(libs.firebase.firestore)
+    implementation(libs.firebase.bom)
 
     implementation("com.google.zxing:core:3.4.1")
     implementation("com.journeyapps:zxing-android-embedded:4.2.0")
-    implementation(libs.firebase.firestore)
-    implementation(libs.firebase.ui.database)
-    implementation(libs.firebase.ui.firestore)
-    implementation(libs.firebase.ui.auth)
-    implementation(libs.firebase.ui.storage)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
