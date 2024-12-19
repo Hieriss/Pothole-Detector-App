@@ -1,14 +1,21 @@
 package com.example.prj.History;
 
+import static androidx.core.content.ContextCompat.startActivity;
+
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.AppCompatButton;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.prj.Dashboard.MenuPage;
+import com.example.prj.Map.MapPage;
 import com.example.prj.R;
+import com.example.prj.Setting.SettingPage;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 
@@ -24,7 +31,15 @@ public class HistoryAdapter extends FirebaseRecyclerAdapter<PotholeModel, Histor
         holder.longitude.setText(String.valueOf(model.getLongitude()));
         holder.timestamp.setText(model.getTimestamp());
         holder.id.setText(model.getId());
-
+        holder.viewOnMap.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(v.getContext(), MapPage.class);
+                intent.putExtra("LATITUDE", model.getLatitude());
+                intent.putExtra("LONGITUDE", model.getLongitude());
+                v.getContext().startActivity(intent);
+            }
+        });
     }
 
     @NonNull
@@ -43,6 +58,7 @@ public class HistoryAdapter extends FirebaseRecyclerAdapter<PotholeModel, Histor
         public TextView longitude;
         public TextView timestamp;
         public TextView id;
+        public AppCompatButton viewOnMap;
 
         public ViewHolder(View view) {
             super(view);
@@ -50,6 +66,7 @@ public class HistoryAdapter extends FirebaseRecyclerAdapter<PotholeModel, Histor
             longitude = view.findViewById(R.id.longitude);
             timestamp = view.findViewById(R.id.timestamp);
             id = view.findViewById(R.id.id);
+            viewOnMap = view.findViewById(R.id.item_button);
         }
     }
 

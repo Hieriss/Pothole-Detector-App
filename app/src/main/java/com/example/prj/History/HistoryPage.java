@@ -46,15 +46,11 @@ public class HistoryPage extends AppCompatActivity {
 //            return insets;
 //        });
 
-        FirebaseDatabase.getInstance().setLogLevel(Logger.Level.DEBUG);
-
         mbase = FirebaseDatabase.getInstance().getReference("sensorData");
         Toast.makeText(this, "Loading...", Toast.LENGTH_SHORT).show();
         recyclerView = findViewById(R.id.history_recycler);
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-
-
 
         homeButton = findViewById(R.id.setting_home_button);
         homeButton.setOnClickListener(new View.OnClickListener() {

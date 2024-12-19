@@ -56,6 +56,10 @@ dependencies {
     implementation(libs.firebase.storage)
     implementation(libs.firebase.firestore)
     implementation(libs.firebase.bom)
+    implementation(libs.firebase.ui.database)
+    implementation(libs.firebase.ui.firestore)
+    implementation(libs.firebase.ui.auth)
+    implementation(libs.firebase.ui.storage)
 
     implementation("com.google.zxing:core:3.4.1")
     implementation("com.journeyapps:zxing-android-embedded:4.2.0")

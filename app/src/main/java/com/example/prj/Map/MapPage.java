@@ -216,6 +216,8 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
     private static final int PICK_IMAGE_REQUEST = 1;
     private Uri imageUri;
     ImageView potholeImage;
+    private boolean viewOnly;
+    private Point fromHistory;
 
     // map component
     private MapboxNavigation mapboxNavigation;
@@ -317,7 +319,7 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
         public void onNewLocationMatcherResult(@NonNull LocationMatcherResult locationMatcherResult) {
             Location location = locationMatcherResult.getEnhancedLocation();
             navigationLocationProvider.changePosition(location, locationMatcherResult.getKeyPoints(), null, null);
-            if (isOnNavigation) {
+            if (isOnNavigation && !viewOnly) {
                 updateCamera(Point.fromLngLat(location.getLongitude(), location.getLatitude()), (double) location.getBearing());
             }
         }
@@ -456,6 +458,7 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
                 .padding(new EdgeInsets(1000.0, 0.0, 0.0, 0.0)).build();
 
         getCamera(mapView).easeTo(cameraOptions, animationOptions);
+
     }
     private final OnMoveListener onMoveListener = new OnMoveListener() {
         @Override
@@ -467,7 +470,7 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
             }
             getGestures(mapView).removeOnMoveListener(this);
             if (!isOnNavigation) focusLocationBtn.show();
-            if (!potholeLocations.isEmpty()) {
+            if (!potholeLocations.isEmpty() && !viewOnly) {
                 for (Quadruple<Double, Double, String, String> pLocation : potholeLocations) {
                     Point point = Point.fromLngLat(pLocation.second, pLocation.first);
                     Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.pothole_on_map);
@@ -608,7 +611,7 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
                         Log.e(TAG, "Failed to retrieve locations", e);
                     }
                 });
-                if (pointAnnotationManager != null) {
+                if (pointAnnotationManager != null && !viewOnly) {
                     List<PointAnnotation> annotations = pointAnnotationManager.getAnnotations();
                     if (annotations != null) {
                         for (PointAnnotation annotation : annotations) {
@@ -808,7 +811,16 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
         placeAutocomplete = PlaceAutocomplete.create(getString(R.string.mapbox_access_token));
         searchET = findViewById(R.id.search_bar_text);
         backBtn = findViewById(R.id.back_button);
-        backBtn.setOnClickListener(v -> finish());
+        backBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (mapboxNavigation != null) {
+                    mapboxNavigation.onDestroy();
+                    mapboxNavigation = null;
+                }
+                finish();
+            }
+        });
         searchResultsView = findViewById(R.id.search_results_view);
         searchResultsView.initialize(new SearchResultsView.Configuration(new CommonSearchViewConfiguration()));
         placeAutocompleteUiAdapter = new PlaceAutocompleteUiAdapter(searchResultsView, placeAutocomplete, LocationEngineProvider.getBestLocationEngine(MapPage.this));
@@ -891,10 +903,24 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
                 pointAnnotationManager = PointAnnotationManagerKt.createPointAnnotationManager(annotationPlugin, mapView);
                 pointAnnotationManager.setIconAllowOverlap(false);
 
+                if (viewOnly) {
+                    if (pointAnnotationManager != null) {
+                        pointAnnotationManager.deleteAll(); // Clear existing annotations if needed
+                        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.placeholder);
+                        PointAnnotationOptions pointAnnotationOptions = new PointAnnotationOptions()
+                                .withTextAnchor(TextAnchor.CENTER)
+                                .withIconAnchor(IconAnchor.CENTER)
+                                .withIconSize(1)
+                                .withIconImage(bitmap)
+                                .withIconOpacity(1.0)
+                                .withPoint(fromHistory);
+                        pointAnnotationManager.create(pointAnnotationOptions);
+                    }
+                }
                 addOnMapClickListener(mapView.getMapboxMap(), new OnMapClickListener() {
                     @Override
                     public boolean onMapClick(@NonNull Point point) {
-                        if (!isRouteActive) {
+                        if (!isRouteActive && !viewOnly) {
                             if (manualAddActive) {
                                 bitmap =  BitmapFactory.decodeResource(getResources(), R.drawable.pothole_on_map);
                                 PointAnnotationOptions pointAnnotationOptions = new PointAnnotationOptions()
@@ -1183,7 +1209,18 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
             }
         });
 
-
+        // Intent from history page
+        Intent intent = getIntent();
+        if (intent != null && intent.hasExtra("LATITUDE") && intent.hasExtra("LONGITUDE")) {
+            double latitude = intent.getDoubleExtra("LATITUDE", 0);
+            double longitude = intent.getDoubleExtra("LONGITUDE", 0);
+            fromHistory = Point.fromLngLat(longitude, latitude);
+            updateCamera(fromHistory, 0.0);
+            searchET.setVisibility(View.GONE);
+            soundButton.setVisibility(View.GONE);
+            focusLocationBtn.setVisibility(View.GONE);
+            viewOnly = true;
+        }
 
         mapView.getMapboxMap().addOnCameraChangeListener(new OnCameraChangeListener() {
             @Override
