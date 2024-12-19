@@ -98,87 +98,43 @@
                             android:layout_marginTop="32dp"
                             android:layout_marginEnd="22dp"
                             android:layout_marginBottom="32dp"
+
                             app:shapeAppearanceOverlay="@style/RoundedImage" />
-                    </RelativeLayout>
 
-                    <TextView
-                        android:id="@+id/profile_nickname_text"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="10dp"
-                        android:fontFamily="@font/grandstander_regular"
-                        android:gravity="center_vertical"
-                        android:text="@string/nickname"
-                        android:textSize="16sp" />
+                        <ImageView
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:layout_alignBottom="@+id/profile_user_image"
+                            android:layout_alignEnd="@+id/profile_user_image"
+                            app:srcCompat="@drawable/signin_button_background" />
 
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="20dp"
-                        android:layout_marginTop="10dp"
-                        android:layout_marginEnd="20dp"
-                        android:layout_marginBottom="10dp"
-                        android:orientation="horizontal">
-
-                        <TextView
-                            android:id="@+id/profile_nickname"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:fontFamily="@font/grandstander_regular"
-                            android:text=""
-                            android:textSize="22sp" />
-
-                        <EditText
-                            android:id="@+id/profile_nickname_edit"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:fontFamily="@font/grandstander_regular"
-                            android:text=""
-                            android:hint="@string/nickname"
-                            android:textSize="22sp"
-                            android:visibility="gone" />
-
-                        <RelativeLayout
+                        <ImageView
                             android:layout_width="24dp"
                             android:layout_height="24dp"
-                            android:layout_marginEnd="5dp">
+                            android:layout_marginBottom="8dp"
+                            android:layout_marginEnd="8dp"
+                            android:layout_alignBottom="@+id/profile_user_image"
+                            android:layout_alignEnd="@+id/profile_user_image"
+                            app:srcCompat="@drawable/camera"
+                            app:tint="@color/black" />
 
-                            <ImageView
-                                android:layout_width="24dp"
-                                android:layout_height="24dp"
-                                android:layout_centerInParent="true"
-                                app:srcCompat="@drawable/edit"
-                                app:tint="@color/black" />
-
-                            <androidx.appcompat.widget.AppCompatButton
-                                android:id="@+id/edit_nickname"
-                                android:layout_width="24dp"
-                                android:layout_height="24dp"
-                                android:background="@android:color/transparent"
-                                android:clickable="true"
-                                android:focusable="true"
-                                android:paddingTop="5dp"
-                                android:text="" />
-                        </RelativeLayout>
-                    </LinearLayout>
-
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:layout_marginStart="10dp"
-                        android:layout_marginEnd="10dp"
-                        android:layout_marginTop="5dp"
-                        android:layout_marginBottom="5dp"
-                        android:alpha="1"
-                        android:background="@color/magenta"/>
+                        <androidx.appcompat.widget.AppCompatButton
+                            android:id="@+id/edit_image_button"
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:layout_alignBottom="@+id/profile_user_image"
+                            android:layout_alignEnd="@+id/profile_user_image"
+                            android:background="@android:color/transparent"
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:text="" />
+                    </RelativeLayout>
 
                     <TextView
                         android:id="@+id/profile_username_text"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="10dp"
+
                         android:layout_marginStart="10dp"
                         android:fontFamily="@font/grandstander_regular"
                         android:gravity="center_vertical"
@@ -263,22 +219,6 @@
                         android:text=""
                         android:textSize="22sp" />
                 </LinearLayout>
-
         </RelativeLayout>
-
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/upload_image_button"
-            android:layout_width="230dp"
-            android:layout_height="50dp"
-            android:layout_marginTop="50dp"
-            android:layout_gravity="center"
-            android:background="@drawable/signin_button_background"
-            android:fontFamily="@font/grandstander_semi_bold"
-            android:text="Upload Image"
-            android:textAllCaps="false"
-            android:textColor="@color/black"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            android:visibility="visible" />
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

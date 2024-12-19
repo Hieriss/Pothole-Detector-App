@@ -38,12 +38,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ProfilePage extends AppCompatActivity {
-    private static final int PICK_IMAGE_REQUEST = 1;
-    TextView textNickname, textUsername, textEmail, textPhone;
-    EditText editNickname;
+    TextView textUsername, textEmail, textPhone;
     ImageView profileUserImage;
-    Button quitButton, uploadButton, editButton;
-    public String username, nickname, email, phone, usernameText;
+    Button quitButton, editButton;
+    public String username, email, phone, usernameText;
 
     SessionManager sessionManager;
 
@@ -87,9 +85,8 @@ public class ProfilePage extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (snapshot.exists()) {
-                    String email = snapshot.child("email").getValue(String.class);
-                    String phone = snapshot.child("phone").getValue(String.class);
-                    String imageUrl = snapshot.child("imageUrl").getValue(String.class);
+                    email = snapshot.child("email").getValue(String.class);
+                    phone = snapshot.child("phone").getValue(String.class);
 
                     textEmail.setText(email);
                     textPhone.setText(phone);
@@ -101,64 +98,25 @@ public class ProfilePage extends AppCompatActivity {
             }
         });
 
-        uploadButton = findViewById(R.id.upload_image_button);
-        uploadButton.setOnClickListener(new View.OnClickListener() {
+        editButton = findViewById(R.id.edit_image_button);
+        editButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                openFileChooser();
+                Intent intent = new Intent(ProfilePage.this, EditImage.class);
+                intent.putExtra("USERNAME", usernameText);
+                startActivityForResult(intent, 1);
             }
         });
 
         downloadImage();
     }
 
-    private void openFileChooser() {
-        Intent intent = new Intent();
-        intent.setType("image/*");
-        intent.setAction(Intent.ACTION_GET_CONTENT);
-        startActivityForResult(intent, PICK_IMAGE_REQUEST);
-    }
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null) {
-            imageUri = data.getData();
-            uploadImage();
+        if (requestCode == 1 && resultCode == RESULT_OK) {
+            downloadImage();
         }
-    }
-
-    private void uploadImage() {
-        if (imageUri != null) {
-            try {
-                InputStream imageStream = getContentResolver().openInputStream(imageUri);
-                Bitmap selectedImage = BitmapFactory.decodeStream(imageStream);
-                ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                selectedImage.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-                byte[] imageBytes = baos.toByteArray();
-                String encodedImage = Base64.encodeToString(imageBytes, Base64.DEFAULT);
-
-                storeImageInFirestore(encodedImage);
-            } catch (Exception e) {
-                Toast.makeText(this, "Failed to encode image: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                Log.e("UploadImage", "Error: ", e);
-            }
-        } else {
-            Toast.makeText(this, "No file selected", Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    private void storeImageInFirestore(String encodedImage) {
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-        Map<String, Object> user = new HashMap<>();
-        user.put("userImage", encodedImage);
-
-        db.collection("users").document(usernameText)
-                .set(user)
-                .addOnSuccessListener(aVoid -> Toast.makeText(ProfilePage.this, "Image stored successfully", Toast.LENGTH_SHORT).show())
-                .addOnFailureListener(e -> Toast.makeText(ProfilePage.this, "Failed to store image: " + e.getMessage(), Toast.LENGTH_SHORT).show());
-
-        downloadImage();
     }
 
     private void downloadImage() {
@@ -171,11 +129,9 @@ public class ProfilePage extends AppCompatActivity {
                         String encodedImage = documentSnapshot.getString("userImage");
 
                         if (encodedImage != null && !encodedImage.isEmpty()) {
-                            // Decode Base64 string to Bitmap
                             byte[] decodedBytes = Base64.decode(encodedImage, Base64.DEFAULT);
                             Bitmap imageBitmap = BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.length);
 
-                            // Set the image to userImageView
                             profileUserImage.setImageBitmap(imageBitmap);
                         }
                     }

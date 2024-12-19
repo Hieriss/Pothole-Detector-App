@@ -11,13 +11,14 @@ public class SensorData {
     public double longitude;
     public double point;
     public String username;
+    public String severity;
     public String timestamp;
 
     public SensorData() {
         // Default constructor required for calls to DataSnapshot.getValue(SensorData.class)
     }
 
-    public SensorData(float currentX, float currentY, float currentZ, double pitch, double roll, float speedKmh, double latitude, double longitude, double point, String username, String timestamp) {
+    public SensorData(float currentX, float currentY, float currentZ, double pitch, double roll, float speedKmh, double latitude, double longitude, double point, String username,String severity, String timestamp) {
         this.currentX = currentX;
         this.currentY = currentY;
         this.currentZ = currentZ;
@@ -28,6 +29,7 @@ public class SensorData {
         this.longitude = longitude;
         this.point = point;
         this.username = username;
+        this.severity = severity;
         this.timestamp = timestamp;
     }
 
@@ -44,6 +46,7 @@ public class SensorData {
                 ", longitude=" + longitude +
                 ", point=" + point +
                 ", username=" + username +
+                ", severity=" + severity +
                 ", timestamp=" + timestamp +
                 '}';
     }

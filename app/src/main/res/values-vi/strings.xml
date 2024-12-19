@@ -128,6 +128,9 @@
     <string name="logout_decline">Không</string>
     <string name="delete_account_title">Bạn có muốn xóa tài khoản của mình không?</string>
     <string name="delete_account_description">Xoá tài khoản đồng nghĩa với việc xóa hết thông tin!\n Bạn có thực sự muốn xóa?</string>
+    <string name="upload_image_title">Bạn muốn tải lên bằng cách nào</string>
+    <string name="choose_from_gallery">Chọn ảnh từ thư viện</string>
+    <string name="take_a_photo">Chụp ảnh</string>
 
 
 

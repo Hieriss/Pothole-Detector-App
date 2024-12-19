@@ -8,7 +8,6 @@ import static com.mapbox.maps.plugin.gestures.GesturesUtils.getGestures;
 import static com.mapbox.maps.plugin.locationcomponent.LocationComponentUtils.getLocationComponent;
 import static com.mapbox.navigation.base.extensions.RouteOptionsExtensions.applyDefaultNavigationOptions;
 
-import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.app.NotificationChannel;
@@ -27,7 +26,6 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
-import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -37,7 +35,6 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Base64;
 import android.util.Log;
-import android.util.Pair;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.Button;
@@ -62,7 +59,6 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-import com.example.prj.Profile.ProfilePage;
 import com.example.prj.R;
 import com.example.prj.Session.SessionManager;
 import com.google.android.material.button.MaterialButton;
@@ -80,18 +76,13 @@ import com.mapbox.api.directions.v5.DirectionsCriteria;
 import com.mapbox.api.directions.v5.models.Bearing;
 import com.mapbox.api.directions.v5.models.RouteOptions;
 import com.mapbox.api.directions.v5.models.VoiceInstructions;
-import com.mapbox.api.geocoding.v5.GeocodingCriteria;
-import com.mapbox.api.geocoding.v5.MapboxGeocoding;
-import com.mapbox.api.geocoding.v5.models.GeocodingResponse;
 import com.mapbox.bindgen.Expected;
-import com.mapbox.geojson.BoundingBox;
 import com.mapbox.geojson.LineString;
 import com.mapbox.geojson.Point;
 import com.mapbox.maps.CameraOptions;
 import com.mapbox.maps.EdgeInsets;
 import com.mapbox.maps.MapView;
 import com.mapbox.maps.Style;
-import com.mapbox.maps.ViewAnnotationOptions;
 import com.mapbox.maps.extension.observable.eventdata.CameraChangedEventData;
 import com.mapbox.maps.extension.style.layers.properties.generated.IconAnchor;
 import com.mapbox.maps.extension.style.layers.properties.generated.TextAnchor;
@@ -114,7 +105,6 @@ import com.mapbox.maps.plugin.locationcomponent.LocationComponentPlugin;
 import com.mapbox.maps.plugin.locationcomponent.OnIndicatorPositionChangedListener;
 import com.mapbox.maps.plugin.locationcomponent.generated.LocationComponentSettings;
 import com.mapbox.maps.plugin.scalebar.ScaleBarPlugin;
-import com.mapbox.maps.viewannotation.ViewAnnotationManager;
 import com.mapbox.navigation.base.formatter.DistanceFormatterOptions;
 import com.mapbox.navigation.base.options.NavigationOptions;
 import com.mapbox.navigation.base.route.NavigationRoute;
@@ -186,9 +176,6 @@ import kotlin.coroutines.Continuation;
 import kotlin.coroutines.CoroutineContext;
 import kotlin.coroutines.EmptyCoroutineContext;
 import kotlin.jvm.functions.Function1;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -289,7 +276,7 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
     double rielZ;
     private Runnable pushDataRunnable;
     private static final int REQUEST_LOCATION_PERMISSION = 1;
-    private List<Quadruple<Double, Double, String, String>> potholeLocations;
+    private List<Penaldo<Double, Double, String, String, String>> potholeLocations;
     private static final float SPEED_THRESHOLD = 15f;
     private static final float DELTA_Z_THRESHOLD = 100.0f;
 
@@ -471,7 +458,7 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
             getGestures(mapView).removeOnMoveListener(this);
             if (!isOnNavigation) focusLocationBtn.show();
             if (!potholeLocations.isEmpty() && !viewOnly) {
-                for (Quadruple<Double, Double, String, String> pLocation : potholeLocations) {
+                for (Penaldo<Double, Double, String, String, String> pLocation : potholeLocations) {
                     Point point = Point.fromLngLat(pLocation.second, pLocation.first);
                     Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.pothole_on_map);
                     PointAnnotationOptions pointAnnotationOptions = new PointAnnotationOptions()
@@ -592,13 +579,13 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
                 LocationRetriever locationRetriever = new LocationRetriever(MapPage.this);
                 locationRetriever.retrieveLocations(new LocationRetriever.LocationCallback() {
                     @Override
-                    public void onLocationsRetrieved(List<Quadruple<Double, Double, String, String>>locations) {
+                    public void onLocationsRetrieved(List<Penaldo<Double, Double, String, String, String>>locations) {
                         // Log the retrieved locations
                         if (locations.isEmpty()) {
                             Log.d(TAG, "No locations retrieved from local storage.");
                         } else {
                             Log.d(TAG, "Retrieved " + locations.size() + " locations from local storage.");
-                            for (Quadruple<Double, Double, String, String> location : locations) {
+                            for (Penaldo<Double, Double, String, String, String> location : locations) {
                                 Log.d(TAG, "Latitude: " + location.first + ", Longitude: " + location.second);
                             }
                         }
@@ -620,7 +607,7 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
                             }
                         }
                     }
-                    for (Quadruple<Double, Double, String, String> location : potholeLocations) {
+                    for (Penaldo<Double, Double, String, String, String> location : potholeLocations) {
                         Point point = Point.fromLngLat(location.second, location.first);
                         Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.pothole_on_map);
                         PointAnnotationOptions pointAnnotationOptions = new PointAnnotationOptions()
@@ -935,7 +922,7 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
                                 Date date = new Date(timestamp);
                                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
                                 String formattedDate = sdf.format(date);
-                                SensorData sensorData = new SensorData(deltaX, deltaY, deltaZ, pitch, roll, speedKmh, latitude, longitude, 0.938689541231339,username, formattedDate);
+                                SensorData sensorData = new SensorData(deltaX, deltaY, deltaZ, pitch, roll, speedKmh, latitude, longitude, 0.938689541231339,username, "low", formattedDate);
                                 Log.d(TAG, "Pushing data to Firebase: " + sensorData.toString());
                                 database.child("sensorData").push().setValue(sensorData)
                                         .addOnSuccessListener(aVoid -> {
@@ -1291,13 +1278,14 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
                 }
                 roadNameTextView.setText(roadName);
 
-                Quadruple<Double, Double, String, String> location = findQuadrupleByPoint(point);
+                Penaldo<Double, Double, String, String, String>location = findQuadrupleByPoint(point);
                 if (location == null) {
                     Log.e(TAG, "Location not found for the given point.");
                     return;
                 }
                 String timestamp = location.third;
                 String id = location.fourth;
+                String severity = location.fifth;
                 //Toast.makeText(MapPage.this, "ID: " + id, Toast.LENGTH_SHORT).show();
 
                 TextView timeTextView = dialog.findViewById(R.id.time_text_view);
@@ -1705,8 +1693,17 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
             Date date = new Date(timestamp);
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
             String formattedDate = sdf.format(date);
+            String severity;
 
-            SensorData sensorData = new SensorData(deltaX, deltaY, (float) rielZ, pitch, roll, speedKmh, latitude, longitude, point, username, formattedDate);
+            if (rielZ > 100 && rielZ < 120) {
+                severity = "Low";
+            } else if (rielZ > 120 && rielZ < 140) {
+                severity = "Medium";
+            } else {
+                severity = "High";
+            }
+
+            SensorData sensorData = new SensorData(deltaX, deltaY, (float) rielZ, pitch, roll, speedKmh, latitude, longitude, point, username, severity, formattedDate);
             Log.d(TAG, "Pushing data to Firebase: " + sensorData.toString());
             database.child("sensorData").push().setValue(sensorData)
                     .addOnSuccessListener(aVoid -> {
@@ -1767,8 +1764,8 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
         }
     }
 
-    private Quadruple<Double, Double, String, String> findQuadrupleByPoint(Point point) {
-        for (Quadruple<Double, Double, String, String> location : potholeLocations) {
+    private Penaldo<Double, Double, String, String, String> findQuadrupleByPoint(Point point) {
+        for (Penaldo<Double, Double, String, String, String> location : potholeLocations) {
             if (location.first.equals(point.latitude()) && location.second.equals(point.longitude())) {
                 return location;
             }

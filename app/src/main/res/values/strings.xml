@@ -128,6 +128,10 @@
     <string name="logout_decline">Nuh uh</string>
     <string name="delete_account_title">Do you want to delete your account?</string>
     <string name="delete_account_description">Delete account means delete all your infomation!\n Do you really want to delete?</string>
+    <string name="upload_image_title">How do you want to upload your image</string>
+    <string name="choose_from_gallery">Choose from gallery</string>
+    <string name="take_a_photo">Take a photo</string>
+
 
 
     <string name="mapbox_access_token" translatable="false" tools:ignore="UnusedResources">sk.eyJ1IjoiaGllcmlzcyIsImEiOiJjbTNuZmwya3ExNnVpMmxzZG9wOGNyN24xIn0.Bnsn24Jk7ZmetYO_MxQHcA</string>

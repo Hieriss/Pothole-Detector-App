@@ -111,26 +111,6 @@ public class MainPage extends AppCompatActivity {
             nameTextView.setText(usernameText);
         }
 
-        // Check if the digital otp is null
-        /*DatabaseReference reference = FirebaseDatabase.getInstance().getReference("user");
-        Query checkUserDatabase = reference.orderByChild("username").equalTo(nameTextView.getText().toString());
-
-        checkUserDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (snapshot.exists()) {
-                    String otpFromDB = snapshot.child(nameTextView.getText().toString()).child("otp").getValue(String.class);
-                    if (otpFromDB == null) {
-                        setDigitalOTP();
-                    }
-                }
-            }
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                Toast.makeText(MainPage.this, "Database Error", Toast.LENGTH_SHORT).show();
-            }
-        });*/
-
         // Linechart
         lineChart1 = findViewById(R.id.line_chart1);
         Description description1 = new Description();
@@ -372,31 +352,8 @@ public class MainPage extends AppCompatActivity {
 
                             // Set the image to userImageView
                             userImageView.setImageBitmap(imageBitmap);
-
-                            // Save to local storage
-                            saveImageToLocalStorage(imageBitmap, usernameText + ".jpg");
                         }
                     }
                 });
-    }
-
-
-    private void saveImageToLocalStorage(Bitmap bitmap, String fileName) {
-        FileOutputStream fos = null;
-        try {
-            // Save the image in app-specific storage
-            File file = new File(getExternalFilesDir(Environment.DIRECTORY_PICTURES), fileName);
-            fos = new FileOutputStream(file);
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
-            Log.d("SaveImage", "Image saved at: " + file.getAbsolutePath());
-        } catch (Exception e) {
-            Log.e("SaveImage", "Error: ", e);
-        } finally {
-            try {
-                if (fos != null) fos.close();
-            } catch (IOException e) {
-                Log.e("SaveImage", "Failed to close FileOutputStream", e);
-            }
-        }
     }
 }

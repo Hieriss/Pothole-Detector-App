@@ -30,23 +30,27 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:orientation="horizontal">
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginTop="16dp"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginTop="15dp"
                     android:text="ID: "
-                    android:textStyle="bold"
+                    android:textSize="16sp"
+                    android:fontFamily="@font/grandstander_semi_bold"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
+
                 <TextView
                     android:id="@+id/id"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginTop="16dp"
-                    android:text="Tmp"
-                    android:textStyle="bold"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="15dp"
+                    android:text="Unknown"
+                    android:textSize="16sp"
+                    android:fontFamily="@font/grandstander_regular"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
             </LinearLayout>
@@ -56,25 +60,29 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:orientation="horizontal">
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
+                    android:layout_marginStart="20dp"
                     android:layout_marginTop="10dp"
-                    android:layout_marginBottom="16dp"
+                    android:layout_marginBottom="15dp"
+                    android:textSize="16sp"
+                    android:fontFamily="@font/grandstander_semi_bold"
                     android:text="Time: "
-                    android:textStyle="bold"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/textView1" />
+
                 <TextView
                     android:id="@+id/timestamp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
+                    android:layout_marginStart="10dp"
                     android:layout_marginTop="10dp"
-                    android:layout_marginBottom="16dp"
-                    android:text="Tmp"
-                    android:textStyle="bold"
+                    android:layout_marginBottom="15dp"
+                    android:textSize="16sp"
+                    android:fontFamily="@font/grandstander_regular"
+                    android:text="Unknown"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/textView1" />
 
@@ -91,24 +99,61 @@
                 android:layout_height="0dp"
                  />
 
+            <TextView
+                android:id="@+id/severity"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                />
+
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
+            android:orientation="vertical"
             android:layout_weight="1">
 
-            <androidx.appcompat.widget.AppCompatButton
+            <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:id="@+id/item_button"
+                >
 
+                <ImageView
+                    android:layout_width="80dp"
+                    android:layout_height="40dp"
+                    android:layout_marginTop="35dp"
+                    android:layout_centerHorizontal="true"
+                    app:srcCompat="@drawable/view_on_map_button" />
 
-                />
+                <ImageView
+                    android:layout_width="15dp"
+                    android:layout_height="15dp"
+                    android:layout_marginTop="47.5dp"
+                    android:layout_centerHorizontal="true"
+                    app:srcCompat="@drawable/search"/>
 
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/item_button"
+                    android:layout_width="80dp"
+                    android:layout_height="40dp"
+                    android:layout_marginTop="35dp"
+                    android:layout_centerHorizontal="true"
+                    android:background="@android:color/transparent"
+                    android:clickable="true"
+                    android:focusable="true"
+                    />
+
+                <TextView
+                    android:id="@+id/button_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="5dp"
+                    android:textSize="16sp"
+                    android:fontFamily="@font/grandstander_semi_bold"
+                    android:text="View on map"
+                    />
+            </RelativeLayout>
         </LinearLayout>
-
-
-
     </LinearLayout>
 </androidx.cardview.widget.CardView>
