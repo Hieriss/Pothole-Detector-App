@@ -30,6 +30,7 @@ import androidx.core.view.WindowInsetsCompat;
 import com.example.prj.History.PotholeModel;
 import com.example.prj.R;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.mapbox.android.core.location.LocationEngine;
 import com.mapbox.android.core.location.LocationEngineCallback;
 import com.mapbox.android.core.location.LocationEngineProvider;
@@ -95,20 +96,12 @@ public class MapViewPothole extends AppCompatActivity {
             return insets;
         });
 
+        database = FirebaseDatabase.getInstance().getReference();
+
         severity = findViewById(R.id.severity_text);
         timestamp = findViewById(R.id.timestamp_text);
         severity.setText(severityText);
         timestamp.setText(timestampText);
-
-        Intent intent = getIntent();
-        if (intent != null && intent.hasExtra("LATITUDE") && intent.hasExtra("LONGITUDE")) {
-            double latitude = intent.getDoubleExtra("LATITUDE", 0);
-            double longitude = intent.getDoubleExtra("LONGITUDE", 0);
-            severityText = getIntent().getStringExtra("SEVERITY");
-            timestampText = getIntent().getStringExtra("TIMESTAMP");
-            fromHistory = Point.fromLngLat(longitude, latitude);
-            updateCamera(fromHistory, 0.0);
-        }
 
         backButton = findViewById(R.id.back_button);
         backButton.setOnClickListener(new View.OnClickListener() {
@@ -151,6 +144,16 @@ public class MapViewPothole extends AppCompatActivity {
                 updateCamera();
             }
         });
+
+        Intent intent = getIntent();
+        if (intent != null && intent.hasExtra("LATITUDE") && intent.hasExtra("LONGITUDE")) {
+            double latitude = intent.getDoubleExtra("LATITUDE", 0);
+            double longitude = intent.getDoubleExtra("LONGITUDE", 0);
+            severityText = getIntent().getStringExtra("SEVERITY");
+            timestampText = getIntent().getStringExtra("TIMESTAMP");
+            fromHistory = Point.fromLngLat(longitude, latitude);
+            updateCamera(fromHistory, 0.0);
+        }
 
         confirmButton = findViewById(R.id.confirm_button);
         confirmButton.setOnClickListener(new View.OnClickListener() {
