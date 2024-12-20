@@ -527,7 +527,6 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
                 navigateBtn.setBackgroundColor(getResources().getColor(R.color.light_purple));
                 navigateBtn.setEnabled(true);
             }
-            getGestures(mapView).removeOnMoveListener(this);
             if (!isOnNavigation) focusLocationBtn.show();
             if (!potholeLocations.isEmpty() && !viewOnly) {
                 for (Penaldo<Double, Double, String, String, String> pLocation : potholeLocations) {
@@ -543,6 +542,7 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
                     pointAnnotationManager.create(pointAnnotationOptions);
                 }
             }
+            getGestures(mapView).removeOnMoveListener(this);
         }
 
         @Override
@@ -1801,6 +1801,13 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
                 pointAnnotationManager.delete(annotation);
             }
         }
+        MapAnimationOptions animationOptions = new MapAnimationOptions.Builder().duration(1500L).build();
+        CameraOptions cameraOptions = new CameraOptions.Builder()
+                .zoom(18.0) // Default zoom level
+                .bearing(0.0) // Default bearing
+                .pitch(0.0) // Default pitch
+                .build();
+        getCamera(mapView).easeTo(cameraOptions, animationOptions);
     }
 
     private void pushData() {
