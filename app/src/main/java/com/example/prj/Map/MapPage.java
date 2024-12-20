@@ -59,6 +59,7 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.example.prj.History.PotholeModel;
 import com.example.prj.R;
 import com.example.prj.Session.SessionManager;
 import com.google.android.material.button.MaterialButton;
@@ -279,6 +280,7 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
     private List<Penaldo<Double, Double, String, String, String>> potholeLocations;
     private static final float SPEED_THRESHOLD = 15f;
     private static final float DELTA_Z_THRESHOLD = 100.0f;
+    public List<PotholeModel> potholeDataList = new ArrayList<>();
 
     //--------------------------Navigation Register--------------------------------
 
@@ -1702,6 +1704,12 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
             } else {
                 severity = "High";
             }
+
+            PotholeModel potholeModel = new PotholeModel(deltaX, deltaY, (float) rielZ, pitch, roll, speedKmh, point, username, severity, latitude, longitude, formattedDate);
+            potholeDataList.add(potholeModel);
+
+            // Save to local storage
+            StorePotholes.savePotholeData(this, potholeDataList);
 
             SensorData sensorData = new SensorData(deltaX, deltaY, (float) rielZ, pitch, roll, speedKmh, latitude, longitude, point, username, severity, formattedDate);
             Log.d(TAG, "Pushing data to Firebase: " + sensorData.toString());

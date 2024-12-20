@@ -87,6 +87,7 @@ dependencies {
     annotationProcessor ("com.github.bumptech.glide:compiler:4.14.2")
     implementation ("com.makeramen:roundedimageview:2.3.0")
     implementation ("com.squareup.picasso:picasso:2.71828")
+    implementation ("com.google.code.gson:gson:2.8.9")
 }
 
 apply(plugin = "com.google.gms.google-services")

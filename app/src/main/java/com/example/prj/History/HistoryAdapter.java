@@ -1,7 +1,5 @@
 package com.example.prj.History;
 
-import static androidx.core.content.ContextCompat.startActivity;
-
 import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,25 +10,41 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatButton;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.prj.Dashboard.MenuPage;
 import com.example.prj.Map.MapPage;
 import com.example.prj.R;
-import com.example.prj.Setting.SettingPage;
-import com.firebase.ui.database.FirebaseRecyclerAdapter;
-import com.firebase.ui.database.FirebaseRecyclerOptions;
 
-public class HistoryAdapter extends FirebaseRecyclerAdapter<PotholeModel, HistoryAdapter.ViewHolder> {
+import java.util.List;
 
-    public HistoryAdapter(@NonNull FirebaseRecyclerOptions<PotholeModel> options) {
-        super(options);
+public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHolder> {
+
+    private final List<PotholeModel> potholeList;
+
+    public HistoryAdapter(List<PotholeModel> potholeList) {
+        this.potholeList = potholeList;
+    }
+
+    @NonNull
+    @Override
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.recycler_item, parent, false);
+        return new ViewHolder(view);
     }
 
     @Override
-    protected void onBindViewHolder(@NonNull ViewHolder holder, int position, @NonNull PotholeModel model) {
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+        PotholeModel model = potholeList.get(position);
+        holder.currentX.setText(String.valueOf(model.getCurrentX()));
+        holder.currentY.setText(String.valueOf(model.getCurrentY()));
+        holder.currentZ.setText(String.valueOf(model.getCurrentZ()));
+        holder.pitch.setText(String.valueOf(model.getPitch()));
+        holder.roll.setText(String.valueOf(model.getRoll()));
+        holder.speedKmh.setText(String.valueOf(model.getSpeedKmh()));
+        holder.point.setText(String.valueOf(model.getPoint()));
+        holder.username.setText(model.getUsername());
         holder.latitude.setText(String.valueOf(model.getLatitude()));
         holder.longitude.setText(String.valueOf(model.getLongitude()));
         holder.timestamp.setText(model.getTimestamp());
-        holder.id.setText(model.getId());
         holder.viewOnMap.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -42,33 +56,40 @@ public class HistoryAdapter extends FirebaseRecyclerAdapter<PotholeModel, Histor
         });
     }
 
-    @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.recycler_item, parent, false);
-
-        return new ViewHolder(view);
+    public int getItemCount() {
+        return potholeList.size();
     }
 
-
-
     public static class ViewHolder extends RecyclerView.ViewHolder {
+        public TextView currentX;
+        public TextView currentY;
+        public TextView currentZ;
+        public TextView pitch;
+        public TextView roll;
+        public TextView speedKmh;
+        public TextView point;
+        public TextView username;
+        public TextView severity;
         public TextView latitude;
         public TextView longitude;
         public TextView timestamp;
-        public TextView id;
         public AppCompatButton viewOnMap;
 
         public ViewHolder(View view) {
             super(view);
+            currentX = view.findViewById(R.id.currentX);
+            currentY = view.findViewById(R.id.currentY);
+            currentZ = view.findViewById(R.id.currentZ);
+            pitch = view.findViewById(R.id.pitch);
+            roll = view.findViewById(R.id.roll);
+            speedKmh = view.findViewById(R.id.speedKmh);
+            point = view.findViewById(R.id.point);
+            username = view.findViewById(R.id.username);
             latitude = view.findViewById(R.id.latitude);
             longitude = view.findViewById(R.id.longitude);
             timestamp = view.findViewById(R.id.timestamp);
-            id = view.findViewById(R.id.id);
             viewOnMap = view.findViewById(R.id.item_button);
         }
     }
-
-
 }

@@ -3,54 +3,39 @@ package com.example.prj.History;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-
 import com.example.prj.Dashboard.MainPage;
+import com.example.prj.Map.MapPage;
+import com.example.prj.Map.StorePotholes;
 import com.example.prj.R;
-import com.example.prj.Setting.SettingPage;
-import com.firebase.ui.database.FirebaseRecyclerOptions;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Logger;
-import com.example.prj.Map.LocationRetriever;
 
-
+import java.util.ArrayList;
+import java.util.List;
 
 public class HistoryPage extends AppCompatActivity {
 
     private RecyclerView recyclerView;
-    HistoryAdapter adapter; // Create Object of the Adapter class
-    DatabaseReference mbase;
-    AppCompatButton homeButton;
-    DataSnapshot dataSnapshot;
+    private HistoryAdapter adapter;
+    private AppCompatButton homeButton;
+    private List<PotholeModel> sensorDataList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_history_page);
-//        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-//            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-//            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-//            return insets;
-//        });
 
-        mbase = FirebaseDatabase.getInstance().getReference("sensorData");
-        Toast.makeText(this, "Loading...", Toast.LENGTH_SHORT).show();
         recyclerView = findViewById(R.id.history_recycler);
-
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+        adapter = new HistoryAdapter(sensorDataList);
+        recyclerView.setAdapter(adapter);
 
         homeButton = findViewById(R.id.setting_home_button);
         homeButton.setOnClickListener(new View.OnClickListener() {
@@ -58,38 +43,16 @@ public class HistoryPage extends AppCompatActivity {
             public void onClick(View view) {
                 Intent intent = new Intent(HistoryPage.this, MainPage.class);
                 startActivity(intent);
+                finish();
             }
         });
+
+        populateSensorData();
     }
 
-    @Override protected void onStart()
-    {
-        super.onStart();
-        FirebaseRecyclerOptions<PotholeModel> options
-                = new FirebaseRecyclerOptions.Builder<PotholeModel>()
-                .setQuery(mbase, snapshot -> {
-                    PotholeModel model = snapshot.getValue(PotholeModel.class);
-                    if (model != null) {
-                        model.setId(snapshot.getKey()); // Set the key
-                    }
-                    return model;
-                })
-                .build();
-
-        System.out.println("DatabaseReference: " + options);
-
-        adapter = new HistoryAdapter(options);
-        // Connecting Adapter class with the Recycler view*/
-        recyclerView.setAdapter(adapter);
-        adapter.startListening();
+    private void populateSensorData() {
+        // Load data from local storage
+        sensorDataList.addAll(StorePotholes.loadPotholeData(this));
+        adapter.notifyDataSetChanged();
     }
-
-    // Function to tell the app to stop getting
-    // data from database on stopping of the activity
-    @Override protected void onStop()
-    {
-        super.onStop();
-        adapter.stopListening();
-    }
-
 }
