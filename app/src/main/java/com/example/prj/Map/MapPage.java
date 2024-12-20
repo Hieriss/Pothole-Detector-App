@@ -965,6 +965,8 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
                 pointAnnotationManager.setIconAllowOverlap(false);
 
                 if (viewOnly) {
+                    focusLocationBtn.setVisibility(View.GONE);
+                    compassView.setVisibility(View.GONE);
                     if (pointAnnotationManager != null) {
                         pointAnnotationManager.deleteAll(); // Clear existing annotations if needed
                         Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.placeholder);
