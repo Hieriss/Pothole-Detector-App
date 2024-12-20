@@ -205,6 +205,7 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
     ImageView potholeImage;
     private boolean viewOnly;
     private Point fromHistory;
+    double thresholdDistanceToNoti = 0.05; // 50 meters
 
     // map component
     private MapboxNavigation mapboxNavigation;
@@ -277,6 +278,7 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
     private Runnable pushDataRunnable;
     private static final int REQUEST_LOCATION_PERMISSION = 1;
     private List<Penaldo<Double, Double, String, String, String>> potholeLocations;
+    private List<Penaldo<Double, Double, String, String, String>> potholeTracking;
     private static final float SPEED_THRESHOLD = 15f;
     private static final float DELTA_Z_THRESHOLD = 100.0f;
 
@@ -429,23 +431,77 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
 
         notificationManager.notify(1, builder.build());
     }
-
-    private boolean isPointOnRoute(Point point, NavigationRoute route) {
+    private Point nearestPointOfRoute(Point point, NavigationRoute route) {
         LineString routeLineString = LineString.fromPolyline(route.getDirectionsRoute().geometry(), 6);
         Point nearestPoint = (Point) TurfMisc.nearestPointOnLine(point, routeLineString.coordinates()).geometry();
+        return nearestPoint;
+    }
+
+    private boolean isPointOnRoute(Point point, NavigationRoute route) {
+        Point nearestPoint = nearestPointOfRoute(point, route);
         double distance = TurfMeasurement.distance(point, nearestPoint);
-        // Define a threshold distance (in kilometers) to consider the point as being on the route
-        double thresholdDistance = 0.008; // 8 meters
+        double thresholdDistance = 0.005; // 5 meters
         return distance < thresholdDistance;
     }
 
+    /* private boolean isPointOnRoute(Point point, NavigationRoute route) {
+        LineString routeLineString = LineString.fromPolyline(route.getDirectionsRoute().geometry(), 6);
+        List<Point> routePoints = routeLineString.coordinates();
+        for (int i = 0; i < routePoints.size() - 1; i++) {
+            Point start = routePoints.get(i);
+            Point end = routePoints.get(i + 1);
+            // Check if the point is exactly at the start or end of the segment
+            if (TurfMeasurement.distance(point, start) == 0 || TurfMeasurement.distance(point, end) == 0) {
+                return true;
+            }
+            // Check if the point is collinear with the segment and within the bounds
+            if (isPointOnSegment(point, start, end)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean isPointOnSegment(Point point, Point start, Point end) {
+        double epsilon = 0.000027; // Approximately 3 meters in degrees
+        double crossProduct = (point.latitude() - start.latitude()) * (end.longitude() - start.longitude()) -
+                (point.longitude() - start.longitude()) * (end.latitude() - start.latitude());
+        if (Math.abs(crossProduct) > epsilon) {
+            return false; // Not collinear
+        }
+        double dotProduct = (point.longitude() - start.longitude()) * (end.longitude() - start.longitude()) +
+                (point.latitude() - start.latitude()) * (end.latitude() - start.latitude());
+        if (dotProduct < 0) {
+            return false; // Point is behind the start point
+        }
+        double squaredLengthBA = (end.longitude() - start.longitude()) * (end.longitude() - start.longitude()) +
+                (end.latitude() - start.latitude()) * (end.latitude() - start.latitude());
+        if (dotProduct > squaredLengthBA) {
+            return false; // Point is beyond the end point
+        }
+        return true; // Point is on the segment
+    } */
+
     private void updateCamera(Point point, Double bearing) {
         MapAnimationOptions animationOptions = new MapAnimationOptions.Builder().duration(1500L).build();
-        CameraOptions cameraOptions = new CameraOptions.Builder().center(point).zoom(18.0).bearing(bearing).pitch(0.0)
-                .padding(new EdgeInsets(1000.0, 0.0, 0.0, 0.0)).build();
-
+        CameraOptions cameraOptions;
+        if (isRouteActive) {
+            cameraOptions = new CameraOptions.Builder()
+                    .center(point)
+                    .zoom(18.0)
+                    .bearing(bearing)
+                    .pitch(45.0) // Adjust the pitch to see ahead
+                    .build();
+        }
+        else {
+            cameraOptions = new CameraOptions.Builder()
+                    .center(point)
+                    .zoom(18.0)
+                    .bearing(bearing)
+                    .pitch(0.0)
+                    .build();
+        }
         getCamera(mapView).easeTo(cameraOptions, animationOptions);
-
     }
     private final OnMoveListener onMoveListener = new OnMoveListener() {
         @Override
@@ -918,21 +974,21 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
                                         .withIconImage(bitmap)
                                         .withPoint(point);
                                 pointAnnotationManager.create(pointAnnotationOptions);
-                                long timestamp = System.currentTimeMillis();
-                                Date date = new Date(timestamp);
-                                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
-                                String formattedDate = sdf.format(date);
-                                SensorData sensorData = new SensorData(deltaX, deltaY, deltaZ, pitch, roll, speedKmh, latitude, longitude, 0.938689541231339,username, "low", formattedDate);
-                                Log.d(TAG, "Pushing data to Firebase: " + sensorData.toString());
-                                database.child("sensorData").push().setValue(sensorData)
-                                        .addOnSuccessListener(aVoid -> {
-                                            Log.d(TAG, "Data pushed successfully");
-                                        })
-                                        .addOnFailureListener(e -> {
-                                            Log.e(TAG, "Failed to push data", e);
-                                        });
-
-                                retrieveLocationsRunnable.run();
+//                                long timestamp = System.currentTimeMillis();
+//                                Date date = new Date(timestamp);
+//                                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+//                                String formattedDate = sdf.format(date);
+//                                SensorData sensorData = new SensorData(deltaX, deltaY, deltaZ, pitch, roll, speedKmh, latitude, longitude, 0.938689541231339,username, "low", formattedDate);
+//                                Log.d(TAG, "Pushing data to Firebase: " + sensorData.toString());
+//                                database.child("sensorData").push().setValue(sensorData)
+//                                        .addOnSuccessListener(aVoid -> {
+//                                            Log.d(TAG, "Data pushed successfully");
+//                                        })
+//                                        .addOnFailureListener(e -> {
+//                                            Log.e(TAG, "Failed to push data", e);
+//                                        });
+//
+//                                retrieveLocationsRunnable.run();
                             }
                             else {
                                 mapboxNavigation.setNavigationRoutes(Collections.emptyList());
@@ -953,9 +1009,8 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
                                 pointAnnotationManager.create(pointAnnotationOptions);
 
                                 containterView.setVisibility(View.VISIBLE);
-                                if (!isRouteActive) {
-                                    navigateBtn.setText("Focus On");
-                                }
+                                navigateBtn.setEnabled(false);
+                                navigateBtn.setBackgroundColor(getResources().getColor(R.color.light_gray));
 
                                 walkingBtn.setOnClickListener(new View.OnClickListener() {
                                     @Override
@@ -1082,6 +1137,8 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
                                     CameraOptions cameraOptions = new CameraOptions.Builder().center(currentLocation).zoom(18.0).pitch(0.0)
                                             .padding(new EdgeInsets(1000.0, 0.0, 0.0, 0.0)).build();
                                     getCamera(mapView).easeTo(cameraOptions, animationOptions);
+                                    isOnNavigation = true;
+                                    focusLocationBtn.setVisibility(View.GONE);
                                 }
                             }
 
@@ -1422,6 +1479,7 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
                 navigateBtn.setText("Navigate");
                 navigateBtn.setBackgroundColor(getResources().getColor(R.color.light_purple));
                 setRoute.setText("Routing...");
+                potholeTracking = potholeLocations;
                 RouteOptions.Builder builder = RouteOptions.builder();
                 Point origin = Point.fromLngLat(Objects.requireNonNull(location).getLongitude(), location.getLatitude());
                 builder.coordinatesList(Arrays.asList(origin, point));
@@ -1561,15 +1619,23 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
     @Override
     protected void onResume() {
         super.onResume();
-        sensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
-        sensorManager.registerListener(this, rotationVectorSensor, SensorManager.SENSOR_DELAY_NORMAL);
+        if (sensorManager != null) {
+            if (accelerometer != null) {
+                sensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
+            }
+            if (rotationVectorSensor != null) {
+                sensorManager.registerListener(this, rotationVectorSensor, SensorManager.SENSOR_DELAY_NORMAL);
+            }
+        }
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        sensorManager.unregisterListener(this, accelerometer);
-        sensorManager.unregisterListener(this, rotationVectorSensor);
+        if (sensorManager != null) {
+            sensorManager.unregisterListener(this, accelerometer);
+            sensorManager.unregisterListener(this, rotationVectorSensor);
+        }
     }
 
     @Override
@@ -1622,45 +1688,33 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
 
     @Override
     public void onLocationChanged(Location location) {
-        if (pointAnnotationManager == null) {
-            Log.e(TAG, "PointAnnotationManager is not initialized");
-            return;
-        }
-
-        // Get the speed in meters/second
-        float speed = location.getSpeed();
-        // Convert to km/h
-        speedKmh = speed * 3.6f;
-        latitude = location.getLatitude();
-        longitude = location.getLongitude();
-
-        // Check distance to annotation point
-        List<PointAnnotation> annotations = pointAnnotationManager.getAnnotations();
-        double thresholdDistance = 0.008; // 10 meters
-        if (annotations != null) {
-            for (PointAnnotation annotation : annotations) {
-                Point annotationPoint = annotation.getPoint();
-                if (annotationPoint != null) {
-                    if (annotation.getIconOpacity() == 0.95) {
-                        Double distance = TurfMeasurement.distance(Point.fromLngLat(location.getLongitude(), location.getLatitude()), annotationPoint);
-                        if (isRouteActive) {
-                            if (isPointOnRoute(annotationPoint, selectedRoute)) {
-                                if (distance < thresholdDistance) {
-                                    showNotification("Pothole On Route", "There are a pothole ahead!.");
-                                    break;
-                                }
-                            }
-                        } else {
-                            if (distance < thresholdDistance) {
-                                showNotification("Pothole Nearby", "You are near a pothole!.");
+        if (isRouteActive) {
+            if (potholeTracking != null) {
+                for (Penaldo<Double, Double, String, String, String> pLocation : potholeTracking) {
+                    Point potholePoint = Point.fromLngLat(pLocation.second, pLocation.first);
+                    Double distance = TurfMeasurement.distance(Point.fromLngLat(location.getLongitude(), location.getLatitude()), potholePoint);
+                    if (distance > 1) continue;
+                    if (isRouteActive) {
+                        if (distance < thresholdDistanceToNoti) {
+                            if (isPointOnRoute(potholePoint, selectedRoute)) {
+                                showNotification("Pothole On Route", "There is a pothole ahead!");
+                                potholeTracking.remove(pLocation);
                                 break;
                             }
                         }
                     }
                 }
             }
+            Point nearestP = nearestPointOfRoute(Point.fromLngLat(location.getLongitude(), location.getLatitude()), selectedRoute);
+            latitude = nearestP.latitude();
+            longitude = nearestP.longitude();
         }
+        // Get the speed in meters/second
+        float speed = location.getSpeed();
+        // Convert to km/h
+        speedKmh = speed * 3.6f;
     }
+
     private void QuitRouting() {
         isRouteActive = false;
         isOnNavigation = false;
