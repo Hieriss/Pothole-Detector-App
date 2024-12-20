@@ -11,6 +11,7 @@ import androidx.appcompat.widget.AppCompatButton;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.prj.Map.MapPage;
+import com.example.prj.Map.MapViewPothole;
 import com.example.prj.R;
 
 import java.util.List;
@@ -49,9 +50,11 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHold
         holder.viewOnMap.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(v.getContext(), MapPage.class);
+                Intent intent = new Intent(v.getContext(), MapViewPothole.class);
                 intent.putExtra("LATITUDE", model.getLatitude());
                 intent.putExtra("LONGITUDE", model.getLongitude());
+                intent.putExtra("SEVERITY", model.getSeverity());
+                intent.putExtra("TIMESTAMP", model.getTimestamp());
                 v.getContext().startActivity(intent);
             }
         });

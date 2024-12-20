@@ -1,5 +1,6 @@
 package com.example.prj.Map;
 
+import static android.content.ContentValues.TAG;
 import static com.mapbox.maps.plugin.animation.CameraAnimationsUtils.getCamera;
 import static com.mapbox.maps.plugin.gestures.GesturesUtils.addOnMapClickListener;
 import static com.mapbox.maps.plugin.gestures.GesturesUtils.getGestures;
@@ -12,6 +13,8 @@ import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -22,7 +25,9 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.example.prj.History.PotholeModel;
 import com.example.prj.R;
+import com.google.firebase.database.DatabaseReference;
 import com.mapbox.android.core.location.LocationEngine;
 import com.mapbox.android.core.location.LocationEngineCallback;
 import com.mapbox.android.core.location.LocationEngineProvider;
@@ -49,6 +54,7 @@ import com.mapbox.maps.plugin.scalebar.ScaleBarPlugin;
 import com.mapbox.search.autocomplete.PlaceAutocompleteSuggestion;
 import com.mapbox.search.ui.adapter.autocomplete.PlaceAutocompleteUiAdapter;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -57,6 +63,10 @@ import kotlin.jvm.functions.Function1;
 
 public class MapViewPothole extends AppCompatActivity {
     MapView mapView;
+    Button backButton, confirmButton, declineButton;
+    TextView severity, timestamp;
+    String severityText, timestampText;
+    private DatabaseReference database;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,13 +79,62 @@ public class MapViewPothole extends AppCompatActivity {
             return insets;
         });
 
-        mapView = findViewById(R.id.mapView);
+        severityText = getIntent().getStringExtra("SEVERITY");
+        timestampText = getIntent().getStringExtra("TIMESTAMP");
+        severity = findViewById(R.id.severity_text);
+        timestamp = findViewById(R.id.timestamp_text);
+        severity.setText(severityText);
+        timestamp.setText(timestampText);
 
+        backButton = findViewById(R.id.back_button);
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
+
+        mapView = findViewById(R.id.mapView);
         mapView.getMapboxMap().loadStyleUri(Style.OUTDOORS, new Style.OnStyleLoaded() {
             @Override
             public void onStyleLoaded(@NonNull Style style) {
                 mapView.getMapboxMap().setCamera(new CameraOptions.Builder().zoom(20.0).build());
+            }
+        });
 
+        confirmButton = findViewById(R.id.confirm_button);
+        confirmButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                List<PotholeModel> potholeDataList = StorePotholes.loadPotholeData(MapViewPothole.this);
+                for (PotholeModel potholeModel : potholeDataList) {
+                    SensorData sensorData = new SensorData(
+                            potholeModel.getCurrentX(), potholeModel.getCurrentY(), potholeModel.getCurrentZ(),
+                            potholeModel.getPitch(), potholeModel.getRoll(), potholeModel.getSpeedKmh(),
+                            potholeModel.getLatitude(), potholeModel.getLongitude(), potholeModel.getPoint(),
+                            potholeModel.getUsername(), potholeModel.getSeverity(), potholeModel.getTimestamp()
+                    );
+                    Log.d(TAG, "Pushing data to Firebase: " + sensorData.toString());
+                    database.child("sensorData").push().setValue(sensorData)
+                            .addOnSuccessListener(aVoid -> {
+                                Log.d(TAG, "Data pushed successfully");
+                            })
+                            .addOnFailureListener(e -> {
+                                Log.e(TAG, "Failed to push data", e);
+                            });
+                }
+                finish();
+            }
+        });
+
+        declineButton = findViewById(R.id.decline_button);
+        declineButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // Clear the stored pothole data
+                List<PotholeModel> potholeDataList = new ArrayList<>();
+                StorePotholes.savePotholeData(MapViewPothole.this, potholeDataList);
+                finish();
             }
         });
     }

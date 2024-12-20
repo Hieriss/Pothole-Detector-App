@@ -1833,7 +1833,7 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
             // Save to local storage
             StorePotholes.savePotholeData(this, potholeDataList);
 
-            SensorData sensorData = new SensorData(deltaX, deltaY, (float) rielZ, pitch, roll, speedKmh, latitude, longitude, point, username, severity, formattedDate);
+            /*SensorData sensorData = new SensorData(deltaX, deltaY, (float) rielZ, pitch, roll, speedKmh, latitude, longitude, point, username, severity, formattedDate);
             Log.d(TAG, "Pushing data to Firebase: " + sensorData.toString());
             database.child("sensorData").push().setValue(sensorData)
                     .addOnSuccessListener(aVoid -> {
@@ -1842,7 +1842,7 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
                     .addOnFailureListener(e -> {
                         Log.e(TAG, "Failed to push data", e);
                     });
-            retrieveLocationsRunnable.run();
+            retrieveLocationsRunnable.run();*/
         }
     }
 
