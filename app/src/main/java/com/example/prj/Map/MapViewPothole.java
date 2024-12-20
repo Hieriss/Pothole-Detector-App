@@ -148,6 +148,7 @@ public class MapViewPothole extends AppCompatActivity {
                             .withPoint(fromHistory);
                     pointAnnotationManager.create(pointAnnotationOptions);
                 }
+                updateCamera();
             }
         });
 
@@ -186,5 +187,15 @@ public class MapViewPothole extends AppCompatActivity {
                 finish();
             }
         });
+    }
+
+    private void updateCamera() {
+        if (mapView != null) {
+            MapAnimationOptions animationOptions = new MapAnimationOptions.Builder().duration(1500L).build();
+            CameraOptions cameraOptions = new CameraOptions.Builder().zoom(15.0).build();
+            getCamera(mapView).easeTo(cameraOptions, animationOptions);
+        } else {
+            Log.e(TAG, "MapView is null");
+        }
     }
 }
