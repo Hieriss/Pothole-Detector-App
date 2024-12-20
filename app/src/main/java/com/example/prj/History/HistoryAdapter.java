@@ -42,6 +42,7 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHold
         holder.speedKmh.setText(String.valueOf(model.getSpeedKmh()));
         holder.point.setText(String.valueOf(model.getPoint()));
         holder.username.setText(model.getUsername());
+        holder.severity.setText(model.getSeverity());
         holder.latitude.setText(String.valueOf(model.getLatitude()));
         holder.longitude.setText(String.valueOf(model.getLongitude()));
         holder.timestamp.setText(model.getTimestamp());
@@ -86,6 +87,7 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHold
             speedKmh = view.findViewById(R.id.speedKmh);
             point = view.findViewById(R.id.point);
             username = view.findViewById(R.id.username);
+            severity = view.findViewById(R.id.severity);
             latitude = view.findViewById(R.id.latitude);
             longitude = view.findViewById(R.id.longitude);
             timestamp = view.findViewById(R.id.timestamp);
