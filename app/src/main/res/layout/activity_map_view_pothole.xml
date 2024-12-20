@@ -8,8 +8,12 @@
     tools:context=".Map.MapViewPothole">
 
     <com.mapbox.maps.MapView
+        xmlns:mapbox="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        mapbox:mapbox_cameraTargetLat="10.874507"
+        mapbox:mapbox_cameraTargetLng="106.794339"
+        mapbox:mapbox_cameraZoom="9.0"
         android:id="@+id/mapView"/>
 
     <RelativeLayout

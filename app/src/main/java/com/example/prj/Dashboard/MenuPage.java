@@ -12,6 +12,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.example.prj.History.HistoryPage;
+import com.example.prj.Map.MapViewPothole;
 import com.example.prj.Notification.NotificationPage;
 import com.example.prj.Profile.ProfilePage;
 import com.example.prj.R;

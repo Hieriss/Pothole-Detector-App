@@ -6,6 +6,7 @@ import static com.mapbox.maps.plugin.gestures.GesturesUtils.addOnMapClickListene
 import static com.mapbox.maps.plugin.gestures.GesturesUtils.getGestures;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -20,6 +21,7 @@ import android.widget.Toast;
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.AppCompatButton;
 import androidx.core.app.ActivityCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -45,6 +47,7 @@ import com.mapbox.maps.plugin.annotation.AnnotationPlugin;
 import com.mapbox.maps.plugin.annotation.AnnotationPluginImplKt;
 import com.mapbox.maps.plugin.annotation.generated.OnPointAnnotationClickListener;
 import com.mapbox.maps.plugin.annotation.generated.PointAnnotation;
+import com.mapbox.maps.plugin.annotation.generated.PointAnnotationManager;
 import com.mapbox.maps.plugin.annotation.generated.PointAnnotationManagerKt;
 import com.mapbox.maps.plugin.annotation.generated.PointAnnotationOptions;
 import com.mapbox.maps.plugin.compass.CompassPlugin;
@@ -63,10 +66,23 @@ import kotlin.jvm.functions.Function1;
 
 public class MapViewPothole extends AppCompatActivity {
     MapView mapView;
-    Button backButton, confirmButton, declineButton;
+    AppCompatButton backButton, confirmButton, declineButton;
     TextView severity, timestamp;
     String severityText, timestampText;
     private DatabaseReference database;
+    private PointAnnotationManager pointAnnotationManager;
+    Point fromHistory;
+
+    private void updateCamera(Point point, Double bearing) {
+        MapAnimationOptions animationOptions = new MapAnimationOptions.Builder().duration(1500L).build();
+        CameraOptions cameraOptions = new CameraOptions.Builder()
+                .center(point)
+                .zoom(18.0)
+                .bearing(bearing)
+                .pitch(0.0)
+                .build();
+        getCamera(mapView).easeTo(cameraOptions, animationOptions);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,12 +95,20 @@ public class MapViewPothole extends AppCompatActivity {
             return insets;
         });
 
-        severityText = getIntent().getStringExtra("SEVERITY");
-        timestampText = getIntent().getStringExtra("TIMESTAMP");
         severity = findViewById(R.id.severity_text);
         timestamp = findViewById(R.id.timestamp_text);
         severity.setText(severityText);
         timestamp.setText(timestampText);
+
+        Intent intent = getIntent();
+        if (intent != null && intent.hasExtra("LATITUDE") && intent.hasExtra("LONGITUDE")) {
+            double latitude = intent.getDoubleExtra("LATITUDE", 0);
+            double longitude = intent.getDoubleExtra("LONGITUDE", 0);
+            severityText = getIntent().getStringExtra("SEVERITY");
+            timestampText = getIntent().getStringExtra("TIMESTAMP");
+            fromHistory = Point.fromLngLat(longitude, latitude);
+            updateCamera(fromHistory, 0.0);
+        }
 
         backButton = findViewById(R.id.back_button);
         backButton.setOnClickListener(new View.OnClickListener() {
@@ -95,10 +119,35 @@ public class MapViewPothole extends AppCompatActivity {
         });
 
         mapView = findViewById(R.id.mapView);
+        AnnotationPlugin annotationPlugin = AnnotationPluginImplKt.getAnnotations(mapView);
+        pointAnnotationManager = PointAnnotationManagerKt.createPointAnnotationManager(annotationPlugin, mapView);
+        pointAnnotationManager.setIconAllowOverlap(false);
+
         mapView.getMapboxMap().loadStyleUri(Style.OUTDOORS, new Style.OnStyleLoaded() {
             @Override
             public void onStyleLoaded(@NonNull Style style) {
+                CompassPlugin compassPlugin = (CompassPlugin) mapView.getPlugin(Plugin.MAPBOX_COMPASS_PLUGIN_ID);
+                if (compassPlugin != null) {
+                    compassPlugin.setVisibility(false);
+                    compassPlugin.setEnabled(false);
+                }
+                ScaleBarPlugin scaleBarPlugin = (ScaleBarPlugin) mapView.getPlugin(Plugin.MAPBOX_SCALEBAR_PLUGIN_ID);
+                if (scaleBarPlugin != null) {
+                    scaleBarPlugin.setEnabled(false);
+                }
                 mapView.getMapboxMap().setCamera(new CameraOptions.Builder().zoom(20.0).build());
+                if (pointAnnotationManager != null) {
+                    pointAnnotationManager.deleteAll(); // Clear existing annotations if needed
+                    Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.placeholder);
+                    PointAnnotationOptions pointAnnotationOptions = new PointAnnotationOptions()
+                            .withTextAnchor(TextAnchor.CENTER)
+                            .withIconAnchor(IconAnchor.CENTER)
+                            .withIconSize(1)
+                            .withIconImage(bitmap)
+                            .withIconOpacity(1.0)
+                            .withPoint(fromHistory);
+                    pointAnnotationManager.create(pointAnnotationOptions);
+                }
             }
         });
 

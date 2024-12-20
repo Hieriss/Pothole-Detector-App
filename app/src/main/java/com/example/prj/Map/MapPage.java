@@ -859,13 +859,6 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
         locationComponentPlugin.addOnIndicatorPositionChangedListener(onPositionChangedListener);
         getGestures(mapView).addOnMoveListener(onMoveListener);
 
-        setRoute.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Toast.makeText(MapPage.this, "Please select a location in map", Toast.LENGTH_SHORT).show();
-            }
-        });
-
         // search
         placeAutocomplete = PlaceAutocomplete.create(getString(R.string.mapbox_access_token));
         searchET = findViewById(R.id.search_bar_text);
@@ -1092,7 +1085,6 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
                                 if (!isRouteActive) {
                                     if (!manualAddActive) {
                                         fetchRoute(point);
-                                        navigateBtn.setText("Navigate");
                                     } else {
                                         Toast.makeText(MapPage.this, "Turn off debug add pothole", Toast.LENGTH_SHORT).show();
                                     }
@@ -1142,32 +1134,8 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
                 focusLocationBtn.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        if (ActivityCompat.checkSelfPermission(MapPage.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(MapPage.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                            // Request location permissions if not granted
-                            ActivityCompat.requestPermissions(MapPage.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, REQUEST_LOCATION_PERMISSION);
-                            return;
-                        }
-                        LocationEngine locationEngine = LocationEngineProvider.getBestLocationEngine(MapPage.this);
-                        locationEngine.getLastLocation(new LocationEngineCallback<LocationEngineResult>() {
-                            @Override
-                            public void onSuccess(LocationEngineResult result) {
-                                Location location = result.getLastLocation();
-                                if (location != null) {
-                                    Point currentLocation = Point.fromLngLat(location.getLongitude(), location.getLatitude());
-                                    MapAnimationOptions animationOptions = new MapAnimationOptions.Builder().duration(1500L).build();
-                                    CameraOptions cameraOptions = new CameraOptions.Builder().center(currentLocation).zoom(18.0).pitch(0.0)
-                                            .padding(new EdgeInsets(1000.0, 0.0, 0.0, 0.0)).build();
-                                    getCamera(mapView).easeTo(cameraOptions, animationOptions);
-                                    isOnNavigation = true;
-                                    focusLocationBtn.setVisibility(View.GONE);
-                                }
-                            }
-
-                            @Override
-                            public void onFailure(@NonNull Exception exception) {
-                                Log.e(TAG, "Failed to get current location", exception);
-                            }
-                        });
+                        navigateBtn.performClick();
+                        searchLayout.setVisibility(View.VISIBLE);
                     }
                 });
 
@@ -1252,6 +1220,7 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
                             @Override
                             public void onClick(View view) {
                                 searchLayout.setVisibility(View.GONE);
+                                searchResultsView.setVisibility(View.GONE);
                                 if (!isRouteActive)
                                     fetchRoute(searchedPoint);
                                 else {
@@ -1568,7 +1537,7 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
                         selectedRoute = list.get(0);
                         setRoute.setEnabled(true);
                         setRoute.setText("Stop route");
-                        searchET.setVisibility(View.GONE);
+                        searchLayout.setVisibility(View.GONE);
                         isRouteActive = true;
 
                         // Set camera to fit the bounding box
@@ -1800,6 +1769,20 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
             if (annotation.getIconOpacity() != 0.95) {
                 pointAnnotationManager.delete(annotation);
             }
+        }
+        RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) soundButton.getLayoutParams();
+        params.addRule(RelativeLayout.BELOW, R.id.search_bar_layout);
+        soundButton.setLayoutParams(params);
+        @SuppressLint("MissingPermission") Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        if (lastKnownLocation != null) {
+            MapAnimationOptions animationOptions = new MapAnimationOptions.Builder().duration(1500L).build();
+            CameraOptions cameraOptions = new CameraOptions.Builder()
+                    .center(Point.fromLngLat(lastKnownLocation.getLongitude(), lastKnownLocation.getLatitude()))
+                    .zoom(15.0) // Default zoom level
+                    .bearing(0.0) // Default bearing
+                    .pitch(0.0) // Default pitch
+                    .build();
+            getCamera(mapView).easeTo(cameraOptions, animationOptions);
         }
         MapAnimationOptions animationOptions = new MapAnimationOptions.Builder().duration(1500L).build();
         CameraOptions cameraOptions = new CameraOptions.Builder()
