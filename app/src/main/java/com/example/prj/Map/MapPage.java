@@ -557,18 +557,7 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
             }
             if (!isOnNavigation) focusLocationBtn.show();
             if (!potholeLocations.isEmpty()) {
-                for (Penaldo<Double, Double, String, String, String> pLocation : potholeLocations) {
-                    Point point = Point.fromLngLat(pLocation.second, pLocation.first);
-                    Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.pothole_on_map);
-                    PointAnnotationOptions pointAnnotationOptions = new PointAnnotationOptions()
-                            .withTextAnchor(TextAnchor.CENTER)
-                            .withIconAnchor(IconAnchor.CENTER)
-                            .withIconSize(iconSize)
-                            .withIconOpacity(0.95)
-                            .withIconImage(bitmap)
-                            .withPoint(point);
-                    pointAnnotationManager.create(pointAnnotationOptions);
-                }
+                reloadPotholePoint();
             }
             getGestures(mapView).removeOnMoveListener(this);
         }
@@ -686,7 +675,7 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
                         } else {
                             Log.d(TAG, "Retrieved " + locations.size() + " locations from local storage.");
                             for (Penaldo<Double, Double, String, String, String> location : locations) {
-                                Log.d(TAG, "Latitude: " + location.first + ", Longitude: " + location.second);
+                                Log.d(TAG, "Latitude: " + location.first + ", Longitude: " + location.second + ", Severity: " + location.fifth);
                             }
                         }
                         // get locations
@@ -699,6 +688,7 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
                     }
                 });
                 reloadPotholePoint();
+                potholeTracking = potholeLocations;
 
                 // Schedule the next update after 1 minute
                 handler.postDelayed(this, 60000);
@@ -1846,8 +1836,7 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
     private void pushData() {
         calcPoint();
         if (point != 0 && speedKmh > SPEED_THRESHOLD && rielZ > DELTA_Z_THRESHOLD) {
-            showNotification("Pothole Detected!", "A new pothole has been detected!");
-            Toast.makeText(this, "Pothole Detected!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "A new pothole has been detected!", Toast.LENGTH_SHORT).show();
 
             long timestamp = System.currentTimeMillis();
             Date date = new Date(timestamp);
@@ -1864,7 +1853,6 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
             }
 
             PotholeModel potholeModel = new PotholeModel(deltaX, deltaY, (float) rielZ, pitch, roll, speedKmh, point, username, severity, latitude, longitude, formattedDate);
-            potholeDataList.add(potholeModel);
 
             potholeDataList = StorePotholes.loadPotholeData(this);
 
@@ -1954,23 +1942,24 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
             for (Penaldo<Double, Double, String, String, String> location : potholeLocations) {
                 Point point = Point.fromLngLat(location.second, location.first);
                 Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.pothole_on_map);
-                if (location.fifth == "Low") {
+                String severity = location.fifth;
+                if (severity.equals("Low")) {
                     bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.low_severity_pothole);
                 }
-                else if (location.fifth == "Medium") {
+                else if (severity.equals("Medium")) {
                     bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.medium_severity_pothole);
                 }
-                else if (location.fifth == "High") {
+                else if (severity.equals("High")) {
                     bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.high_severity_pothole);
                 }
                 if (!lowFilter) {
-                    if (location.fifth == "Low") continue;
+                    if (severity.equals("Low")) continue;
                 }
                 if (!mediumFilter) {
-                    if (location.fifth == "Medium") continue;
+                    if (severity.equals("Medium")) continue;
                 }
                 if (!highFilter) {
-                    if (location.fifth == "High") continue;
+                    if (severity.equals("High")) continue;
                 }
                 PointAnnotationOptions pointAnnotationOptions = new PointAnnotationOptions()
                         .withTextAnchor(TextAnchor.CENTER)
