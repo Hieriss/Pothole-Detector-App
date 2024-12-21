@@ -324,6 +324,19 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
             if (isOnNavigation) {
                 updateCamera(Point.fromLngLat(location.getLongitude(), location.getLatitude()), (double) location.getBearing());
             }
+
+            // Check if the current location is close to the destination
+            if (isRouteActive && selectedRoute != null) {
+                LineString lineString = LineString.fromPolyline(selectedRoute.getDirectionsRoute().geometry(), 6);
+                Point destination = lineString.coordinates().get(lineString.coordinates().size() - 1);
+                double distanceToDestination = TurfMeasurement.distance(Point.fromLngLat(location.getLongitude(), location.getLatitude()), destination);
+                double arrivalThreshold = 0.005; // 5 meters
+
+                if (distanceToDestination < arrivalThreshold) {
+                    QuitRouting();
+                    Toast.makeText(MapPage.this, "You have arrived at your destination", Toast.LENGTH_SHORT).show();
+                }
+            }
         }
     };
 
@@ -1299,6 +1312,8 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
                     roadName = "Đường Hàn Thuyên";
                 } else if (roadName.equals("A2 / A1")) {
                     roadName = "Đường Lê Quý Đôn";
+                } else if (roadName.equals("VQJP+R76")) {
+                    roadName = "Đường Hồ Xuân Hương";
                 }
                 roadNameTextView.setText(roadName);
 
@@ -1655,8 +1670,12 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
             mapboxNavigation = null;
         }
         handler.removeCallbacks(pushDataRunnable);
-        LocationComponentPlugin locationComponentPlugin = getLocationComponent(mapView);
-        locationComponentPlugin.removeOnIndicatorPositionChangedListener(onPositionChangedListener);
+        if (mapView != null) {
+            LocationComponentPlugin locationComponentPlugin = getLocationComponent(mapView);
+            if (locationComponentPlugin != null) {
+                locationComponentPlugin.removeOnIndicatorPositionChangedListener(onPositionChangedListener);
+            }
+        }
     }
 
     // sensors
@@ -1773,6 +1792,9 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
     private void pushData() {
         calcPoint();
         if (point != 0 && speedKmh > SPEED_THRESHOLD && rielZ > DELTA_Z_THRESHOLD) {
+            showNotification("Pothole Detected!", "A new pothole has been detected!", false);
+            Toast.makeText(this, "Pothole Detected!", Toast.LENGTH_SHORT).show();
+
             long timestamp = System.currentTimeMillis();
             Date date = new Date(timestamp);
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
@@ -1792,8 +1814,6 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
 
             // Save to local storage
             StorePotholes.savePotholeData(this, potholeDataList);
-
-            showNotification("Pothole Detected!", "A new pothole has been detected!", false);
 
             /*SensorData sensorData = new SensorData(deltaX, deltaY, (float) rielZ, pitch, roll, speedKmh, latitude, longitude, point, username, severity, formattedDate);
             Log.d(TAG, "Pushing data to Firebase: " + sensorData.toString());

@@ -74,17 +74,6 @@ public class MapViewPothole extends AppCompatActivity {
     private PointAnnotationManager pointAnnotationManager;
     Point fromHistory;
 
-    private void updateCamera(Point point, Double bearing) {
-        MapAnimationOptions animationOptions = new MapAnimationOptions.Builder().duration(1500L).build();
-        CameraOptions cameraOptions = new CameraOptions.Builder()
-                .center(point)
-                .zoom(18.0)
-                .bearing(bearing)
-                .pitch(0.0)
-                .build();
-        getCamera(mapView).easeTo(cameraOptions, animationOptions);
-    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -141,7 +130,6 @@ public class MapViewPothole extends AppCompatActivity {
                             .withPoint(fromHistory);
                     pointAnnotationManager.create(pointAnnotationOptions);
                 }
-                updateCamera();
             }
         });
 
@@ -192,10 +180,15 @@ public class MapViewPothole extends AppCompatActivity {
         });
     }
 
-    private void updateCamera() {
+    private void updateCamera(Point point, Double bearing) {
         if (mapView != null) {
             MapAnimationOptions animationOptions = new MapAnimationOptions.Builder().duration(1500L).build();
-            CameraOptions cameraOptions = new CameraOptions.Builder().zoom(15.0).build();
+            CameraOptions cameraOptions = new CameraOptions.Builder()
+                    .center(point)
+                    .zoom(18.0)
+                    .bearing(bearing)
+                    .pitch(0.0)
+                    .build();
             getCamera(mapView).easeTo(cameraOptions, animationOptions);
         } else {
             Log.e(TAG, "MapView is null");

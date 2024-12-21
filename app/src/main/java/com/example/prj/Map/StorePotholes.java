@@ -18,7 +18,21 @@ public class StorePotholes {
         SharedPreferences sharedPreferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         Gson gson = new Gson();
-        String json = gson.toJson(potholeDataList);
+
+        // Load existing pothole data
+        String existingJson = sharedPreferences.getString(KEY_POTHOLE_DATA, null);
+        Type type = new TypeToken<ArrayList<PotholeModel>>() {}.getType();
+        List<PotholeModel> existingPotholeDataList = existingJson == null ? new ArrayList<>() : gson.fromJson(existingJson, type);
+
+        // Add new potholes if they have latitude and longitude and are not already saved
+        for (PotholeModel newPothole : potholeDataList) {
+            if (newPothole.getLatitude() != 0 && newPothole.getLongitude() != 0 && !existingPotholeDataList.contains(newPothole)) {
+                existingPotholeDataList.add(newPothole);
+            }
+        }
+
+        // Save the updated list
+        String json = gson.toJson(existingPotholeDataList);
         editor.putString(KEY_POTHOLE_DATA, json);
         editor.apply();
     }
