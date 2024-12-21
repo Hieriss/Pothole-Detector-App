@@ -716,10 +716,13 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
         });
 
         // Initialize addPotholeBtn
-        filterLayout.findViewById(R.id.filter_layout);
-        lowBtn.findViewById(R.id.low_button);
-        mediumBtn.findViewById(R.id.medium_button);
-        highBtn.findViewById(R.id.high_button);
+        filterLayout = findViewById(R.id.filter_layout);
+        lowBtn = findViewById(R.id.low_button);
+        mediumBtn = findViewById(R.id.medium_button);
+        highBtn = findViewById(R.id.high_button);
+        lowLayout = findViewById(R.id.low_button_layout);
+        mediumLayout = findViewById(R.id.medium_button_layout);
+        highLayout = findViewById(R.id.high_button_layout);
         addPotholeBtn = findViewById(R.id.debug_detail_point);
         addPotholeBtn.setVisibility(View.GONE);
 
@@ -785,7 +788,7 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
         // route line
         mapView = findViewById(R.id.mapView);
         focusLocationBtn = findViewById(R.id.focus_location_button);
-        filterBtn.findViewById(R.id.filter_button);
+        filterBtn = findViewById(R.id.filter_button);
         setRoute = findViewById(R.id.route_button);
 
         // route line color resources
@@ -1951,6 +1954,15 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
             for (Penaldo<Double, Double, String, String, String> location : potholeLocations) {
                 Point point = Point.fromLngLat(location.second, location.first);
                 Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.pothole_on_map);
+                if (location.fifth == "Low") {
+                    bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.low_severity_pothole);
+                }
+                else if (location.fifth == "Medium") {
+                    bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.medium_severity_pothole);
+                }
+                else if (location.fifth == "High") {
+                    bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.high_severity_pothole);
+                }
                 if (!lowFilter) {
                     if (location.fifth == "Low") continue;
                 }
