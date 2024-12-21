@@ -1814,7 +1814,10 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
             PotholeModel potholeModel = new PotholeModel(deltaX, deltaY, (float) rielZ, pitch, roll, speedKmh, point, username, severity, latitude, longitude, formattedDate);
             potholeDataList.add(potholeModel);
 
-            // Save to local storage
+            potholeDataList = StorePotholes.loadPotholeData(this);
+
+            potholeDataList.add(potholeModel);
+
             StorePotholes.savePotholeData(this, potholeDataList);
 
             /*SensorData sensorData = new SensorData(deltaX, deltaY, (float) rielZ, pitch, roll, speedKmh, latitude, longitude, point, username, severity, formattedDate);

@@ -29,8 +29,11 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.example.prj.History.PotholeModel;
 import com.example.prj.R;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.mapbox.android.core.location.LocationEngine;
 import com.mapbox.android.core.location.LocationEngineCallback;
 import com.mapbox.android.core.location.LocationEngineProvider;
@@ -157,14 +160,38 @@ public class MapViewPothole extends AppCompatActivity {
                             potholeModel.getLatitude(), potholeModel.getLongitude(), potholeModel.getPoint(),
                             potholeModel.getUsername(), potholeModel.getSeverity(), potholeModel.getTimestamp()
                     );
-                    Log.d(TAG, "Pushing data to Firebase: " + sensorData.toString());
-                    database.child("sensorData").push().setValue(sensorData)
-                            .addOnSuccessListener(aVoid -> {
-                                Log.d(TAG, "Data pushed successfully");
-                            })
-                            .addOnFailureListener(e -> {
-                                Log.e(TAG, "Failed to push data", e);
-                            });
+
+                    database.child("sensorData").addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            boolean dataExists = false;
+                            for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                                String existingTimestamp = snapshot.child("timestamp").getValue(String.class);
+                                if (existingTimestamp != null && existingTimestamp.equals(potholeModel.getTimestamp())) {
+                                    dataExists = true;
+                                    break;
+                                }
+                            }
+
+                            if (!dataExists) {
+                                // Data does not exist, push it to the database
+                                database.child("sensorData").push().setValue(sensorData)
+                                        .addOnSuccessListener(aVoid -> {
+                                            Log.d(TAG, "Data pushed successfully");
+                                        })
+                                        .addOnFailureListener(e -> {
+                                            Log.e(TAG, "Failed to push data", e);
+                                        });
+                            } else {
+                                Log.d(TAG, "Data already exists in the database");
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+                            Log.e(TAG, "Database error: " + databaseError.getMessage());
+                        }
+                    });
                 }
                 finish();
             }
