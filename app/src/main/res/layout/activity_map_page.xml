@@ -252,7 +252,7 @@
                     android:layout_height="55dp"
                     android:layout_gravity="end"
                     android:layout_marginEnd="20dp"
-                    android:layout_marginBottom="10dp" />
+                    android:layout_marginBottom="20dp" />
 
                 <com.google.android.material.floatingactionbutton.FloatingActionButton
                     android:id="@+id/focus_location_button"

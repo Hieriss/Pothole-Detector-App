@@ -63,6 +63,10 @@ public class HistoryPage extends AppCompatActivity {
     }
 
     private void populateSensorData() {
+        // Clear the existing data
+        sensorDataList.clear();
+        adapter.notifyDataSetChanged();
+
         // Load data from local storage
         List<PotholeModel> loadedData = StorePotholes.loadPotholeData(this);
         for (PotholeModel model : loadedData) {
