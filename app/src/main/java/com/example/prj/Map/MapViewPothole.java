@@ -137,11 +137,13 @@ public class MapViewPothole extends AppCompatActivity {
         if (intent != null && intent.hasExtra("LATITUDE") && intent.hasExtra("LONGITUDE")) {
             double latitude = intent.getDoubleExtra("LATITUDE", 0);
             double longitude = intent.getDoubleExtra("LONGITUDE", 0);
-            severityText = getIntent().getStringExtra("SEVERITY");
-            timestampText = getIntent().getStringExtra("TIMESTAMP");
+            severityText = intent.getStringExtra("SEVERITY");
+            timestampText = intent.getStringExtra("TIMESTAMP");
             fromHistory = Point.fromLngLat(longitude, latitude);
             updateCamera(fromHistory, 0.0);
         }
+
+        final int position = intent.getIntExtra("POSITION", -1);
 
         confirmButton = findViewById(R.id.confirm_button);
         confirmButton.setOnClickListener(new View.OnClickListener() {
@@ -172,9 +174,9 @@ public class MapViewPothole extends AppCompatActivity {
         declineButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // Clear the stored pothole data
-                List<PotholeModel> potholeDataList = new ArrayList<>();
-                StorePotholes.savePotholeData(MapViewPothole.this, potholeDataList);
+                Intent resultIntent = new Intent();
+                resultIntent.putExtra("POSITION", position);
+                setResult(RESULT_OK, resultIntent);
                 finish();
             }
         });

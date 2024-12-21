@@ -119,32 +119,162 @@
         android:layout_alignParentBottom="true"
         android:orientation="vertical">
 
-        <com.mapbox.maps.plugin.compass.CompassViewImpl
-            android:id="@+id/compass_icon"
-            android:layout_width="55dp"
-            android:layout_height="55dp"
-            android:layout_gravity="end"
-            android:layout_marginEnd="20dp"
-            android:layout_marginBottom="10dp" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
 
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/focus_location_button"
-            android:layout_width="55dp"
-            android:layout_height="55dp"
-            android:layout_marginEnd="20dp"
-            android:layout_marginBottom="20dp"
-            android:layout_gravity="end"
-            android:backgroundTint="@color/light_purple"
-            android:src="@drawable/my_location"
-            app:tint="@color/black" />
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="end|bottom"
+                android:layout_weight="10"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="55dp"
+                    android:layout_gravity="end|bottom"
+                    android:layout_marginBottom="20dp"
+                    android:layout_marginEnd="10dp"
+                    android:background="@drawable/main_user_box_background"
+                    android:orientation="horizontal"
+                    android:visibility="gone">
+
+                    <RelativeLayout
+                        android:id="@+id/low_button_layout"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginEnd="5dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/driving_profile_button_background_choosen">
+
+                        <ImageView
+                            android:id="@+id/low_icon"
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:layout_centerHorizontal="true"
+                            android:layout_centerVertical="true"
+                            android:src="@drawable/low_severity_pothole" />
+
+                        <androidx.appcompat.widget.AppCompatButton
+                            android:id="@+id/low_button"
+                            android:layout_width="50dp"
+                            android:layout_height="30dp"
+                            android:background="@android:color/transparent"
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:text="" />
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                        android:id="@+id/medium_button_layout"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginStart="5dp"
+                        android:layout_marginEnd="5dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/driving_profile_button_background_choosen">
+
+                        <ImageView
+                            android:id="@+id/medium_icon"
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:layout_centerHorizontal="true"
+                            android:layout_centerVertical="true"
+                            android:src="@drawable/medium_severity_pothole" />
+
+                        <androidx.appcompat.widget.AppCompatButton
+                            android:id="@+id/medium_button"
+                            android:layout_width="50dp"
+                            android:layout_height="30dp"
+                            android:background="@android:color/transparent"
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:text="" />
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                        android:id="@+id/high_button_layout"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginStart="5dp"
+                        android:layout_marginEnd="10dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/driving_profile_button_background_choosen">
+
+                        <ImageView
+                            android:id="@+id/high_icon"
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:layout_centerHorizontal="true"
+                            android:layout_centerVertical="true"
+                            android:src="@drawable/high_severity_pothole"/>
+
+                        <androidx.appcompat.widget.AppCompatButton
+                            android:id="@+id/high_button"
+                            android:layout_width="50dp"
+                            android:layout_height="30dp"
+                            android:background="@android:color/transparent"
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:text="" />
+                    </RelativeLayout>
+                </LinearLayout>
+
+                <com.google.android.material.floatingactionbutton.FloatingActionButton
+                    android:id="@+id/filter_button"
+                    android:layout_width="55dp"
+                    android:layout_height="55dp"
+                    android:layout_gravity="end|bottom"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginBottom="20dp"
+                    android:backgroundTint="@color/light_purple"
+                    android:src="@drawable/filter"
+                    app:tint="@color/black" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.1"
+                android:layout_marginStart="10dp"
+                android:orientation="vertical">
+
+                <com.mapbox.maps.plugin.compass.CompassViewImpl
+                    android:id="@+id/compass_icon"
+                    android:layout_width="55dp"
+                    android:layout_height="55dp"
+                    android:layout_gravity="end"
+                    android:layout_marginEnd="20dp"
+                    android:layout_marginBottom="10dp" />
+
+                <com.google.android.material.floatingactionbutton.FloatingActionButton
+                    android:id="@+id/focus_location_button"
+                    android:layout_width="55dp"
+                    android:layout_height="55dp"
+                    android:layout_gravity="end"
+                    android:layout_marginEnd="20dp"
+                    android:layout_marginBottom="20dp"
+                    android:backgroundTint="@color/light_purple"
+                    android:src="@drawable/my_location"
+                    app:tint="@color/black" />
+
+            </LinearLayout>
+
+        </LinearLayout>
 
         <RelativeLayout
             android:id="@+id/container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
             android:layout_marginStart="10dp"
             android:layout_marginEnd="10dp"
+            android:layout_marginBottom="10dp"
             android:background="@drawable/main_user_box_background"
             android:visibility="gone">
 
@@ -158,14 +288,14 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="end"
-                    android:paddingTop="15dp"
-                    android:layout_marginEnd="20dp">
+                    android:layout_marginEnd="20dp"
+                    android:paddingTop="15dp">
 
                     <ImageView
                         android:layout_width="20dp"
                         android:layout_height="20dp"
                         app:srcCompat="@drawable/quit"
-                        app:tint="@color/black"/>
+                        app:tint="@color/black" />
 
                     <androidx.appcompat.widget.AppCompatButton
                         android:id="@+id/quit_button"
@@ -281,8 +411,8 @@
                         android:id="@+id/route_button"
                         android:layout_width="wrap_content"
                         android:layout_height="60dp"
-                        android:layout_marginTop="20dp"
                         android:layout_marginStart="20dp"
+                        android:layout_marginTop="20dp"
                         android:layout_marginEnd="10dp"
                         android:layout_marginBottom="20dp"
                         android:layout_weight="1"
@@ -299,8 +429,8 @@
                         android:id="@+id/navigate_button"
                         android:layout_width="wrap_content"
                         android:layout_height="60dp"
-                        android:layout_marginTop="20dp"
                         android:layout_marginStart="10dp"
+                        android:layout_marginTop="20dp"
                         android:layout_marginEnd="20dp"
                         android:layout_marginBottom="20dp"
                         android:layout_weight="1"

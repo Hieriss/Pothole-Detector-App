@@ -1,5 +1,6 @@
 package com.example.prj.History;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -55,7 +56,8 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHold
                 intent.putExtra("LONGITUDE", model.getLongitude());
                 intent.putExtra("SEVERITY", model.getSeverity());
                 intent.putExtra("TIMESTAMP", model.getTimestamp());
-                v.getContext().startActivity(intent);
+                intent.putExtra("POSITION", holder.getAdapterPosition());
+                ((Activity) v.getContext()).startActivityForResult(intent, 1);
             }
         });
     }

@@ -50,6 +50,18 @@ public class HistoryPage extends AppCompatActivity {
         populateSensorData();
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 1 && resultCode == RESULT_OK) {
+            int position = data.getIntExtra("POSITION", -1);
+            if (position != -1) {
+                sensorDataList.remove(position);
+                adapter.notifyItemRemoved(position);
+            }
+        }
+    }
+
     private void populateSensorData() {
         // Load data from local storage
         List<PotholeModel> loadedData = StorePotholes.loadPotholeData(this);
