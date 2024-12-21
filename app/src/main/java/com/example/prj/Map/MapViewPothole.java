@@ -174,6 +174,12 @@ public class MapViewPothole extends AppCompatActivity {
         declineButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                List<PotholeModel> potholeDataList = StorePotholes.loadPotholeData(MapViewPothole.this);
+                if (position != -1 && position < potholeDataList.size()) {
+                    potholeDataList.remove(position);
+                    StorePotholes.savePotholeData(MapViewPothole.this, potholeDataList);
+                }
+
                 Intent resultIntent = new Intent();
                 resultIntent.putExtra("POSITION", position);
                 setResult(RESULT_OK, resultIntent);
