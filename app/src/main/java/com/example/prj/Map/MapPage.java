@@ -63,7 +63,10 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.example.prj.History.HistoryAdapter;
+import com.example.prj.History.HistoryPage;
 import com.example.prj.History.PotholeModel;
+import com.example.prj.Notification.NotificationPage;
 import com.example.prj.R;
 import com.example.prj.Session.SessionManager;
 import com.google.android.material.button.MaterialButton;
@@ -209,9 +212,6 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
     int routeType = 2;
     private static final int PICK_IMAGE_REQUEST = 1;
     private Uri imageUri;
-    ImageView potholeImage;
-    private boolean viewOnly;
-    private Point fromHistory;
     private static final int REQUEST_IMAGE_CAPTURE = 2;
     private static final int REQUEST_CAMERA_PERMISSION = 100;
     private Uri photoUri;
@@ -321,7 +321,7 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
         public void onNewLocationMatcherResult(@NonNull LocationMatcherResult locationMatcherResult) {
             Location location = locationMatcherResult.getEnhancedLocation();
             navigationLocationProvider.changePosition(location, locationMatcherResult.getKeyPoints(), null, null);
-            if (isOnNavigation && !viewOnly) {
+            if (isOnNavigation) {
                 updateCamera(Point.fromLngLat(location.getLongitude(), location.getLatitude()), (double) location.getBearing());
             }
         }
@@ -338,7 +338,6 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
                     }
                 }
             });
-
         }
     };
 
@@ -422,7 +421,7 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
         void onRoadNameFetched(String roadName);
     }
 
-    private void showNotification(String title, String message) {
+    private void showNotification(String title, String message, boolean typeNoti) {
         NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         String channelId = "pothole_ahead_channel";
         Uri soundUri = Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.notification_sound);
@@ -433,7 +432,15 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
             notificationManager.createNotificationChannel(channel);
         }
 
-        Intent intent = new Intent(this, MapPage.class);
+        Intent intent = new Intent(MapPage.this, HistoryPage.class);;
+        if (typeNoti) {
+            intent = new Intent(MapPage.this, NotificationPage.class);
+            long timestamp = System.currentTimeMillis();
+            Date date = new Date(timestamp);
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+            String formattedDate = sdf.format(date);
+            intent.putExtra("TIME", formattedDate);
+        }
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, channelId)
@@ -528,7 +535,7 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
                 navigateBtn.setEnabled(true);
             }
             if (!isOnNavigation) focusLocationBtn.show();
-            if (!potholeLocations.isEmpty() && !viewOnly) {
+            if (!potholeLocations.isEmpty()) {
                 for (Penaldo<Double, Double, String, String, String> pLocation : potholeLocations) {
                     Point point = Point.fromLngLat(pLocation.second, pLocation.first);
                     Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.pothole_on_map);
@@ -670,7 +677,7 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
                         Log.e(TAG, "Failed to retrieve locations", e);
                     }
                 });
-                if (pointAnnotationManager != null && !viewOnly) {
+                if (pointAnnotationManager != null) {
                     List<PointAnnotation> annotations = pointAnnotationManager.getAnnotations();
                     if (annotations != null) {
                         for (PointAnnotation annotation : annotations) {
@@ -870,7 +877,6 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
                     mapboxNavigation.onDestroy();
                     mapboxNavigation = null;
                 }
-                viewOnly = false;
                 finish();
             }
         });
@@ -957,26 +963,10 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
                 pointAnnotationManager = PointAnnotationManagerKt.createPointAnnotationManager(annotationPlugin, mapView);
                 pointAnnotationManager.setIconAllowOverlap(false);
 
-                if (viewOnly) {
-                    focusLocationBtn.setVisibility(View.GONE);
-                    compassView.setVisibility(View.GONE);
-                    if (pointAnnotationManager != null) {
-                        pointAnnotationManager.deleteAll(); // Clear existing annotations if needed
-                        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.placeholder);
-                        PointAnnotationOptions pointAnnotationOptions = new PointAnnotationOptions()
-                                .withTextAnchor(TextAnchor.CENTER)
-                                .withIconAnchor(IconAnchor.CENTER)
-                                .withIconSize(1)
-                                .withIconImage(bitmap)
-                                .withIconOpacity(1.0)
-                                .withPoint(fromHistory);
-                        pointAnnotationManager.create(pointAnnotationOptions);
-                    }
-                }
                 addOnMapClickListener(mapView.getMapboxMap(), new OnMapClickListener() {
                     @Override
                     public boolean onMapClick(@NonNull Point point) {
-                        if (!isRouteActive && !viewOnly) {
+                        if (!isRouteActive) {
                             if (manualAddActive) {
                                 bitmap =  BitmapFactory.decodeResource(getResources(), R.drawable.pothole_on_map);
                                 PointAnnotationOptions pointAnnotationOptions = new PointAnnotationOptions()
@@ -1242,19 +1232,6 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
                 });
             }
         });
-
-        // Intent from history page
-        Intent intent = getIntent();
-        if (intent != null && intent.hasExtra("LATITUDE") && intent.hasExtra("LONGITUDE")) {
-            double latitude = intent.getDoubleExtra("LATITUDE", 0);
-            double longitude = intent.getDoubleExtra("LONGITUDE", 0);
-            fromHistory = Point.fromLngLat(longitude, latitude);
-            updateCamera(fromHistory, 0.0);
-            searchET.setVisibility(View.GONE);
-            soundButton.setVisibility(View.GONE);
-            focusLocationBtn.setVisibility(View.GONE);
-            viewOnly = true;
-        }
 
         mapView.getMapboxMap().addOnCameraChangeListener(new OnCameraChangeListener() {
             @Override
@@ -1729,7 +1706,7 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
                     if (isRouteActive) {
                         if (distance < thresholdDistanceToNoti) {
                             if (isPointOnRoute(potholePoint, selectedRoute)) {
-                                showNotification("Pothole On Route", "There is a pothole ahead!");
+                                showNotification("Pothole On Route", "There is a pothole ahead!", true);
                                 potholeTracking.remove(pLocation);
                                 break;
                             }
@@ -1815,6 +1792,8 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
 
             // Save to local storage
             StorePotholes.savePotholeData(this, potholeDataList);
+
+            showNotification("Pothole Detected!", "A new pothole has been detected!", false);
 
             /*SensorData sensorData = new SensorData(deltaX, deltaY, (float) rielZ, pitch, roll, speedKmh, latitude, longitude, point, username, severity, formattedDate);
             Log.d(TAG, "Pushing data to Firebase: " + sensorData.toString());

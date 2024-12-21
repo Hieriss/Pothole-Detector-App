@@ -52,7 +52,12 @@ public class HistoryPage extends AppCompatActivity {
 
     private void populateSensorData() {
         // Load data from local storage
-        sensorDataList.addAll(StorePotholes.loadPotholeData(this));
-        adapter.notifyDataSetChanged();
+        List<PotholeModel> loadedData = StorePotholes.loadPotholeData(this);
+        for (PotholeModel model : loadedData) {
+            if (!sensorDataList.contains(model)) {
+                sensorDataList.add(model);
+                adapter.notifyItemInserted(sensorDataList.size() - 1);
+            }
+        }
     }
 }
