@@ -88,9 +88,10 @@
     <string name="opt_fail">"Digital OTP hasn't been set"</string>
     <string name="opt_fail_description">"Please set your digital OTP to secure your account"</string>
     <string name="set_otp">"Set Digital OTP"</string>
-    <string name="verify_email">"Verify Your Email"</string>
-    <string name="verify_email_description">"We’ve sent a verification email to your email address. Please check your inbox and verify your account."</string>
-    <string name="check_the_verification">"Check the verification"</string>
+    <string name="verify_email">"Verify 6-digits OTP"</string>
+    <string name="verify_email_description">"We’ve sent a 6-digits OTP to your phone number. Please check your message."</string>
+    <string name="check_the_verification">"Verify the OTP"</string>
+    <string name="resend_otp">"Send the OTP"</string>
     <string name="terms_setting">"Terms"</string>
     <string name="didnt_set_otp">"You didn't set your digital OTP"</string>
     <string name="email_doesnt_match">"Email doesn't match"</string>

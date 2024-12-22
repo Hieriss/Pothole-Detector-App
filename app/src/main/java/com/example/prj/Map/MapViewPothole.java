@@ -92,8 +92,6 @@ public class MapViewPothole extends AppCompatActivity {
 
         severity = findViewById(R.id.severity_text);
         timestamp = findViewById(R.id.timestamp_text);
-        severity.setText(severityText);
-        timestamp.setText(timestampText);
 
         backButton = findViewById(R.id.back_button);
         backButton.setOnClickListener(new View.OnClickListener() {
@@ -144,6 +142,9 @@ public class MapViewPothole extends AppCompatActivity {
             timestampText = intent.getStringExtra("TIMESTAMP");
             fromHistory = Point.fromLngLat(longitude, latitude);
             updateCamera(fromHistory, 0.0);
+
+            severity.setText(severityText);
+            timestamp.setText(timestampText);
         }
 
         final int position = intent.getIntExtra("POSITION", -1);

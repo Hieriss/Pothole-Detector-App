@@ -40,13 +40,13 @@
                 android:layout_height="wrap_content">
 
                 <LinearLayout
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
                     tools:ignore="UselessParent">
 
                     <LinearLayout
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:gravity="center"
@@ -54,7 +54,7 @@
 
                         <EditText
                             android:id="@+id/signup_username"
-                            android:layout_width="330dp"
+                            android:layout_width="match_parent"
                             android:layout_height="50dp"
                             android:layout_marginStart="40dp"
                             android:layout_marginTop="210dp"

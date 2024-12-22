@@ -9,6 +9,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -19,6 +20,12 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.FirebaseException;
+import com.google.firebase.auth.PhoneAuthCredential;
+import com.google.firebase.auth.PhoneAuthOptions;
+import com.google.firebase.auth.PhoneAuthProvider;
+
+import java.util.concurrent.TimeUnit;
 
 public class SignUp extends AppCompatActivity {
 
@@ -49,6 +56,11 @@ public class SignUp extends AppCompatActivity {
         signupEmail = findViewById(R.id.signup_email);
         signupPhone = findViewById(R.id.signup_phone);
 
+        String email = signupEmail.getText().toString();
+        String password = signupPassword.getText().toString();
+        String username = signupUsername.getText().toString();
+        String phone = signupPhone.getText().toString();
+
         signupButton = findViewById(R.id.signup_button);
 
         signupButton.setOnClickListener(new View.OnClickListener() {
@@ -57,7 +69,17 @@ public class SignUp extends AppCompatActivity {
                 if (!validateUsername() | !validatePassword() | !validateConfirmPassword() | !validateEmail() | !validatePhone()) {
                     return;
                 } else {
-                    createAccount();
+                    String username = signupUsername.getText().toString().trim();
+                    String password = signupPassword.getText().toString().trim();
+                    String email = signupEmail.getText().toString().trim();
+                    String phone = formatPhoneNumber(signupPhone.getText().toString().trim());
+
+                    Intent intent = new Intent(SignUp.this,VerifySignUp.class);
+                    intent.putExtra("username", username);
+                    intent.putExtra("password", password);
+                    intent.putExtra("email", email);
+                    intent.putExtra("phone", phone);
+                    startActivity(intent);
                 }
             }
         });
@@ -142,35 +164,10 @@ public class SignUp extends AppCompatActivity {
         }
     }
 
-    private void createAccount() {
-        final String email = signupEmail.getText().toString();
-        final String password = signupPassword.getText().toString();
-        final String username = signupUsername.getText().toString();
-        final String phone = signupPhone.getText().toString();
-
-        mAuth.createUserWithEmailAndPassword(email, password)
-                .addOnCompleteListener(task -> {
-                    FirebaseUser user = mAuth.getCurrentUser();
-
-                    if (user != null) {
-                        user.sendEmailVerification()
-                                .addOnCompleteListener(task1 -> {
-                                    if (task1.isSuccessful()) {
-                                        Toast.makeText(SignUp.this, getString(R.string.sent_verify_email_success), Toast.LENGTH_SHORT).show();
-
-                                        Intent intent = new Intent(SignUp.this, VerifySignUp.class);
-                                        intent.putExtra("username", username);
-                                        intent.putExtra("password", password);
-                                        intent.putExtra("email", email);
-                                        intent.putExtra("phone", phone);
-                                        startActivity(intent);
-                                    } else {
-                                        Toast.makeText(SignUp.this, getString(R.string.sent_verify_email_fail), Toast.LENGTH_SHORT).show();
-                                    }
-                                });
-                    } else {
-                        Toast.makeText(SignUp.this, getString(R.string.register_fail) + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
-                    }
-                });
+    private String formatPhoneNumber(String phoneNumber) {
+        if (phoneNumber.startsWith("0")) {
+            return "+84" + phoneNumber;
+        }
+        return phoneNumber;
     }
 }

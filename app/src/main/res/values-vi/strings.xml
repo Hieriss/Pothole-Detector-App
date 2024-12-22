@@ -88,9 +88,10 @@
     <string name="opt_fail">"Mã OTP chưa được thiết lập"</string>
     <string name="opt_fail_description">"Vui lòng thiết lập OTP để bảo mật tài khoản của bạn"</string>
     <string name="set_otp">"Thiếp lập OTP"</string>
-    <string name="verify_email">"Xác minh Email của bạn"</string>
-    <string name="verify_email_description">"Chúng tôi đã gửi mail xác minh đến email của bạn. Vui lòng kiểm tra hộp thư đến và xác minh tài khoản của bạn."</string>
-    <string name="check_the_verification">"Xác minh"</string>
+    <string name="verify_email">"Xác minh mã OTP 6 số"</string>
+    <string name="verify_email_description">"Chúng tôi đã gửi mã OTP 6 số đến số điện thoại của bạn. Vui lòng kiểm tra tin nhắn của bạn."</string>
+    <string name="check_the_verification">"Xác minh mã OTP"</string>
+    <string name="resend_otp">"Gửi lại mã OTP"</string>
     <string name="terms_setting">"Điều khoản"</string>
     <string name="didnt_set_otp">"Bạn chưa thiết lập mã otp"</string>
     <string name="email_doesnt_match">"Email không khớp"</string>
