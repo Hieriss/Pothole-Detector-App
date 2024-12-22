@@ -66,6 +66,7 @@ import androidx.core.view.WindowInsetsCompat;
 import com.example.prj.History.HistoryAdapter;
 import com.example.prj.History.HistoryPage;
 import com.example.prj.History.PotholeModel;
+import com.example.prj.Notification.NotificationModel;
 import com.example.prj.Notification.NotificationPage;
 import com.example.prj.R;
 import com.example.prj.Session.SessionManager;
@@ -305,6 +306,7 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
     private static final float SPEED_THRESHOLD = 15f;
     private static final float DELTA_Z_THRESHOLD = 100.0f;
     public List<PotholeModel> potholeDataList = new ArrayList<>();
+    public List<NotificationModel> notificationDataList = new ArrayList<>();
 
     //--------------------------Navigation Register--------------------------------
 
@@ -1843,13 +1845,17 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
             String formattedDate = sdf.format(date);
             String severity;
 
-            if (rielZ > 100 && rielZ < 120) {
+            if (rielZ > 110 && rielZ < 125) {
                 severity = "Low";
-            } else if (rielZ > 120 && rielZ < 140) {
+            } else if (rielZ > 125 && rielZ < 150) {
                 severity = "Medium";
             } else {
                 severity = "High";
             }
+
+            /*NotificationModel notificationModel = new NotificationModel(formattedDate, severity);
+            notificationDataList = StoreNotifications.loadNotificationData(this);
+            notificationDataList.add(notificationModel);*/
 
             PotholeModel potholeModel = new PotholeModel(deltaX, deltaY, (float) rielZ, pitch, roll, speedKmh, point, username, severity, latitude, longitude, formattedDate);
             potholeDataList = StorePotholes.loadPotholeData(this);

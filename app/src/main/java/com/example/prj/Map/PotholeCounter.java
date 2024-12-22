@@ -1,15 +1,7 @@
 package com.example.prj.Map;
 
 public class PotholeCounter {
-    String day, timestamp, severity;
-
-    public String getDay() {
-        return day;
-    }
-
-    public void setDay(String username) {
-        this.day = username;
-    }
+    String timestamp, severity;
 
     public String getTimestamp() {
         return timestamp;
@@ -27,8 +19,7 @@ public class PotholeCounter {
         this.severity = email;
     }
 
-    public PotholeCounter(String day, String timestamp, String severity) {
-        this.day = day;
+    public PotholeCounter(String timestamp, String severity) {
         this.timestamp = timestamp;
         this.severity = severity;
     }

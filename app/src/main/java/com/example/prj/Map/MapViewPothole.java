@@ -167,7 +167,17 @@ public class MapViewPothole extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 List<PotholeModel> potholeDataList = StorePotholes.loadPotholeData(MapViewPothole.this);
+                String currentDay = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
+
+                List<PotholeModel> filteredPotholeDataList = new ArrayList<>();
                 for (PotholeModel potholeModel : potholeDataList) {
+                    String potholeDay = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(potholeModel.getTimestamp());
+                    if (potholeDay.equals(currentDay)) {
+                        filteredPotholeDataList.add(potholeModel);
+                    }
+                }
+
+                for (PotholeModel potholeModel : filteredPotholeDataList) {
                     SensorData sensorData = new SensorData(
                             potholeModel.getCurrentX(), potholeModel.getCurrentY(), potholeModel.getCurrentZ(),
                             potholeModel.getPitch(), potholeModel.getRoll(), potholeModel.getSpeedKmh(),
@@ -208,22 +218,27 @@ public class MapViewPothole extends AppCompatActivity {
                     });
                 }
 
-                DatabaseReference database = FirebaseDatabase.getInstance().getReference();
-
                 database.child("user").child(username).get()
                         .addOnCompleteListener(task -> {
                             if (task.isSuccessful() && task.getResult().exists()) {
-                                String currentDay = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
+                                PotholeCounter potholeCounter = new PotholeCounter(timestampText, severityText);
 
-                                PotholeCounter potholeCounter = new PotholeCounter(currentDay, timestampText, severityText);
-
-                                database.child("user").child(username).child("counter").setValue(potholeCounter)
+                                database.child("user").child(username).child("counter").child(currentDay).setValue(potholeCounter)
                                         .addOnSuccessListener(aVoid -> Log.d(TAG, "Data pushed successfully"))
                                         .addOnFailureListener(e -> Log.e(TAG, "Failed to push data", e));
                             } else {
                                 Log.d(TAG, "Username does not exist");
                             }
                         });
+                
+                if (position != -1 && position < potholeDataList.size()) {
+                    potholeDataList.remove(position);
+                    StorePotholes.savePotholeData(MapViewPothole.this, potholeDataList);
+                }
+
+                Intent resultIntent = new Intent();
+                resultIntent.putExtra("POSITION", position);
+                setResult(RESULT_OK, resultIntent);
                 finish();
             }
         });
