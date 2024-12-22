@@ -81,6 +81,11 @@ public class MainPage extends AppCompatActivity {
         loadLocale();
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main_page);
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            return insets;
+        });
 
         IntentFilter filter_close = new IntentFilter("CLOSE_MAIN_PAGE");
         registerReceiver(closeReceiver, filter_close);

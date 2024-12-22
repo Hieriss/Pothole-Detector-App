@@ -447,7 +447,7 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
         void onRoadNameFetched(String roadName);
     }
 
-    private void showNotification(String title, String message) {
+    private void showNotification(String title, String message, Point p) {
         NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         String channelId = "pothole_channel";
         Uri soundUri = Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.pothole_notification);
@@ -459,11 +459,6 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
         }
 
         Intent intent = new Intent(this, NotificationPage.class);
-        long timestamp = System.currentTimeMillis();
-        Date date = new Date(timestamp);
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
-        String formattedDate = sdf.format(date);
-        intent.putExtra("TIME", formattedDate);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, channelId)
@@ -476,6 +471,44 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
                 .setSound(soundUri);
 
         notificationManager.notify(1, builder.build());
+
+        // Save the notification data
+        fetchRoadName(p, new RoadNameCallback() {
+            @Override
+            public void onRoadNameFetched(String roadName) {
+                if (roadName.equals("Tô Vĩnh Diện")) {
+                    roadName = "Đường Mạc Đĩnh Chi";
+                } else if (roadName.equals("Hiệp Bình") || roadName.equals("VQJV+2F9") || roadName.equals("33, 99, 53") || roadName.equals("VQJW+5FH")) {
+                    roadName = "Đường Nguyễn Du";
+                } else if (roadName.equals("VRH2+74C") || roadName.equals("VRH2+27J") || roadName.equals("VRG2+G3M")) {
+                    roadName = "Đường William Shakespeare";
+                } else if (roadName.equals("VRG2+CFW") || roadName.equals("VRG3+PC8")) {
+                    roadName = "Đường Lưu Hữu Phước";
+                } else if (roadName.equals("VRF3+46J ") || roadName.equals("VRC3+V7G")) {
+                    roadName = "Đường Hàn Thuyên";
+                } else if (roadName.equals("A2 / A1")) {
+                    roadName = "Đường Lê Quý Đôn";
+                } else if (roadName.equals("VQJP+R76")) {
+                    roadName = "Đường Hồ Xuân Hương";
+                }
+                Penaldo<Double, Double, String, String, String>location = findQuadrupleByPoint(p);
+                if (location == null) {
+                    Log.e(TAG, "Location not found for the given point.");
+                    return;
+                }
+                String severity = location.fifth;
+                //Toast.makeText(MapPage.this, "ID: " + id, Toast.LENGTH_SHORT).show();
+                long timestamp = System.currentTimeMillis();
+                Date date = new Date(timestamp);
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+                String formattedDate = sdf.format(date);
+                List<NotificationModel> notificationDataList = StorePotholes.loadNotificationData(MapPage.this);
+                NotificationModel model = new NotificationModel(formattedDate, severity, roadName);
+                notificationDataList.add(model);
+                StorePotholes.saveNotificationData(MapPage.this, notificationDataList);
+            }
+        });
+
     }
 
     private Point nearestPointOfRoute(Point point, NavigationRoute route) {
@@ -885,11 +918,8 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
                 if (keypadHeight > screenHeight * 0.15) { // 0.15 ratio is used to determine if the keyboard is shown
                     backBtnLayout.setVisibility(View.GONE);
                     searchET.setCursorVisible(true);
-                    searchET.setHint(R.string.search_option);
-                    searchResultsView.setVisibility(View.VISIBLE);
                 } else {
                     searchET.setCursorVisible(false);
-                    searchET.setHint("");
                     backBtnLayout.setVisibility(View.VISIBLE);
                     searchResultsView.setVisibility(View.GONE);
                 }
@@ -926,7 +956,11 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
             }
 
             @Override
-            public void afterTextChanged(Editable editable) {}
+            public void afterTextChanged(Editable editable) {
+                if (editable.toString().isEmpty()) {
+                    searchResultsView.setVisibility(View.GONE);
+                }
+            }
         });
 
         mapView.getMapboxMap().loadStyleUri(Style.OUTDOORS, new Style.OnStyleLoaded() {
@@ -1778,7 +1812,7 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
                     else if (pLocation.fifth.equals("High") && !highFilter) continue;
                     if (distance < thresholdDistanceToNoti) {
                         if (isPointOnRoute(p, selectedRoute)) {
-                            showNotification("Pothole On Route", "There are a pothole ahead!");
+                            showNotification("Pothole On Route", "There are a pothole ahead!", p);
                             potholeTracking.remove(pLocation);
                             break;
                         }

@@ -105,6 +105,7 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHold
             longitude = view.findViewById(R.id.longitude);
             timestamp = view.findViewById(R.id.timestamp);
             viewOnMap = view.findViewById(R.id.item_button);
+
         }
     }
 }

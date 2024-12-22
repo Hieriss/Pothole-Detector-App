@@ -1,15 +1,17 @@
 package com.example.prj.Notification;
 
 public class NotificationModel {
-        public NotificationModel() {}
-
-        public NotificationModel(String timestamp, String severity) {
-            this.timestamp = timestamp;
-            this.severity = severity;
-        }
-
         private String timestamp;
         private String severity;
+        private String roadName;
+
+        public NotificationModel() {}
+
+        public NotificationModel(String timestamp, String severity, String roadName) {
+            this.timestamp = timestamp;
+            this.severity = severity;
+            this.roadName = roadName;
+        }
 
         public String getTimestamp() { return timestamp; }
 
@@ -18,4 +20,8 @@ public class NotificationModel {
         public String getSeverity() { return severity; }
 
         public void setSeverity(String severity) { this.severity = severity; }
+
+        public String getRoadName() { return roadName; }
+
+        public void setRoadName(String roadName) { this.roadName = roadName; }
 }
