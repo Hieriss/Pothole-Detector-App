@@ -218,7 +218,7 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
     private static final int REQUEST_IMAGE_CAPTURE = 2;
     private static final int REQUEST_CAMERA_PERMISSION = 100;
     private Uri photoUri;
-    double thresholdDistanceToNoti = 0.05; // 50 meters
+    double thresholdDistanceToNoti = 0.07; // 70 meters
     boolean lowFilter = true, mediumFilter = true, highFilter = true;
 
     // map component
@@ -447,11 +447,11 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
 
     private void showNotification(String title, String message) {
         NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        String channelId = "pothole_notification_channel";
+        String channelId = "pothole_channel";
         Uri soundUri = Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.pothole_notification);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationChannel channel = new NotificationChannel(channelId, "Nearby Annotation", NotificationManager.IMPORTANCE_HIGH);
+            NotificationChannel channel = new NotificationChannel(channelId, "Pothole Notification", NotificationManager.IMPORTANCE_HIGH);
             channel.setSound(soundUri, null);
             notificationManager.createNotificationChannel(channel);
         }
@@ -858,7 +858,6 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
         placeAutocomplete = PlaceAutocomplete.create(getString(R.string.mapbox_access_token));
         searchET = findViewById(R.id.search_bar_text);
         searchET.setHint(R.string.search_option);
-        //searchET.setPadding(16, 0, 0, 0);
         backBtn = findViewById(R.id.back_button);
         backBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -1550,6 +1549,7 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
                 navigateBtn.setText("Navigate");
                 navigateBtn.setBackgroundColor(getResources().getColor(R.color.light_purple));
                 setRoute.setText("Routing...");
+                potholeTracking = potholeLocations;
                 RouteOptions.Builder builder = RouteOptions.builder();
                 Point origin = Point.fromLngLat(Objects.requireNonNull(location).getLongitude(), location.getLatitude());
                 builder.coordinatesList(Arrays.asList(origin, point));
@@ -1765,11 +1765,15 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
         if (isRouteActive) {
             if (potholeTracking != null) {
                 for (Penaldo<Double, Double, String, String, String> pLocation : potholeTracking) {
-                    Double distance = TurfMeasurement.distance(Point.fromLngLat(location.getLongitude(), location.getLatitude()), Point.fromLngLat(pLocation.second, pLocation.first));
+                    Point p = Point.fromLngLat(pLocation.second, pLocation.first);
+                    Double distance = TurfMeasurement.distance(Point.fromLngLat(location.getLongitude(), location.getLatitude()), p);
                     if (distance > 1) continue;
+                    if (pLocation.fifth.equals("Low") && !lowFilter) continue;
+                    else if (pLocation.fifth.equals("Medium") && !mediumFilter) continue;
+                    else if (pLocation.fifth.equals("High") && !highFilter) continue;
                     if (distance < thresholdDistanceToNoti) {
-                        if (isPointOnRoute(Point.fromLngLat(pLocation.second, pLocation.first), selectedRoute)) {
-                            showNotification("Pothole On Route", "There is a pothole ahead!");
+                        if (isPointOnRoute(p, selectedRoute)) {
+                            showNotification("Pothole On Route", "There are a pothole ahead!");
                             potholeTracking.remove(pLocation);
                             break;
                         }
@@ -1794,6 +1798,7 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
         walkingView.setVisibility(View.VISIBLE);
         cyclingView.setVisibility(View.VISIBLE);
         drivingView.setVisibility(View.VISIBLE);
+        searchResultsView.setVisibility(View.GONE);
         searchET.setText("");
         navigateBtn.setEnabled(false);
         navigateBtn.setBackgroundColor(getResources().getColor(R.color.light_gray));
