@@ -484,7 +484,7 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
     private boolean isPointOnRoute(Point point, NavigationRoute route) {
         Point nearestPoint = nearestPointOfRoute(point, route);
         double distance = TurfMeasurement.distance(point, nearestPoint);
-        double thresholdDistance = 0.005; // 5 meters
+        double thresholdDistance = 0.003; // 3 meters
         return distance < thresholdDistance;
     }
 
@@ -1099,6 +1099,18 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
                                 //pointAnnotationManager.deleteAll();
                                 manualAddActive = false;
                             }
+                        }
+                        else {
+                            Toast.makeText(MapPage.this, "A new pothole has been detected!", Toast.LENGTH_SHORT).show();
+                            long timestamp = System.currentTimeMillis();
+                            Date date = new Date(timestamp);
+                            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+                            String formattedDate = sdf.format(date);
+                            String severity = "Debug";
+                            PotholeModel potholeModel = new PotholeModel(deltaX, deltaY, (float) rielZ, pitch, roll, speedKmh, point, username, severity, latitude, longitude, formattedDate);
+                            potholeDataList = StorePotholes.loadPotholeData(MapPage.this);
+                            potholeDataList.add(potholeModel);
+                            StorePotholes.savePotholeData(MapPage.this, potholeDataList);
                         }
                     }
                 });
