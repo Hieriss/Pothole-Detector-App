@@ -59,6 +59,15 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHold
                 ((Activity) v.getContext()).startActivityForResult(intent, 1);
             }
         });
+        if (model.getSeverity().equals("Low")) {
+            holder.severity.setTextColor(holder.itemView.getContext().getResources().getColor(R.color.green));
+        } else if (model.getSeverity().equals("Medium")) {
+            holder.severity.setTextColor(holder.itemView.getContext().getResources().getColor(R.color.yellow));
+        } else if (model.getSeverity().equals("High")) {
+            holder.severity.setTextColor(holder.itemView.getContext().getResources().getColor(R.color.red));
+        } else {
+            holder.severity.setTextColor(holder.itemView.getContext().getResources().getColor(R.color.cyan)); // Default color
+        }
     }
 
     @Override

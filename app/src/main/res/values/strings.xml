@@ -72,7 +72,7 @@
     <string name="enter_otp">"Please enter your digital OTP before going to the next step"</string>"
     <string name="verify_title">"Verify Your Digital OTP"</string>
     <string name="set_route">"Set route"</string>
-    <string name="search_option">"Search"</string>
+    <string name="search_option">"Search for a location..."</string>
     <string name="pothole_detetion">"Pothole detection"</string>
     <string name="pothole_warning">"Pothole warning"</string>
     <string name="pothole_news">"Pothole news"</string>

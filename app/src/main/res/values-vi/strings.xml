@@ -72,7 +72,7 @@
     <string name="enter_otp">"Vui lòng nhập OTP của bạn trước khi chuyển sang bước tiếp theo"</string>"
     <string name="verify_title">"Xác minh mã OTP của bạn"</string>
     <string name="set_route">"Chọn đường"</string>
-    <string name="search_option">"Tìm kiếm"</string>
+    <string name="search_option">"Tìm kiếm địa điểm..."</string>
     <string name="pothole_detetion">"Phát hiện ổ gà"</string>
     <string name="pothole_warning">"Cảnh báo ổ gà"</string>
     <string name="pothole_news">"Thông tin ổ gà"</string>
