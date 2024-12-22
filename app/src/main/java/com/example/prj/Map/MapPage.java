@@ -219,7 +219,7 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
     private static final int REQUEST_IMAGE_CAPTURE = 2;
     private static final int REQUEST_CAMERA_PERMISSION = 100;
     private Uri photoUri;
-    double thresholdDistanceToNoti = 0.07; // 70 meters
+    double thresholdDistanceToNoti = 0.06; // 70 meters
     boolean lowFilter = true, mediumFilter = true, highFilter = true;
 
     // map component
@@ -859,7 +859,6 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
         // search
         placeAutocomplete = PlaceAutocomplete.create(getString(R.string.mapbox_access_token));
         searchET = findViewById(R.id.search_bar_text);
-        searchET.setHint(R.string.search_option);
         backBtn = findViewById(R.id.back_button);
         backBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -886,9 +885,13 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
                 if (keypadHeight > screenHeight * 0.15) { // 0.15 ratio is used to determine if the keyboard is shown
                     backBtnLayout.setVisibility(View.GONE);
                     searchET.setCursorVisible(true);
+                    searchET.setHint(R.string.search_option);
+                    searchResultsView.setVisibility(View.VISIBLE);
                 } else {
                     searchET.setCursorVisible(false);
+                    searchET.setHint("");
                     backBtnLayout.setVisibility(View.VISIBLE);
+                    searchResultsView.setVisibility(View.GONE);
                 }
             }
         });
