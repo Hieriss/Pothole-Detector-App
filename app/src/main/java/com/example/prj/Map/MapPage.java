@@ -458,10 +458,10 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
             notificationManager.createNotificationChannel(channel);
         }
 
-        Intent intent = new Intent(this, NotificationPage.class);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+        Intent intent = new Intent(MapPage.this, NotificationPage.class);
+        PendingIntent pendingIntent = PendingIntent.getActivity(MapPage.this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
 
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, channelId)
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(MapPage.this, channelId)
                 .setSmallIcon(R.drawable.pothole_on_map)
                 .setContentTitle(title)
                 .setContentText(message)
@@ -1812,7 +1812,8 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
                     else if (pLocation.fifth.equals("High") && !highFilter) continue;
                     if (distance < thresholdDistanceToNoti) {
                         if (isPointOnRoute(p, selectedRoute)) {
-                            showNotification("Pothole On Route", "There are a pothole ahead!", p);
+                            Toast.makeText(this, "There is a pothole ahead!", Toast.LENGTH_SHORT).show();
+                            showNotification("Pothole On Route", "There is a pothole ahead!", p);
                             potholeTracking.remove(pLocation);
                             break;
                         }
