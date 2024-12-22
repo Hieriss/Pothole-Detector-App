@@ -27,8 +27,11 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.example.prj.Authen.UserData;
 import com.example.prj.History.PotholeModel;
 import com.example.prj.R;
+import com.example.prj.Session.SessionManager;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -61,9 +64,13 @@ import com.mapbox.maps.plugin.scalebar.ScaleBarPlugin;
 import com.mapbox.search.autocomplete.PlaceAutocompleteSuggestion;
 import com.mapbox.search.ui.adapter.autocomplete.PlaceAutocompleteUiAdapter;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 
 import kotlin.Unit;
 import kotlin.jvm.functions.Function1;
@@ -76,6 +83,7 @@ public class MapViewPothole extends AppCompatActivity {
     private DatabaseReference database;
     private PointAnnotationManager pointAnnotationManager;
     Point fromHistory;
+    SessionManager sessionManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -147,6 +155,11 @@ public class MapViewPothole extends AppCompatActivity {
             timestamp.setText(timestampText);
         }
 
+        sessionManager = new SessionManager(this);
+        HashMap<String, String> userDetails = sessionManager.getUserDetails();
+        String username = userDetails.get(SessionManager.KEY_NAME);
+
+
         final int position = intent.getIntExtra("POSITION", -1);
 
         confirmButton = findViewById(R.id.confirm_button);
@@ -194,6 +207,23 @@ public class MapViewPothole extends AppCompatActivity {
                         }
                     });
                 }
+
+                DatabaseReference database = FirebaseDatabase.getInstance().getReference();
+
+                database.child("user").child(username).get()
+                        .addOnCompleteListener(task -> {
+                            if (task.isSuccessful() && task.getResult().exists()) {
+                                String currentDay = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
+
+                                PotholeCounter potholeCounter = new PotholeCounter(currentDay, timestampText, severityText);
+
+                                database.child("user").child(username).child("counter").setValue(potholeCounter)
+                                        .addOnSuccessListener(aVoid -> Log.d(TAG, "Data pushed successfully"))
+                                        .addOnFailureListener(e -> Log.e(TAG, "Failed to push data", e));
+                            } else {
+                                Log.d(TAG, "Username does not exist");
+                            }
+                        });
                 finish();
             }
         });
