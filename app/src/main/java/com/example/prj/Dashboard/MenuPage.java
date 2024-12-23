@@ -3,7 +3,10 @@ package com.example.prj.Dashboard;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
+import android.widget.FrameLayout;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -32,6 +35,10 @@ public class MenuPage extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
+        FrameLayout mainLayout = findViewById(R.id.main);
+        Animation slideIn = AnimationUtils.loadAnimation(this, R.anim.slide_in_right);
+        mainLayout.startAnimation(slideIn);
 
         username = getIntent().getStringExtra("USERNAME");
 

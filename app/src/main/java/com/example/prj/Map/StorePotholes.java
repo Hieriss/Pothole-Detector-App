@@ -92,4 +92,10 @@ public class StorePotholes {
         Type type = new TypeToken<ArrayList<NotificationModel>>() {}.getType();
         return json == null ? new ArrayList<>() : gson.fromJson(json, type);
     }
+
+    public static void deleteNotificationData(Context context, NotificationModel model) {
+        List<NotificationModel> notificationDataList = loadNotificationData(context);
+        notificationDataList.remove(model);
+        saveNotificationData(context, notificationDataList);
+    }
 }

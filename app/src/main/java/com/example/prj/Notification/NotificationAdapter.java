@@ -67,4 +67,9 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
             roadName = view.findViewById(R.id.roadname);
         }
     }
+
+    public void removeItem(int position) {
+        potholeList.remove(position);
+        notifyItemRemoved(position);
+    }
 }

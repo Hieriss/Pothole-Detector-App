@@ -1196,7 +1196,8 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
                         walkingView.setVisibility(View.GONE);
                         cyclingView.setVisibility(View.GONE);
                         drivingView.setVisibility(View.GONE);
-
+                        soundButton.setVisibility(View.VISIBLE);
+                        mapboxVoiceInstructionsPlayer.volume(new SpeechVolume(1.0f));
                         getGestures(mapView).addOnMoveListener(onMoveListener);
                         focusLocationBtn.hide();
                         navigateBtn.setEnabled(false);
@@ -1611,9 +1612,11 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
                     @Override
                     public void onRoutesReady(@NonNull List<NavigationRoute> list, @NonNull RouterOrigin routerOrigin) {
                         mapboxNavigation.setNavigationRoutes(list);
+                        mapboxVoiceInstructionsPlayer.volume(new SpeechVolume(0f));
                         selectedRoute = list.get(0);
                         setRoute.setEnabled(true);
                         setRoute.setText("Stop route");
+                        soundButton.setVisibility(View.GONE);
                         searchLayout.setVisibility(View.GONE);
                         isRouteActive = true;
 

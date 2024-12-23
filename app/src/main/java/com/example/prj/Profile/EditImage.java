@@ -1,6 +1,8 @@
 package com.example.prj.Profile;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -15,6 +17,8 @@ import android.widget.Toast;
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -58,7 +62,13 @@ public class EditImage extends AppCompatActivity {
         chooseButton.setOnClickListener(view -> openFileChooser());
 
         photoButton = findViewById(R.id.take_a_photo_button);
-        photoButton.setOnClickListener(view -> takePhoto());
+        photoButton.setOnClickListener(v -> {
+            if (ContextCompat.checkSelfPermission(EditImage.this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(EditImage.this, new String[]{Manifest.permission.CAMERA}, TAKE_PHOTO_REQUEST);
+            } else {
+                takePhoto();
+            }
+        });
     }
 
     private void openFileChooser() {
