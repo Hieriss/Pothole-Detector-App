@@ -121,110 +121,146 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="horizontal">
 
             <LinearLayout
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:gravity="end|bottom"
                 android:layout_weight="10"
                 android:orientation="horizontal">
 
                 <LinearLayout
-                    android:id="@+id/filter_layout"
                     android:layout_width="wrap_content"
-                    android:layout_height="55dp"
-                    android:layout_gravity="end|bottom"
-                    android:layout_marginBottom="20dp"
-                    android:layout_marginEnd="10dp"
+                    android:layout_height="wrap_content"
                     android:background="@drawable/main_user_box_background"
-                    android:orientation="horizontal"
-                    android:visibility="gone">
+                    android:layout_gravity="end|bottom"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginBottom="20dp"
+                    android:orientation="vertical">
 
-                    <RelativeLayout
-                        android:id="@+id/low_button_layout"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:layout_marginStart="10dp"
-                        android:layout_marginEnd="5dp"
-                        android:layout_weight="1"
-                        android:background="@drawable/driving_profile_button_background_choosen">
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="horizontal">
 
-                        <ImageView
-                            android:id="@+id/low_icon"
-                            android:layout_width="20dp"
-                            android:layout_height="20dp"
-                            android:layout_centerHorizontal="true"
-                            android:layout_centerVertical="true"
-                            android:src="@drawable/low_severity_pothole" />
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:id="@+id/range"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="10dp"
+                            android:hint="Data range"
+                            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                            app:boxStrokeColor="@color/magenta">
 
-                        <androidx.appcompat.widget.AppCompatButton
-                            android:id="@+id/low_button"
-                            android:layout_width="50dp"
-                            android:layout_height="30dp"
-                            android:background="@android:color/transparent"
-                            android:clickable="true"
-                            android:focusable="true"
-                            android:text="" />
-                    </RelativeLayout>
+                            <AutoCompleteTextView
+                                android:id="@+id/range_auto_complete"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:inputType="none"/>
+                        </com.google.android.material.textfield.TextInputLayout>
+                    </LinearLayout>
 
-                    <RelativeLayout
-                        android:id="@+id/medium_button_layout"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
                         android:layout_marginStart="5dp"
                         android:layout_marginEnd="5dp"
-                        android:layout_weight="1"
-                        android:background="@drawable/driving_profile_button_background_choosen">
+                        android:alpha="1"
+                        android:background="@color/magenta"/>
 
-                        <ImageView
-                            android:id="@+id/medium_icon"
-                            android:layout_width="20dp"
-                            android:layout_height="20dp"
-                            android:layout_centerHorizontal="true"
-                            android:layout_centerVertical="true"
-                            android:src="@drawable/medium_severity_pothole" />
-
-                        <androidx.appcompat.widget.AppCompatButton
-                            android:id="@+id/medium_button"
-                            android:layout_width="50dp"
-                            android:layout_height="30dp"
-                            android:background="@android:color/transparent"
-                            android:clickable="true"
-                            android:focusable="true"
-                            android:text="" />
-                    </RelativeLayout>
-
-                    <RelativeLayout
-                        android:id="@+id/high_button_layout"
+                    <LinearLayout
+                        android:id="@+id/filter_layout"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:layout_marginStart="5dp"
-                        android:layout_marginEnd="10dp"
-                        android:layout_weight="1"
-                        android:background="@drawable/driving_profile_button_background_choosen">
+                        android:layout_height="55dp"
+                        android:orientation="horizontal"
+                        android:visibility="visible">
 
-                        <ImageView
-                            android:id="@+id/high_icon"
-                            android:layout_width="20dp"
-                            android:layout_height="20dp"
-                            android:layout_centerHorizontal="true"
-                            android:layout_centerVertical="true"
-                            android:src="@drawable/high_severity_pothole"/>
+                        <RelativeLayout
+                            android:id="@+id/low_button_layout"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_marginStart="10dp"
+                            android:layout_marginEnd="5dp"
+                            android:layout_weight="1"
+                            android:background="@drawable/driving_profile_button_background_choosen">
 
-                        <androidx.appcompat.widget.AppCompatButton
-                            android:id="@+id/high_button"
-                            android:layout_width="50dp"
-                            android:layout_height="30dp"
-                            android:background="@android:color/transparent"
-                            android:clickable="true"
-                            android:focusable="true"
-                            android:text="" />
-                    </RelativeLayout>
+                            <ImageView
+                                android:id="@+id/low_icon"
+                                android:layout_width="24dp"
+                                android:layout_height="24dp"
+                                android:layout_centerHorizontal="true"
+                                android:layout_centerVertical="true"
+                                android:src="@drawable/low_severity_pothole" />
+
+                            <androidx.appcompat.widget.AppCompatButton
+                                android:id="@+id/low_button"
+                                android:layout_width="55dp"
+                                android:layout_height="40dp"
+                                android:background="@android:color/transparent"
+                                android:clickable="true"
+                                android:focusable="true"
+                                android:text="" />
+                        </RelativeLayout>
+
+                        <RelativeLayout
+                            android:id="@+id/medium_button_layout"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_marginStart="5dp"
+                            android:layout_marginEnd="5dp"
+                            android:layout_weight="1"
+                            android:background="@drawable/driving_profile_button_background_choosen">
+
+                            <ImageView
+                                android:id="@+id/medium_icon"
+                                android:layout_width="24dp"
+                                android:layout_height="24dp"
+                                android:layout_centerHorizontal="true"
+                                android:layout_centerVertical="true"
+                                android:src="@drawable/medium_severity_pothole" />
+
+                            <androidx.appcompat.widget.AppCompatButton
+                                android:id="@+id/medium_button"
+                                android:layout_width="55dp"
+                                android:layout_height="40dp"
+                                android:background="@android:color/transparent"
+                                android:clickable="true"
+                                android:focusable="true"
+                                android:text="" />
+                        </RelativeLayout>
+
+                        <RelativeLayout
+                            android:id="@+id/high_button_layout"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_marginStart="5dp"
+                            android:layout_marginEnd="10dp"
+                            android:layout_weight="1"
+                            android:background="@drawable/driving_profile_button_background_choosen">
+
+                            <ImageView
+                                android:id="@+id/high_icon"
+                                android:layout_width="24dp"
+                                android:layout_height="24dp"
+                                android:layout_centerHorizontal="true"
+                                android:layout_centerVertical="true"
+                                android:src="@drawable/high_severity_pothole" />
+
+                            <androidx.appcompat.widget.AppCompatButton
+                                android:id="@+id/high_button"
+                                android:layout_width="55dp"
+                                android:layout_height="40dp"
+                                android:background="@android:color/transparent"
+                                android:clickable="true"
+                                android:focusable="true"
+                                android:text="" />
+                        </RelativeLayout>
+                    </LinearLayout>
                 </LinearLayout>
 
                 <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -243,6 +279,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="0.1"
+                android:layout_gravity="bottom"
                 android:layout_marginStart="10dp"
                 android:orientation="vertical">
 

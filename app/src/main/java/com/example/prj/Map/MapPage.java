@@ -39,6 +39,9 @@ import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewTreeObserver;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -221,6 +224,9 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
     private Uri photoUri;
     double thresholdDistanceToNoti = 0.06; // 70 meters
     boolean lowFilter = true, mediumFilter = true, highFilter = true;
+    String[] dataRange = {"1 km", "5 km", "10 km"};
+    AutoCompleteTextView dataRangeAutoComplete;
+    ArrayAdapter<String> dataRangeAdapter;
 
     // map component
     private MapboxNavigation mapboxNavigation;
@@ -727,6 +733,18 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
             public void onClick(View view) {
                 isOnNavigation = false;
                 resetMapBearing();
+            }
+        });
+
+        // filter data range
+        dataRangeAutoComplete = findViewById(R.id.range_auto_complete);
+        dataRangeAdapter = new ArrayAdapter<String>(this, R.layout.list_item, dataRange);
+        dataRangeAutoComplete.setAdapter(dataRangeAdapter);
+
+        dataRangeAutoComplete.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                String range = parent.getItemAtPosition(position).toString();
             }
         });
 
