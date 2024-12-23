@@ -240,13 +240,7 @@ public class MapViewPothole extends AppCompatActivity {
                             }
                         });
 
-                potholeDataList.clear();
-                StorePotholes.savePotholeData(MapViewPothole.this, potholeDataList);
-
-                Intent resultIntent = new Intent();
-                resultIntent.putExtra("POSITION", position);
-                setResult(RESULT_OK, resultIntent);
-                finish();
+                declineButton.performClick();
             }
         });
 

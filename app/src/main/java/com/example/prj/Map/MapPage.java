@@ -227,6 +227,7 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
     String[] dataRange = {"1 km", "5 km", "10 km"};
     AutoCompleteTextView dataRangeAutoComplete;
     ArrayAdapter<String> dataRangeAdapter;
+    String rangeToRender = "10 km";
 
     // map component
     private MapboxNavigation mapboxNavigation;
@@ -293,6 +294,8 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
     private double roll;
     private double latitude;
     private double longitude;
+    private double currentLatitude;
+    private double currentLongitude;
 
     // variables for speed
     private LocationManager locationManager;
@@ -598,7 +601,7 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
             }
             if (!isOnNavigation) focusLocationBtn.show();
             if (!potholeLocations.isEmpty()) {
-                reloadPotholePoint();
+                reloadPotholePoint(rangeToRender, Point.fromLngLat(currentLongitude, currentLatitude));
             }
             getGestures(mapView).removeOnMoveListener(this);
         }
@@ -718,7 +721,7 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
                     }
                 });
                 potholeTracking = potholeLocations;
-                reloadPotholePoint();
+                reloadPotholePoint(rangeToRender, Point.fromLngLat(currentLongitude, currentLatitude));
 
                 // Schedule the next update after 1 minute
                 handler.postDelayed(this, 60000);
@@ -744,7 +747,8 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
         dataRangeAutoComplete.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String range = parent.getItemAtPosition(position).toString();
+                rangeToRender = parent.getItemAtPosition(position).toString();
+                reloadPotholePoint(rangeToRender, Point.fromLngLat(currentLongitude, currentLatitude));
             }
         });
 
@@ -1171,7 +1175,7 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
                             lowFilter = true;
                             lowLayout.setBackground(getResources().getDrawable(R.drawable.driving_profile_button_background_choosen));
                         }
-                        reloadPotholePoint();
+                        reloadPotholePoint(rangeToRender, Point.fromLngLat(currentLongitude, currentLatitude));
                     }
                 });
 
@@ -1186,7 +1190,7 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
                             mediumFilter = true;
                             mediumLayout.setBackground(getResources().getDrawable(R.drawable.driving_profile_button_background_choosen));
                         }
-                        reloadPotholePoint();
+                        reloadPotholePoint(rangeToRender, Point.fromLngLat(currentLongitude, currentLatitude));
                     }
                 });
 
@@ -1201,7 +1205,7 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
                             highFilter = true;
                             highLayout.setBackground(getResources().getDrawable(R.drawable.driving_profile_button_background_choosen));
                         }
-                        reloadPotholePoint();
+                        reloadPotholePoint(rangeToRender, Point.fromLngLat(currentLongitude, currentLatitude));
                     }
                 });
 
@@ -1849,6 +1853,8 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
         float speed = location.getSpeed();
         // Convert to km/h
         speedKmh = speed * 3.6f;
+        currentLatitude = location.getLatitude();
+        currentLongitude = location.getLongitude();
     }
 
     private void QuitRouting() {
@@ -1876,7 +1882,7 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
             }
         }
         potholeTracking = potholeLocations;
-        reloadPotholePoint();
+        reloadPotholePoint(rangeToRender, Point.fromLngLat(currentLongitude, currentLatitude));
         RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) soundButton.getLayoutParams();
         params.addRule(RelativeLayout.BELOW, R.id.search_bar_layout);
         soundButton.setLayoutParams(params);
@@ -1979,15 +1985,29 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
         }
     }
 
-    public void reloadPotholePoint() {
+    public void reloadPotholePoint(String range, Point currentLocation) {
         if (pointAnnotationManager != null) {
             for (PointAnnotation annotation : pointAnnotationManager.getAnnotations()) {
                 if (annotation.getIconOpacity() != 0.95) {
                     pointAnnotationManager.delete(annotation);
                 }
             }
+            Double kmToRender;
+            if (range.equals("1 km")) {
+                kmToRender = 1.0;
+            }
+            else if (range.equals("5 km")) {
+                kmToRender = 5.0;
+            }
+            else {
+                kmToRender = 10.0;
+            }
             for (Penaldo<Double, Double, String, String, String> location : potholeLocations) {
                 Point point = Point.fromLngLat(location.second, location.first);
+                Double distanceP = TurfMeasurement.distance(currentLocation, point);
+                if (distanceP > kmToRender) {
+                    continue;
+                }
                 Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.pothole_on_map);
                 String severity = location.fifth;
                 if (severity.equals("Low")) {

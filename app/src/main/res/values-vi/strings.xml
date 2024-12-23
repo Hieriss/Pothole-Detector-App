@@ -48,9 +48,9 @@
     <string name="option_achievement">"Thành tựu"</string>
     <string name="option_history_log">"Lịch sử"</string>
     <string name="option_profile">"Hồ sơ"</string>"
-    <string name="potholes_detected_per_day">"Ổ gà phát hiện mỗi ngày"</string>"
+    <string name="potholes_detected_per_day">"Các loại ổ gà phát hiện tuần này"</string>"
     <string name="option_open_map">"Mở bản đồ"</string>
-    <string name="potholes_detected_today">"Ổ gà phát hiện hôm nay"</string>
+    <string name="potholes_detected_today">"Ổ gà phát hiện tuần này"</string>
     <string name="empty_username">"Tên người dùng không thể để trống"</string>
     <string name="empty_password">"Mật khẩu không thể để trống"</string>
     <string name="wrong_pass">"Thông tin không hợp lệ"</string>

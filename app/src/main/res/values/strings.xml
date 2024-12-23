@@ -48,9 +48,9 @@
     <string name="option_achievement">"Achievement"</string>
     <string name="option_history_log">"History Log"</string>
     <string name="option_profile">"Profile"</string>"
-    <string name="potholes_detected_per_day">"Potholes detected per day"</string>"
+    <string name="potholes_detected_per_day">"Pothole types detected this week"</string>"
     <string name="option_open_map">"Open map"</string>
-    <string name="potholes_detected_today">"Potholes detected today"</string>
+    <string name="potholes_detected_today">"Potholes detected this week"</string>
     <string name="empty_username">"Username can't be empty"</string>
     <string name="empty_password">"Password can't be empty"</string>
     <string name="account_doesnt_exist">"Username doesn't exist"</string>

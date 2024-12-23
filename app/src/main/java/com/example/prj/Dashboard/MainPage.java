@@ -1,5 +1,6 @@
 package com.example.prj.Dashboard;
 
+import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -10,6 +11,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.util.Base64;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -17,6 +19,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.graphics.Insets;
@@ -39,17 +42,24 @@ import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
 import com.github.mikephil.charting.utils.ColorTemplate;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 public class MainPage extends AppCompatActivity {
 
@@ -58,6 +68,8 @@ public class MainPage extends AppCompatActivity {
     private LineChart lineChart;
     private BarChart barChart;
     private List<String> lineXValues;
+    private List<Entry> lineEntries = new ArrayList<>();
+    ArrayList<BarEntry> barEntries = new ArrayList<>();
     public TextView nameTextView;
     public ImageView userImageView;
 
@@ -74,24 +86,20 @@ public class MainPage extends AppCompatActivity {
         }
     };
 
+    @SuppressLint("NewApi")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         loadLocale();
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main_page);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
 
         IntentFilter filter_close = new IntentFilter("CLOSE_MAIN_PAGE");
-        registerReceiver(closeReceiver, filter_close);
+        registerReceiver(closeReceiver, filter_close, Context.RECEIVER_NOT_EXPORTED);
 
         // Register the logout receiver
         IntentFilter filter = new IntentFilter("com.example.prj.LOGOUT");
-        registerReceiver(logoutReceiver, filter);
+        registerReceiver(logoutReceiver, filter, Context.RECEIVER_NOT_EXPORTED);
 
         nameTextView = findViewById(R.id.name_text);
 
@@ -123,11 +131,6 @@ public class MainPage extends AppCompatActivity {
         barChart.getAxisRight().setDrawLabels(false);
         barChart.getAxisRight().setDrawGridLines(false);
 
-        ArrayList<BarEntry> barEntries = new ArrayList<>();
-        barEntries.add(new BarEntry(0, 2f));
-        barEntries.add(new BarEntry(1, 7f));
-        barEntries.add(new BarEntry(2, 5f));
-
         XAxis barXAxis = barChart.getXAxis();
         barXAxis.setDrawGridLines(false);
         barXAxis.setLabelCount(3);
@@ -140,19 +143,12 @@ public class MainPage extends AppCompatActivity {
         yAxis.setAxisLineColor(getColor(R.color.black));
         yAxis.setLabelCount(4);
 
-        BarDataSet dataSet1 = new BarDataSet(barEntries, "Detected");
-        dataSet1.setColors(new int[]{ColorTemplate.MATERIAL_COLORS[0], ColorTemplate.MATERIAL_COLORS[1], ColorTemplate.MATERIAL_COLORS[2]});
-
-        BarData barData = new BarData(dataSet1);
-        barData.setDrawValues(false);
+        fetchDataForBarChart();
 
         barChart.getXAxis().setValueFormatter(new IndexAxisValueFormatter(barXValues));
         barChart.getXAxis().setPosition(XAxis.XAxisPosition.BOTTOM);
         barChart.getXAxis().setGranularity(1f);
         barChart.getXAxis().setGranularityEnabled(true);
-
-        barChart.setData(barData);
-        barChart.invalidate();
         barChart.setScaleEnabled(false);
         barChart.setPinchZoom(false);
         barChart.setDoubleTapToZoomEnabled(false);
@@ -179,26 +175,8 @@ public class MainPage extends AppCompatActivity {
         lineYAxis.setDrawGridLines(false);
         lineYAxis.setLabelCount(4);
 
-        List<Entry> lineEntries = new ArrayList<>();
-        lineEntries.add(new Entry(0, 10f));
-        lineEntries.add(new Entry(1, 2f));
-        lineEntries.add(new Entry(2, 15f));
-        lineEntries.add(new Entry(3, 1f));
-        lineEntries.add(new Entry(4, 5f));
-        lineEntries.add(new Entry(5, 20f));
-        lineEntries.add(new Entry(6, 10f));
+        fetchDataForLineChart();
 
-        LineDataSet dataSet = new LineDataSet(lineEntries, "Detected");
-        dataSet.setColor(getColor(R.color.red));
-        dataSet.setMode(LineDataSet.Mode.HORIZONTAL_BEZIER);
-        dataSet.setDrawCircles(false);
-        dataSet.setLineWidth(3f);
-
-        LineData lineData = new LineData(dataSet);
-        lineData.setDrawValues(false);
-
-        lineChart.setData(lineData);
-        lineChart.invalidate();
         lineChart.setScaleEnabled(false);
         lineChart.setPinchZoom(false);
         lineChart.setDoubleTapToZoomEnabled(false);
@@ -237,6 +215,135 @@ public class MainPage extends AppCompatActivity {
         } else {
             Toast.makeText(this, "Username is null", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private void fetchDataForLineChart() {
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("user").child(usernameText).child("counter");
+        reference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()) {
+                    Map<String, Integer> weekdayCount = new HashMap<>();
+                    for (String day : lineXValues) {
+                        weekdayCount.put(day, 0);
+                    }
+
+                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+                    Calendar calendar = Calendar.getInstance();
+                    calendar.add(Calendar.DAY_OF_YEAR, -7);
+                    Date oneWeekAgo = calendar.getTime();
+
+                    for (DataSnapshot dateSnapshot : snapshot.getChildren()) {
+                        String dateString = dateSnapshot.getKey();
+                        try {
+                            Date date = sdf.parse(dateString);
+                            if (date != null && date.after(oneWeekAgo)) {
+                                calendar.setTime(date);
+                                String weekday = new SimpleDateFormat("EEE", Locale.getDefault()).format(calendar.getTime());
+                                int itemCount = 0;
+                                for (DataSnapshot itemSnapshot : dateSnapshot.getChildren()) {
+                                    itemCount++;
+                                }
+                                weekdayCount.put(weekday, weekdayCount.get(weekday) + itemCount);
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                    lineEntries.clear(); // Clear previous entries
+                    for (int i = 0; i < lineXValues.size(); i++) {
+                        String day = lineXValues.get(i);
+                        lineEntries.add(new Entry(i, weekdayCount.get(day)));
+                    }
+
+                    if (lineEntries.isEmpty()) {
+                        Log.d("LineChart", "No data available for the chart.");
+                    } else {
+                        Log.d("LineChart", "Data available for the chart: " + lineEntries.toString());
+                    }
+
+                    LineDataSet dataSet = new LineDataSet(lineEntries, "Detected");
+                    dataSet.setColor(getColor(R.color.red));
+                    dataSet.setMode(LineDataSet.Mode.HORIZONTAL_BEZIER);
+                    dataSet.setDrawCircles(false);
+                    dataSet.setLineWidth(3f);
+
+                    LineData lineData = new LineData(dataSet);
+                    lineData.setDrawValues(false);
+
+                    lineChart.setData(lineData);
+                    lineChart.invalidate();
+                } else {
+                    Log.d("LineChart", "No snapshot data available.");
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.e("LineChart", "Database error: " + error.getMessage());
+            }
+        });
+    }
+
+    private void fetchDataForBarChart() {
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("user").child(usernameText).child("counter");
+        reference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()) {
+                    Map<String, Integer> severityCount = new HashMap<>();
+                    severityCount.put("Low", 0);
+                    severityCount.put("Medium", 0);
+                    severityCount.put("High", 0);
+
+                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+                    Calendar calendar = Calendar.getInstance();
+                    calendar.add(Calendar.DAY_OF_YEAR, -7);
+                    Date oneWeekAgo = calendar.getTime();
+
+                    for (DataSnapshot dateSnapshot : snapshot.getChildren()) {
+                        String dateString = dateSnapshot.getKey();
+                        try {
+                            Date date = sdf.parse(dateString);
+                            if (date != null && date.after(oneWeekAgo)) {
+                                for (DataSnapshot timeSnapshot : dateSnapshot.getChildren()) {
+                                    String severity = timeSnapshot.getValue(String.class);
+                                    if (severity != null) {
+                                        severityCount.put(severity, severityCount.get(severity) + 1);
+                                    }
+                                }
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                    barEntries.clear();
+                    barEntries.add(new BarEntry(0, severityCount.get("Low")));
+                    barEntries.add(new BarEntry(1, severityCount.get("Medium")));
+                    barEntries.add(new BarEntry(2, severityCount.get("High")));
+
+                    Log.d("BarChart", "Data available for the chart: " + barEntries.toString());
+
+                    BarDataSet dataSet = new BarDataSet(barEntries, "Detected");
+                    dataSet.setColors(new int[]{ColorTemplate.MATERIAL_COLORS[0], ColorTemplate.MATERIAL_COLORS[1], ColorTemplate.MATERIAL_COLORS[2]});
+
+                    BarData barData = new BarData(dataSet);
+                    barData.setDrawValues(false);
+
+                    barChart.setData(barData);
+                    barChart.invalidate();
+                } else {
+                    Log.d("BarChart", "No snapshot data available.");
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.e("BarChart", "Database error: " + error.getMessage());
+            }
+        });
     }
 
     // QR Code Scanning Method
