@@ -55,6 +55,17 @@ public class StorePotholes {
         return json == null ? new ArrayList<>() : gson.fromJson(json, type);
     }
 
+    public static void deleteHistoryData(Context context, PotholeModel model) {
+        List<PotholeModel> potholeDataList = loadPotholeData(context);
+        potholeDataList.remove(model);
+        SharedPreferences sharedPreferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        Gson gson = new Gson();
+        String updatedJson = gson.toJson(potholeDataList);
+        editor.putString(KEY_POTHOLE_DATA, updatedJson);
+        editor.apply();
+    }
+
     public static void saveNotificationData(Context context, List<NotificationModel> notificationDataList) {
         SharedPreferences sharedPreferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -92,6 +103,7 @@ public class StorePotholes {
         Type type = new TypeToken<ArrayList<NotificationModel>>() {}.getType();
         return json == null ? new ArrayList<>() : gson.fromJson(json, type);
     }
+
 
     public static void deleteNotificationData(Context context, NotificationModel model) {
         List<NotificationModel> notificationDataList = loadNotificationData(context);

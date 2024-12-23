@@ -1,5 +1,7 @@
 package com.example.prj.History;
 
+import java.util.Objects;
+
 public class PotholeModel {
 
     public PotholeModel() {}
@@ -79,4 +81,20 @@ public class PotholeModel {
     public String getTimestamp() { return timestamp; }
 
     public void setTimestamp(String timestamp) { this.timestamp = timestamp; }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        PotholeModel that = (PotholeModel) o;
+        return Double.compare(that.latitude, latitude) == 0 &&
+                Double.compare(that.longitude, longitude) == 0 &&
+                Objects.equals(severity, that.severity) &&
+                Objects.equals(timestamp, that.timestamp);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(latitude, longitude, severity, timestamp);
+    }
 }

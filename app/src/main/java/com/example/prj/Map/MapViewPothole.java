@@ -6,7 +6,9 @@ import static com.mapbox.maps.plugin.gestures.GesturesUtils.addOnMapClickListene
 import static com.mapbox.maps.plugin.gestures.GesturesUtils.getGestures;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -29,6 +31,7 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.example.prj.Authen.UserData;
 import com.example.prj.History.PotholeModel;
+import com.example.prj.Notification.NotificationModel;
 import com.example.prj.R;
 import com.example.prj.Session.SessionManager;
 import com.google.firebase.auth.FirebaseAuth;
@@ -37,6 +40,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.mapbox.android.core.location.LocationEngine;
 import com.mapbox.android.core.location.LocationEngineCallback;
 import com.mapbox.android.core.location.LocationEngineProvider;
@@ -64,6 +69,7 @@ import com.mapbox.maps.plugin.scalebar.ScaleBarPlugin;
 import com.mapbox.search.autocomplete.PlaceAutocompleteSuggestion;
 import com.mapbox.search.ui.adapter.autocomplete.PlaceAutocompleteUiAdapter;
 
+import java.lang.reflect.Type;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -249,8 +255,8 @@ public class MapViewPothole extends AppCompatActivity {
             public void onClick(View view) {
                 List<PotholeModel> potholeDataList = StorePotholes.loadPotholeData(MapViewPothole.this);
                 if (position != -1 && position < potholeDataList.size()) {
-                    potholeDataList.remove(position);
-                    StorePotholes.savePotholeData(MapViewPothole.this, potholeDataList);
+                    PotholeModel model = potholeDataList.get(position);
+                    StorePotholes.deleteHistoryData(MapViewPothole.this, model);
                 }
 
                 Intent resultIntent = new Intent();
