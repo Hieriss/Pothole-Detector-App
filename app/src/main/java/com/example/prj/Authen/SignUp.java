@@ -6,10 +6,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -17,20 +15,12 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.example.prj.R;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.FirebaseException;
-import com.google.firebase.auth.PhoneAuthCredential;
-import com.google.firebase.auth.PhoneAuthOptions;
-import com.google.firebase.auth.PhoneAuthProvider;
 import com.google.firebase.appcheck.FirebaseAppCheck;
 import com.google.firebase.appcheck.playintegrity.PlayIntegrityAppCheckProviderFactory;
 
-import java.util.concurrent.TimeUnit;
-
 public class SignUp extends AppCompatActivity {
-
     Button signupButton;
     TextView switchtosigninText;
     EditText signupUsername, signupPassword, signupConfirmpassword, signupEmail, signupPhone;
@@ -81,7 +71,7 @@ public class SignUp extends AppCompatActivity {
                     String email = signupEmail.getText().toString().trim();
                     String phone = formatPhoneNumber(signupPhone.getText().toString().trim());
 
-                    Intent intent = new Intent(SignUp.this,VerifySignUp.class);
+                    Intent intent = new Intent(SignUp.this, SignUpVerify.class);
                     intent.putExtra("username", username);
                     intent.putExtra("password", password);
                     intent.putExtra("email", email);

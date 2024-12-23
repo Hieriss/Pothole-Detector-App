@@ -132,6 +132,10 @@
     <string name="upload_image_title">Bạn muốn tải lên bằng cách nào</string>
     <string name="choose_from_gallery">Chọn ảnh từ thư viện</string>
     <string name="take_a_photo">Chụp ảnh</string>
+    <string name="change_password_description">Bạn đã vượt qua bước xác thực, bây giờ hãy đổi mật khẩu mới</string>
+    <string name="new_password">mật khẩu mới</string>
+    <string name="confirm_new_password">xác nhận mật khẩu mới</string>
+    <string name="confirm">Xác nhận</string>
 
 
 

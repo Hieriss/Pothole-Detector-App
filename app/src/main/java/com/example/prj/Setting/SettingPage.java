@@ -1,11 +1,13 @@
 package com.example.prj.Setting;
 
+import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.content.IntentFilter;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
@@ -20,13 +22,10 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-import com.example.prj.Authen.ForgotPassword;
 import com.example.prj.Dashboard.MainPage;
 import com.example.prj.Profile.ProfilePage;
 import com.example.prj.R;
-import com.google.android.material.textfield.MaterialAutoCompleteTextView;
 import com.google.android.material.textfield.TextInputLayout;
-import com.mapbox.geojson.Point;
 
 import java.util.Locale;
 
@@ -63,8 +62,6 @@ public class SettingPage extends AppCompatActivity {
         };
         registerReceiver(closeReceiver, new IntentFilter("CLOSE_SETTING_PAGE"));
 
-        loadLocale();
-
         warnNotificationLayout = findViewById(R.id.setting_warn_notification_text);
         warnNotificationText = findViewById(R.id.setting_warn_notification_text_input);
         warnNotificationAdapter = new ArrayAdapter<>(this, R.layout.list_item, warnNotification);
@@ -85,9 +82,9 @@ public class SettingPage extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 String item = parent.getItemAtPosition(position).toString();
                 if (item.equals("English")) {
-                    setLocale("en");
+                    setLocale(SettingPage.this, "en");
                 } else {
-                    setLocale("vi");
+                    setLocale(SettingPage.this, "vi");
                 }
                 recreate();
             }
@@ -114,6 +111,8 @@ public class SettingPage extends AppCompatActivity {
         homeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Intent intent = new Intent(SettingPage.this, MainPage.class);
+                startActivity(intent);
                 finish();
             }
         });
@@ -180,21 +179,43 @@ public class SettingPage extends AppCompatActivity {
         editor.apply();
     }
 
-    private void setLocale(String lang) {
+    private void setLocale(Activity activity, String lang) {
         Locale locale = new Locale(lang);
         Locale.setDefault(locale);
-        Configuration config = new Configuration();
-        config.locale = locale;
-        getBaseContext().getResources().updateConfiguration(config, getBaseContext().getResources().getDisplayMetrics());
+        Resources resources = activity.getResources();
+        Configuration config = resources.getConfiguration();
+        config.setLocale(locale);
+        resources.updateConfiguration(config, resources.getDisplayMetrics());
+
+
+        /*Configuration config = new Configuration();
+        config.setLocale(locale);
+
+        Context context = getBaseContext().createConfigurationContext(config);
+        getBaseContext().getResources().updateConfiguration(config, context.getResources().getDisplayMetrics());
+
+        clearConfigurationCache();
+
         SharedPreferences.Editor editor = getSharedPreferences("Settings", MODE_PRIVATE).edit();
         editor.putString("My_Lang", lang);
-        editor.apply();
+        editor.apply();*/
     }
 
     public void loadLocale() {
         SharedPreferences prefs = getSharedPreferences("Settings", MODE_PRIVATE);
-        String language = prefs.getString("My_Lang", "");
-        setLocale(language);
+        String language = prefs.getString("My_Lang", "en");
+        /*setLocale(language);*/
+    }
+
+    private void clearConfigurationCache() {
+        Resources resources = getBaseContext().getResources();
+        Configuration configuration = resources.getConfiguration();
+        resources.updateConfiguration(configuration, resources.getDisplayMetrics());
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
     }
 
     @Override

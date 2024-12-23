@@ -24,16 +24,14 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
-import java.util.Objects;
-
 public class ForgotPassword extends AppCompatActivity {
     Button back_button, verify_button;
-    EditText forgot_password_email, forgot_password_username;
+    EditText forgot_password_phone, forgot_password_username;
     TextView forgot_password_description;
 
     private FirebaseAuth mAuth;
 
-    public String userUsername, userEmail;
+    public String userUsername, userPhone;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,7 +42,7 @@ public class ForgotPassword extends AppCompatActivity {
         back_button = findViewById(R.id.back_button);
         verify_button = findViewById(R.id.verify_button);
         forgot_password_username = findViewById(R.id.forgot_password_username);
-        forgot_password_email = findViewById(R.id.forgot_password_email);
+        forgot_password_phone = findViewById(R.id.forgot_password_phone);
         forgot_password_description = findViewById(R.id.forgot_password_description);
 
         mAuth = FirebaseAuth.getInstance();
@@ -60,16 +58,17 @@ public class ForgotPassword extends AppCompatActivity {
             public void onClick(View view) {
                 Intent intent = new Intent(ForgotPassword.this, SignIn.class);
                 startActivity(intent);
+                finish();
             }
         });
 
         verify_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (!validateUsername() | !validateEmail()) {
+                if (!validateUsername() | !validatePhone()) {
                     return;
                 } else {
-                    sendEmail();
+                    sendOTP();
                 }
             }
         });
@@ -86,81 +85,40 @@ public class ForgotPassword extends AppCompatActivity {
         }
     }
 
-    private Boolean validateEmail() {
-        String val = forgot_password_email.getText().toString().trim();
-        String emailPattern = "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+";
+    private Boolean validatePhone() {
+        String val = forgot_password_phone.getText().toString().trim();
+        String phonePattern = "[0-9]{10}";
         if (val.isEmpty()) {
-            forgot_password_email.setError(getString(R.string.empty_email));
+            forgot_password_phone.setError(getString(R.string.empty_phonenumber));
             return false;
-        } else if (!val.matches(emailPattern)) {
-            forgot_password_email.setError(getString(R.string.invalid_email));
+        } else if (!val.matches(phonePattern)) {
+            forgot_password_phone.setError(getString(R.string.rule_phone));
             return false;
         } else {
-            forgot_password_email.setError(null);
+            forgot_password_phone.setError(null);
             return true;
         }
     }
 
-    private void sendEmail() {
+    private String formatPhoneNumber(String phoneNumber) {
+        if (phoneNumber.startsWith("0")) {
+            //return "+84" + phoneNumber;
+            return "+84" + phoneNumber.substring(1);
+        }
+        return phoneNumber;
+    }
+
+    private void sendOTP() {
         String userUsername = forgot_password_username.getText().toString().trim();
+        String userPhone = formatPhoneNumber(forgot_password_phone.getText().toString().trim());
 
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("user");
-        Query checkUserDatabase = reference.orderByChild("username").equalTo(userUsername);
-
-        checkUserDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (snapshot.exists()) {
-                    forgot_password_username.setError(null);
-                    String emailFromDB = snapshot.child(userUsername).child("email").getValue(String.class);
-
-                    mAuth.sendPasswordResetEmail(emailFromDB)
-                            .addOnCompleteListener(task -> {
-                                if (task.isSuccessful()) {
-                                    Toast.makeText(ForgotPassword.this, "Reset link sent to your email", Toast.LENGTH_SHORT).show();
-                                } else {
-                                    Toast.makeText(ForgotPassword.this, "Failed to send reset link", Toast.LENGTH_SHORT).show();
-                                }
-                            });
-                } else {
-                    forgot_password_username.setError(getString(R.string.account_doesnt_exist));
-                    forgot_password_username.requestFocus();
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                Toast.makeText(ForgotPassword.this, "Database Error", Toast.LENGTH_SHORT).show();
-            }
-        });
+        Intent intent = new Intent(ForgotPassword.this, ForgotPasswordVerify.class);
+        intent.putExtra("username", userUsername);
+        intent.putExtra("phone", userPhone);
+        startActivity(intent);
     }
 
-    private void authenticateUserWithUsername(String username, String newPassword) {
-        DatabaseReference database = FirebaseDatabase.getInstance().getReference();
-
-        // Find email from the database using the username
-        database.child("user").child(username).child("email").get()
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful() && task.getResult().exists()) {
-                        String email = task.getResult().getValue(String.class);
-
-                        // Sign in with email and new password
-                        FirebaseAuth auth = FirebaseAuth.getInstance();
-                        auth.signInWithEmailAndPassword(email, newPassword)
-                                .addOnCompleteListener(authTask -> {
-                                    if (authTask.isSuccessful()) {
-                                        updatePassword(username, newPassword); // Proceed to update password
-                                    } else {
-                                        Toast.makeText(this, "Login failed: " + authTask.getException().getMessage(), Toast.LENGTH_SHORT).show();
-                                    }
-                                });
-                    } else {
-                        Toast.makeText(this, "Username not found.", Toast.LENGTH_SHORT).show();
-                    }
-                });
-    }
-
-    private void updatePassword(String userUsername, String newPassword) {
+    /*private void updatePassword(String userUsername, String newPassword) {
         String hashedPassword = Encrypt.hashPassword(newPassword);
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("user");
         databaseReference.child(userUsername).child("password").setValue(hashedPassword)
@@ -173,5 +131,5 @@ public class ForgotPassword extends AppCompatActivity {
                         Toast.makeText(ForgotPassword.this, "Failed to update password", Toast.LENGTH_SHORT).show();
                     }
                 });
-    }
+    }*/
 }

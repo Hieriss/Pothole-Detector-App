@@ -30,6 +30,12 @@
         android:theme="@style/Theme.Prj"
         tools:targetApi="31">
         <activity
+            android:name=".Authen.ChangePassword"
+            android:exported="false" />
+        <activity
+            android:name=".Authen.ForgotPasswordVerify"
+            android:exported="false" />
+        <activity
             android:name=".Map.MapViewPothole"
             android:exported="false" />
 
@@ -55,7 +61,7 @@
             android:screenOrientation="portrait"
             android:theme="@style/TransparentActivityTheme" />
         <activity
-            android:name=".Authen.VerifySignUp"
+            android:name=".Authen.SignUpVerify"
             android:exported="false"
             android:screenOrientation="portrait"
             android:theme="@style/TransparentActivityTheme" />

@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#80000000"
+    tools:context=".Authen.SignUpVerify">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:layout_margin="10dp"
+        android:background="@drawable/main_user_box_background"
+        android:padding="20dp"
+        android:elevation="8dp">
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:layout_marginStart="0dp">
+
+            <ImageView
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                app:srcCompat="@drawable/quit"
+                app:tint="@color/black"/>
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/quit_button"
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:layout_centerVertical="true"
+                android:background="@android:color/transparent"
+                android:clickable="true"
+                android:focusable="true"
+                android:text="" />
+        </RelativeLayout>
+
+        <TextView
+            android:id="@+id/verify_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:fontFamily="@font/grandstander_semi_bold"
+            android:gravity="center"
+            android:text="@string/verify_email"
+            android:textColor="#000000"
+            android:textSize="26sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/verify_message"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/verify_email_description"
+            android:gravity="center"
+            android:fontFamily="@font/grandstander_regular"
+            android:textColor="#000000"
+            android:textSize="16sp"
+            android:layout_marginBottom="10dp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:layout_marginBottom="10dp"
+            android:layout_gravity="center">
+
+            <EditText
+                android:id="@+id/otpBox1"
+                android:layout_width="40dp"
+                android:layout_height="50dp"
+                android:layout_marginEnd="10dp"
+                android:gravity="center"
+                android:inputType="number"
+                android:maxLength="1"
+                android:textSize="32sp"
+                android:fontFamily="@font/grandstander_regular"
+                android:background="@drawable/otp_box_background"
+                android:importantForAccessibility="yes"
+                android:imeOptions="actionNext"
+                android:focusableInTouchMode="true" />
+
+            <EditText
+                android:id="@+id/otpBox2"
+                android:layout_width="40dp"
+                android:layout_height="50dp"
+                android:layout_marginEnd="10dp"
+                android:gravity="center"
+                android:inputType="number"
+                android:maxLength="1"
+                android:textSize="32sp"
+                android:fontFamily="@font/grandstander_regular"
+                android:background="@drawable/otp_box_background"
+                android:imeOptions="actionNext"
+                android:focusableInTouchMode="true" />
+
+            <EditText
+                android:id="@+id/otpBox3"
+                android:layout_width="40dp"
+                android:layout_height="50dp"
+                android:layout_marginEnd="10dp"
+                android:gravity="center"
+                android:inputType="number"
+                android:maxLength="1"
+                android:textSize="32sp"
+                android:fontFamily="@font/grandstander_regular"
+                android:background="@drawable/otp_box_background"
+                android:imeOptions="actionNext"
+                android:focusableInTouchMode="true" />
+
+            <EditText
+                android:id="@+id/otpBox4"
+                android:layout_width="40dp"
+                android:layout_height="50dp"
+                android:layout_marginEnd="10dp"
+                android:gravity="center"
+                android:inputType="number"
+                android:maxLength="1"
+                android:textSize="32sp"
+                android:fontFamily="@font/grandstander_regular"
+                android:background="@drawable/otp_box_background"
+                android:imeOptions="actionNext"
+                android:focusableInTouchMode="true" />
+
+            <EditText
+                android:id="@+id/otpBox5"
+                android:layout_width="40dp"
+                android:layout_height="50dp"
+                android:layout_marginEnd="10dp"
+                android:gravity="center"
+                android:inputType="number"
+                android:maxLength="1"
+                android:textSize="32sp"
+                android:fontFamily="@font/grandstander_regular"
+                android:background="@drawable/otp_box_background"
+                android:imeOptions="actionNext"
+                android:focusableInTouchMode="true" />
+
+            <EditText
+                android:id="@+id/otpBox6"
+                android:layout_width="40dp"
+                android:layout_height="50dp"
+                android:gravity="center"
+                android:inputType="number"
+                android:maxLength="1"
+                android:textSize="32sp"
+                android:fontFamily="@font/grandstander_regular"
+                android:background="@drawable/otp_box_background"
+                android:imeOptions="actionDone"
+                android:focusableInTouchMode="true" />
+        </LinearLayout>
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/verify_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/check_the_verification"
+            android:fontFamily="@font/grandstander_semi_bold"
+            android:background="@drawable/signin_button_background"
+            android:textAllCaps="false"
+            android:textColor="#000000"
+            android:textSize="20sp"/>
+
+        <TextView
+            android:id="@+id/resend_otp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text=""
+            android:gravity="center"
+            android:fontFamily="@font/grandstander_regular"
+            android:textColor="#000000"
+            android:textSize="16sp"
+            android:layout_marginBottom="10dp" />
+    </LinearLayout>
+</FrameLayout>

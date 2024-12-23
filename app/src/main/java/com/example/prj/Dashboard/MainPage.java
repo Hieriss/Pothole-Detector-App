@@ -64,7 +64,7 @@ import java.util.Map;
 public class MainPage extends AppCompatActivity {
 
     SessionManager sessionManager;
-    private Button logoutButton, scanButton, settingButton, menuButton, notificationButton, historyButton, profileButton, mapButton;
+    private Button logoutButton, scanButton, menuButton, mapButton;
     private LineChart lineChart;
     private BarChart barChart;
     private List<String> lineXValues;
@@ -392,12 +392,6 @@ public class MainPage extends AppCompatActivity {
             }
         });
     }
-
-    /*private void setDigitalOTP() {
-        Intent intent = new Intent(MainPage.this, SetDigital.class);
-        intent.putExtra("USERNAME", nameTextView.getText().toString());
-        startActivity(intent);
-    }*/
 
     private BroadcastReceiver closeReceiver = new BroadcastReceiver() {
         @Override

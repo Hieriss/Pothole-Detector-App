@@ -38,7 +38,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
 
-public class VerifySignUp extends AppCompatActivity {
+public class SignUpVerify extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
     private SessionManager sessionManager;
@@ -56,7 +56,7 @@ public class VerifySignUp extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_verify);
+        setContentView(R.layout.activity_sign_up_verify);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
@@ -68,7 +68,6 @@ public class VerifySignUp extends AppCompatActivity {
         firebaseAppCheck.installAppCheckProviderFactory(
                 PlayIntegrityAppCheckProviderFactory.getInstance()
         );
-
 
         mAuth = FirebaseAuth.getInstance();
         sessionManager = new SessionManager(this);
@@ -162,7 +161,7 @@ public class VerifySignUp extends AppCompatActivity {
     }
 
     void sendOtp(String phoneNumber, boolean isResend) {
-        Log.d("VerifySignUp", "Sending OTP to: " + phoneNumber);
+        Log.d("SignUpVerify", "Sending OTP to: " + phoneNumber);
         startResendTimer();
         PhoneAuthOptions.Builder builder =
                 PhoneAuthOptions.newBuilder(mAuth)
@@ -172,19 +171,19 @@ public class VerifySignUp extends AppCompatActivity {
                         .setCallbacks(new PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
                             @Override
                             public void onVerificationCompleted(@NonNull PhoneAuthCredential phoneAuthCredential) {
-                                Log.d("VerifySignUp", "Verification completed");
+                                Log.d("SignUpVerify", "Verification completed");
                                 signUp(phoneAuthCredential);
                             }
 
                             @Override
                             public void onVerificationFailed(@NonNull FirebaseException e) {
-                                Log.e("VerifySignUp", "Verification failed", e);
+                                Log.e("SignUpVerify", "Verification failed", e);
                             }
 
                             @Override
                             public void onCodeSent(@NonNull String s, @NonNull PhoneAuthProvider.ForceResendingToken forceResendingToken) {
                                 super.onCodeSent(s, forceResendingToken);
-                                Log.d("VerifySignUp", "Code sent: " + s);
+                                Log.d("SignUpVerify", "Code sent: " + s);
                                 verificationCode = s;
                                 resendingToken = forceResendingToken;
                             }
@@ -202,7 +201,7 @@ public class VerifySignUp extends AppCompatActivity {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if(task.isSuccessful()){
-                    Intent intent = new Intent(VerifySignUp.this,SignIn.class);
+                    Intent intent = new Intent(SignUpVerify.this,SignIn.class);
                     pushInfo(username, password, email, phone);
                     startActivity(intent);
                     finish();
@@ -236,8 +235,8 @@ public class VerifySignUp extends AppCompatActivity {
         UserData userData = new UserData(username, hashedPassword, email, phone);
         reference.child(username).setValue(userData);
 
-        Toast.makeText(VerifySignUp.this, getString(R.string.sign_up_success), Toast.LENGTH_SHORT).show();
-        Intent intent = new Intent(VerifySignUp.this, SignIn.class);
+        Toast.makeText(SignUpVerify.this, getString(R.string.sign_up_success), Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent(SignUpVerify.this, SignIn.class);
         startActivity(intent);
     }
 }

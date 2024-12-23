@@ -132,6 +132,11 @@
     <string name="upload_image_title">How do you want to upload your image</string>
     <string name="choose_from_gallery">Choose from gallery</string>
     <string name="take_a_photo">Take a photo</string>
+    <string name="change_password_description">You have passed the verification, you can change your password now</string>
+    <string name="new_password">new password</string>
+    <string name="confirm_new_password">confirm new password</string>
+    <string name="confirm">Confirm</string>
+
 
 
     <string name="mapbox_access_token" translatable="false" tools:ignore="UnusedResources">sk.eyJ1IjoiaGllcmlzcyIsImEiOiJjbTNuZmwya3ExNnVpMmxzZG9wOGNyN24xIn0.Bnsn24Jk7ZmetYO_MxQHcA</string>
