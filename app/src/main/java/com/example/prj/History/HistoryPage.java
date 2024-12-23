@@ -76,4 +76,10 @@ public class HistoryPage extends AppCompatActivity {
             }
         }
     }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        homeButton.performClick();
+    }
 }

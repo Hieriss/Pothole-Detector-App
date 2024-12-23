@@ -43,7 +43,26 @@ public class MenuPage extends AppCompatActivity {
         username = getIntent().getStringExtra("USERNAME");
 
         quitButton = findViewById(R.id.quit_button);
-        quitButton.setOnClickListener(v -> finish());
+        quitButton.setOnClickListener(v -> {
+            Animation slideOut = AnimationUtils.loadAnimation(this, R.anim.slide_out_right);
+            slideOut.setAnimationListener(new Animation.AnimationListener() {
+                @Override
+                public void onAnimationStart(Animation animation) {
+                    // Do nothing
+                }
+
+                @Override
+                public void onAnimationEnd(Animation animation) {
+                    finish();
+                }
+
+                @Override
+                public void onAnimationRepeat(Animation animation) {
+                    // Do nothing
+                }
+            });
+            mainLayout.startAnimation(slideOut);
+        });
 
         settingButton = findViewById(R.id.setting_button);
         settingButton.setOnClickListener(new View.OnClickListener() {

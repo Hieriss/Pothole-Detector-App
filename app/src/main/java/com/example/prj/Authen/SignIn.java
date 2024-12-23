@@ -251,4 +251,11 @@ public class SignIn extends AppCompatActivity {
             this.timestamp = timestamp;
         }
     }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        Intent intent = new Intent(SignIn.this, IntroPage.class);
+        startActivity(intent);
+    }
 }

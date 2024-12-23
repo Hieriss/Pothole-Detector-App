@@ -107,4 +107,10 @@ public class NotificationPage extends AppCompatActivity {
             }
         }
     }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        homeButton.performClick();
+    }
 }

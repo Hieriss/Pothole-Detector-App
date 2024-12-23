@@ -76,6 +76,7 @@ public class ProfilePage extends AppCompatActivity {
             public void onClick(View view) {
                 Intent intent = new Intent(ProfilePage.this, MainPage.class);
                 startActivity(intent);
+                finish();
             }
         });
 
@@ -136,5 +137,11 @@ public class ProfilePage extends AppCompatActivity {
                         }
                     }
                 });
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        quitButton.performClick();
     }
 }

@@ -263,7 +263,7 @@ public class MainPage extends AppCompatActivity {
                         Log.d("LineChart", "Data available for the chart: " + lineEntries.toString());
                     }
 
-                    LineDataSet dataSet = new LineDataSet(lineEntries, "Detected");
+                    LineDataSet dataSet = new LineDataSet(lineEntries, "Number of Potholes");
                     dataSet.setColor(getColor(R.color.red));
                     dataSet.setMode(LineDataSet.Mode.HORIZONTAL_BEZIER);
                     dataSet.setDrawCircles(false);
@@ -326,7 +326,7 @@ public class MainPage extends AppCompatActivity {
 
                     Log.d("BarChart", "Data available for the chart: " + barEntries.toString());
 
-                    BarDataSet dataSet = new BarDataSet(barEntries, "Detected");
+                    BarDataSet dataSet = new BarDataSet(barEntries, "Pothole Types");
                     dataSet.setColors(new int[]{ColorTemplate.MATERIAL_COLORS[0], ColorTemplate.MATERIAL_COLORS[1], ColorTemplate.MATERIAL_COLORS[2]});
 
                     BarData barData = new BarData(dataSet);

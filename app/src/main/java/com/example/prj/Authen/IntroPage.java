@@ -48,11 +48,6 @@ public class IntroPage extends AppCompatActivity {
                 Intent intent = new Intent(IntroPage.this, MainPage.class);
                 startActivity(intent);
                 finish();
-            } else {
-                // User is not logged in, redirect to SignIn
-                Intent intent = new Intent(IntroPage.this, SignIn.class);
-                startActivity(intent);
-                finish();
             }
         }
 

@@ -1,6 +1,9 @@
 package com.example.prj.Setting;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -19,6 +22,7 @@ import com.example.prj.R;
 public class SettingPage extends AppCompatActivity {
 
     Button homeButton, accountButton, resetPasswordButton, anonymousUserButton, logoutButton, deleteAccountButton, detectNotificationButton, warnNotificationButton, languageButton, themeButton, supportButton, termButton;
+    private BroadcastReceiver closeReceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,6 +34,16 @@ public class SettingPage extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
+        closeReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                if ("CLOSE_SETTING_PAGE".equals(intent.getAction())) {
+                    finish();
+                }
+            }
+        };
+        registerReceiver(closeReceiver, new IntentFilter("CLOSE_SETTING_PAGE"));
 
         homeButton = findViewById(R.id.setting_home_button);
         homeButton.setOnClickListener(new View.OnClickListener() {
@@ -137,9 +151,25 @@ public class SettingPage extends AppCompatActivity {
         logoutButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                getSharedPreferences("PotholeDataPrefs", MODE_PRIVATE).edit().clear().apply();
                 Intent intent = new Intent(SettingPage.this, LogoutRequest.class);
                 startActivity(intent);
             }
         });
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        // Unregister the broadcast receiver
+        if (closeReceiver != null) {
+            unregisterReceiver(closeReceiver);
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        homeButton.performClick();
     }
 }

@@ -1358,10 +1358,10 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
                         } else if (zoomLevel <= 15 && iconSize != 0.3f) {
                             iconSize = 0.3f;
                             changeIconSize(iconSize);
-                        } else if (zoomLevel > 20 && iconSize != 1.5f) {
+                        } else if (zoomLevel > 19 && iconSize != 1.5f) {
                             iconSize = 1.5f;
                             changeIconSize(iconSize);
-                        } else if (iconSize != 1.0f){
+                        } else if (zoomLevel >= 17 && zoomLevel <= 19 && iconSize != 1.0f){
                             iconSize = 1.0f;
                             changeIconSize(iconSize);
                         }
@@ -1903,13 +1903,11 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
         calcPoint();
         if (point != 0 && speedKmh > SPEED_THRESHOLD && rielZ > DELTA_Z_THRESHOLD) {
             Toast.makeText(this, "A new pothole has been detected!", Toast.LENGTH_SHORT).show();
-
             long timestamp = System.currentTimeMillis();
             Date date = new Date(timestamp);
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
             String formattedDate = sdf.format(date);
             String severity;
-
             if (rielZ > 105 && rielZ < 125) {
                 severity = "Low";
             } else if (rielZ > 125 && rielZ < 145) {
@@ -1917,11 +1915,6 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
             } else {
                 severity = "High";
             }
-
-            /*NotificationModel notificationModel = new NotificationModel(formattedDate, severity);
-            notificationDataList = StoreNotifications.loadNotificationData(this);
-            notificationDataList.add(notificationModel);*/
-
             PotholeModel potholeModel = new PotholeModel(deltaX, deltaY, (float) rielZ, pitch, roll, speedKmh, point, username, severity, latitude, longitude, formattedDate);
             potholeDataList = StorePotholes.loadPotholeData(this);
             potholeDataList.add(potholeModel);
@@ -1949,6 +1942,7 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
                 if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
                         ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
                     locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 500L, 0.5F, this);
+                    finish();
                 }
             } else {
                 // Permission denied, handle accordingly
