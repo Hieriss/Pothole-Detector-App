@@ -20,7 +20,7 @@ import android.widget.TextView;
 
 import com.example.prj.R;
 
-public class DisplaySettingPage extends AppCompatActivity {
+public class LanguageSettingPage extends AppCompatActivity {
 
     Button backButton;
     Button tvButton;
@@ -44,7 +44,7 @@ public class DisplaySettingPage extends AppCompatActivity {
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(DisplaySettingPage.this, SettingPage.class);
+                Intent intent = new Intent(LanguageSettingPage.this, SettingPage.class);
                 startActivity(intent);
             }
         });

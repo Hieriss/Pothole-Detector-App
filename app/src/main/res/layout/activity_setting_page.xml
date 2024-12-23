@@ -88,7 +88,7 @@
 
                     <RelativeLayout
                         android:layout_width="match_parent"
-                        android:layout_height="260dp"
+                        android:layout_height="160dp"
                         android:layout_marginStart="10dp"
                         android:layout_marginTop="10dp"
                         android:layout_marginEnd="10dp">
@@ -149,114 +149,6 @@
                                         android:clickable="true"
                                         android:focusable="true"
                                         android:background="@android:color/transparent"
-                                        android:text="" />
-                                </RelativeLayout>
-
-                                <View
-                                    android:layout_width="match_parent"
-                                    android:layout_height="1dp"
-                                    android:layout_marginStart="10dp"
-                                    android:layout_marginEnd="10dp"
-                                    android:layout_marginTop="2dp"
-                                    android:layout_marginBottom="2dp"
-                                    android:alpha="0.2"
-                                    style="@style/bg_line"/>
-                                    android:alpha="1"
-                                    android:background="@color/magenta"/>
-
-                                <RelativeLayout
-                                    android:id="@+id/resetpw_layout"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="match_parent"
-                                    android:layout_weight="1">
-
-                                    <LinearLayout
-                                        android:layout_width="match_parent"
-                                        android:layout_height="match_parent"
-                                        android:orientation="horizontal">
-
-                                        <ImageView
-                                            android:id="@+id/setting_resetpw_icon"
-                                            android:layout_width="20dp"
-                                            android:layout_height="20dp"
-                                            android:layout_gravity="center"
-                                            android:paddingTop="5dp"
-                                            android:layout_marginStart="20dp"
-                                            android:layout_marginEnd="5dp"
-                                            android:src="@drawable/lock" />
-
-                                        <TextView
-                                            android:id="@+id/setting_resetpw"
-                                            android:layout_width="match_parent"
-                                            android:layout_height="match_parent"
-                                            android:layout_marginStart="10dp"
-                                            android:layout_weight="1"
-                                            android:fontFamily="@font/grandstander_regular"
-                                            android:gravity="center_vertical"
-                                            android:text="@string/setting_security"
-                                            android:textSize="20sp" />
-                                    </LinearLayout>
-
-                                    <androidx.appcompat.widget.AppCompatButton
-                                        android:id="@+id/setting_resetpw_button"
-                                        android:layout_width="match_parent"
-                                        android:layout_height="match_parent"
-                                        android:background="@android:color/transparent"
-                                        android:clickable="true"
-                                        android:focusable="true"
-                                        android:text="" />
-                                </RelativeLayout>
-
-                                <View
-                                    android:layout_width="match_parent"
-                                    android:layout_height="1dp"
-                                    android:layout_marginStart="10dp"
-                                    android:layout_marginEnd="10dp"
-                                    android:layout_marginTop="2dp"
-                                    android:layout_marginBottom="2dp"
-                                    android:alpha="1"
-                                    android:background="@color/magenta"/>
-
-                                <RelativeLayout
-                                    android:id="@+id/anonymous_layout"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="match_parent"
-                                    android:layout_weight="1">
-
-                                    <LinearLayout
-                                        android:layout_width="match_parent"
-                                        android:layout_height="match_parent"
-                                        android:orientation="horizontal">
-
-                                        <ImageView
-                                            android:id="@+id/anonymous_icon"
-                                            android:layout_width="20dp"
-                                            android:layout_height="20dp"
-                                            android:layout_gravity="center"
-                                            android:paddingTop="5dp"
-                                            android:layout_marginStart="20dp"
-                                            android:layout_marginEnd="5dp"
-                                            android:src="@drawable/incognito" />
-
-                                        <TextView
-                                            android:id="@+id/anonymous"
-                                            android:layout_width="match_parent"
-                                            android:layout_height="match_parent"
-                                            android:layout_marginStart="10dp"
-                                            android:layout_weight="1"
-                                            android:fontFamily="@font/grandstander_regular"
-                                            android:gravity="center_vertical"
-                                            android:text="@string/setting_anonymous"
-                                            android:textSize="20sp" />
-                                    </LinearLayout>
-
-                                    <androidx.appcompat.widget.AppCompatButton
-                                        android:id="@+id/setting_anonymous_button"
-                                        android:layout_width="match_parent"
-                                        android:layout_height="match_parent"
-                                        android:background="@android:color/transparent"
-                                        android:clickable="true"
-                                        android:focusable="true"
                                         android:text="" />
                                 </RelativeLayout>
 
@@ -385,7 +277,7 @@
 
                     <RelativeLayout
                         android:layout_width="match_parent"
-                        android:layout_height="105dp"
+                        android:layout_height="50dp"
                         android:layout_marginStart="10dp"
                         android:layout_marginTop="10dp"
                         android:layout_marginEnd="10dp">
@@ -407,63 +299,29 @@
                                 android:orientation="vertical">
 
                                 <RelativeLayout
-                                    android:id="@+id/detect_notification_layout"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="match_parent"
-                                    android:layout_weight="1">
-
-                                    <LinearLayout
-                                        android:layout_width="match_parent"
-                                        android:layout_height="match_parent"
-                                        android:orientation="horizontal">
-
-                                        <ImageView
-                                            android:id="@+id/setting_detect_notification_icon"
-                                            android:layout_width="20dp"
-                                            android:layout_height="20dp"
-                                            android:layout_gravity="center"
-                                            android:paddingTop="5dp"
-                                            android:layout_marginStart="20dp"
-                                            android:layout_marginEnd="5dp"
-                                            android:src="@drawable/notification" />
-
-                                        <TextView
-                                            android:id="@+id/setting_detect_notification"
-                                            android:layout_width="match_parent"
-                                            android:layout_height="match_parent"
-                                            android:layout_marginStart="10dp"
-                                            android:layout_weight="1"
-                                            android:fontFamily="@font/grandstander_regular"
-                                            android:gravity="center_vertical"
-                                            android:text="@string/setting_detect_notification"
-                                            android:textSize="20sp" />
-                                    </LinearLayout>
-
-                                    <androidx.appcompat.widget.AppCompatButton
-                                        android:id="@+id/setting_detect_notification_button"
-                                        android:layout_width="match_parent"
-                                        android:layout_height="match_parent"
-                                        android:background="@android:color/transparent"
-                                        android:clickable="true"
-                                        android:focusable="true"
-                                        android:text="" />
-                                </RelativeLayout>
-
-                                <View
-                                    android:layout_width="match_parent"
-                                    android:layout_height="1dp"
-                                    android:layout_marginStart="10dp"
-                                    android:layout_marginEnd="10dp"
-                                    android:layout_marginTop="2dp"
-                                    android:layout_marginBottom="2dp"
-                                    android:alpha="1"
-                                    android:background="@color/magenta"/>
-
-                                <RelativeLayout
                                     android:id="@+id/warn_notification_layout"
                                     android:layout_width="match_parent"
                                     android:layout_height="match_parent"
                                     android:layout_weight="1">
+
+                                    <com.google.android.material.textfield.TextInputLayout
+                                        android:id="@+id/setting_warn_notification_text"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:paddingBottom="5dp"
+                                        android:background="@color/ap_transparent"
+                                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                                        app:boxStrokeWidth="0dp"
+                                        app:boxStrokeWidthFocused="0dp">
+
+                                        <AutoCompleteTextView
+                                            android:id="@+id/setting_warn_notification_text_input"
+                                            android:layout_width="100dp"
+                                            android:layout_height="wrap_content"
+                                            android:layout_marginEnd="10dp"
+                                            android:layout_gravity="end"
+                                            android:inputType="none" />
+                                    </com.google.android.material.textfield.TextInputLayout>
 
                                     <LinearLayout
                                         android:layout_width="match_parent"
@@ -491,167 +349,7 @@
                                             android:text="@string/setting_warn_notification"
                                             android:textSize="20sp" />
                                     </LinearLayout>
-
-                                    <androidx.appcompat.widget.AppCompatButton
-                                        android:id="@+id/setting_warn_notification_button"
-                                        android:layout_width="match_parent"
-                                        android:layout_height="match_parent"
-                                        android:background="@android:color/transparent"
-                                        android:clickable="true"
-                                        android:focusable="true"
-                                        android:text="" />
                                 </RelativeLayout>
-
-                                <!--<View
-                                    android:layout_width="match_parent"
-                                    android:layout_height="1dp"
-                                    android:layout_marginStart="10dp"
-                                    android:layout_marginEnd="10dp"
-                                    android:layout_marginTop="2dp"
-                                    android:layout_marginBottom="2dp"
-                                    android:alpha="0.2"
-                                    style="@style/bg_line"/>
-
-                                <RelativeLayout
-                                    android:layout_width="match_parent"
-                                    android:layout_height="match_parent"
-                                    android:layout_weight="1">
-
-                                    <LinearLayout
-                                        android:layout_width="match_parent"
-                                        android:layout_height="match_parent"
-                                        android:orientation="horizontal">
-
-                                        <ImageView
-                                            android:id="@+id/setting_language_icon"
-                                            android:layout_width="20dp"
-                                            android:layout_height="20dp"
-                                            android:layout_gravity="center"
-                                            android:layout_marginStart="20dp"
-                                            android:layout_marginEnd="5dp"
-                                            android:src="@drawable/lock" />
-
-                                        <TextView
-                                            android:id="@+id/setting_display"
-                                            android:layout_width="match_parent"
-                                            android:layout_height="match_parent"
-                                            android:layout_marginStart="10dp"
-                                            android:layout_weight="1"
-                                            android:fontFamily="@font/grandstander_regular"
-                                            android:gravity="center_vertical"
-                                            android:text="@string/language_title"
-                                            android:textSize="20sp" />
-                                    </LinearLayout>
-
-                                    <androidx.appcompat.widget.AppCompatButton
-                                        android:id="@+id/setting_display_button"
-                                        android:layout_width="match_parent"
-                                        android:layout_height="match_parent"
-                                        android:background="@android:color/transparent"
-                                        android:clickable="true"
-                                        android:focusable="true"
-                                        android:text="" />
-                                </RelativeLayout>
-
-                                <View
-                                    android:layout_width="match_parent"
-                                    android:layout_height="1dp"
-                                    android:layout_marginStart="10dp"
-                                    android:layout_marginEnd="10dp"
-                                    android:layout_marginTop="2dp"
-                                    android:layout_marginBottom="2dp"
-                                    android:alpha="0.2"
-                                    style="@style/bg_line"/>
-                                <RelativeLayout
-                                    android:layout_width="match_parent"
-                                    android:layout_height="match_parent"
-                                    android:layout_weight="1">
-
-                                    <LinearLayout
-                                        android:layout_width="match_parent"
-                                        android:layout_height="match_parent"
-                                        android:orientation="horizontal">
-
-                                        <ImageView
-                                            android:id="@+id/setting_theme_icon"
-                                            android:layout_width="20dp"
-                                            android:layout_height="20dp"
-                                            android:layout_gravity="center"
-                                            android:layout_marginStart="20dp"
-                                            android:layout_marginEnd="5dp"
-                                            android:src="@drawable/lock" />
-
-                                        <TextView
-                                            android:id="@+id/setting_theme"
-                                            android:layout_width="match_parent"
-                                            android:layout_height="match_parent"
-                                            android:layout_marginStart="10dp"
-                                            android:layout_weight="1"
-                                            android:fontFamily="@font/grandstander_regular"
-                                            android:gravity="center_vertical"
-                                            android:text="@string/theme_title"
-                                            android:textSize="20sp" />
-                                    </LinearLayout>
-
-                                    <androidx.appcompat.widget.AppCompatButton
-                                        android:id="@+id/setting_theme_button"
-                                        android:layout_width="match_parent"
-                                        android:layout_height="match_parent"
-                                        android:background="@android:color/transparent"
-                                        android:clickable="true"
-                                        android:focusable="true"
-                                        android:text="" />
-                                </RelativeLayout>
-
-                                <View
-                                    android:layout_width="match_parent"
-                                    android:layout_height="1dp"
-                                    android:layout_marginStart="10dp"
-                                    android:layout_marginEnd="10dp"
-                                    android:layout_marginTop="2dp"
-                                    android:layout_marginBottom="2dp"
-                                    android:alpha="0.2"
-                                    style="@style/bg_line"/>
-                                <RelativeLayout
-                                    android:layout_width="match_parent"
-                                    android:layout_height="match_parent"
-                                    android:layout_weight="1">
-
-                                    <LinearLayout
-                                        android:layout_width="match_parent"
-                                        android:layout_height="match_parent"
-                                        android:orientation="horizontal">
-
-                                        <ImageView
-                                            android:id="@+id/setting_activity_center_icon"
-                                            android:layout_width="20dp"
-                                            android:layout_height="20dp"
-                                            android:layout_gravity="center"
-                                            android:layout_marginStart="20dp"
-                                            android:layout_marginEnd="5dp"
-                                            android:src="@drawable/lock" />
-
-                                        <TextView
-                                            android:id="@+id/setting_activity_center"
-                                            android:layout_width="match_parent"
-                                            android:layout_height="match_parent"
-                                            android:layout_marginStart="10dp"
-                                            android:layout_weight="1"
-                                            android:fontFamily="@font/grandstander_regular"
-                                            android:gravity="center_vertical"
-                                            android:text="@string/setting_map"
-                                            android:textSize="20sp" />
-                                    </LinearLayout>
-
-                                    <androidx.appcompat.widget.AppCompatButton
-                                        android:id="@+id/setting_activity_center_button"
-                                        android:layout_width="match_parent"
-                                        android:layout_height="match_parent"
-                                        android:background="@android:color/transparent"
-                                        android:clickable="true"
-                                        android:focusable="true"
-                                        android:text="" />
-                                </RelativeLayout>-->
                             </LinearLayout>
                         </RelativeLayout>
                     </RelativeLayout>
@@ -696,6 +394,25 @@
                                     android:layout_height="match_parent"
                                     android:layout_weight="1">
 
+                                    <com.google.android.material.textfield.TextInputLayout
+                                        android:id="@+id/setting_languague_text"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:paddingBottom="5dp"
+                                        android:background="@color/ap_transparent"
+                                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                                        app:boxStrokeWidth="0dp"
+                                        app:boxStrokeWidthFocused="0dp">
+
+                                        <AutoCompleteTextView
+                                            android:id="@+id/setting_language_text_input"
+                                            android:layout_width="100dp"
+                                            android:layout_height="wrap_content"
+                                            android:layout_marginEnd="10dp"
+                                            android:layout_gravity="end"
+                                            android:inputType="none"/>
+                                    </com.google.android.material.textfield.TextInputLayout>
+
                                     <LinearLayout
                                         android:layout_width="match_parent"
                                         android:layout_height="match_parent"
@@ -722,15 +439,6 @@
                                             android:text="@string/setting_language"
                                             android:textSize="20sp" />
                                     </LinearLayout>
-
-                                    <androidx.appcompat.widget.AppCompatButton
-                                        android:id="@+id/setting_language_button"
-                                        android:layout_width="match_parent"
-                                        android:layout_height="match_parent"
-                                        android:background="@android:color/transparent"
-                                        android:clickable="true"
-                                        android:focusable="true"
-                                        android:text="" />
                                 </RelativeLayout>
 
                                 <View
@@ -748,6 +456,25 @@
                                     android:layout_width="match_parent"
                                     android:layout_height="match_parent"
                                     android:layout_weight="1">
+
+                                    <com.google.android.material.textfield.TextInputLayout
+                                        android:id="@+id/setting_theme_text"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:paddingBottom="5dp"
+                                        android:background="@color/ap_transparent"
+                                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                                        app:boxStrokeWidth="0dp"
+                                        app:boxStrokeWidthFocused="0dp">
+
+                                        <AutoCompleteTextView
+                                            android:id="@+id/setting_theme_text_input"
+                                            android:layout_width="100dp"
+                                            android:layout_height="wrap_content"
+                                            android:layout_marginEnd="10dp"
+                                            android:layout_gravity="end"
+                                            android:inputType="none" />
+                                    </com.google.android.material.textfield.TextInputLayout>
 
                                     <LinearLayout
                                         android:layout_width="match_parent"
@@ -775,15 +502,6 @@
                                             android:text="@string/setting_theme"
                                             android:textSize="20sp" />
                                     </LinearLayout>
-
-                                    <androidx.appcompat.widget.AppCompatButton
-                                        android:id="@+id/setting_theme_button"
-                                        android:layout_width="match_parent"
-                                        android:layout_height="match_parent"
-                                        android:background="@android:color/transparent"
-                                        android:clickable="true"
-                                        android:focusable="true"
-                                        android:text="" />
                                 </RelativeLayout>
                             </LinearLayout>
                         </RelativeLayout>

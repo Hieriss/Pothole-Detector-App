@@ -15,8 +15,8 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="10"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
             android:orientation="horizontal">
 
             <RelativeLayout
@@ -27,13 +27,13 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
-                    android:layout_marginStart="30dp">
+                    android:layout_marginStart="30dp"
+                    android:paddingTop="10dp">
 
                     <ImageView
                         android:layout_width="20dp"
                         android:layout_height="20dp"
-                        app:srcCompat="@drawable/home"
-                        app:tint="@color/black"/>
+                        app:srcCompat="@drawable/home"/>
 
                     <androidx.appcompat.widget.AppCompatButton
                         android:id="@+id/setting_home_button"
@@ -54,8 +54,8 @@
                     android:layout_centerHorizontal="true"
                     android:layout_centerVertical="true"
                     android:fontFamily="@font/grandstander_semi_bold"
-                    android:text="History"
-                    android:textColor="@color/black"
+                    android:text="@string/history_text"
+                    style="@style/TEXT"
                     android:textSize="26sp" />
             </RelativeLayout>
 
@@ -64,7 +64,6 @@
         <androidx.recyclerview.widget.RecyclerView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="1"
             android:layout_marginTop="20dp"
             android:id="@+id/history_recycler">
         </androidx.recyclerview.widget.RecyclerView>

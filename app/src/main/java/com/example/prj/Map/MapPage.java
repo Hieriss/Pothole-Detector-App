@@ -1908,9 +1908,9 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
             String formattedDate = sdf.format(date);
             String severity;
-            if (rielZ > 105 && rielZ < 125) {
+            if (rielZ > 110 && rielZ < 130) {
                 severity = "Low";
-            } else if (rielZ > 125 && rielZ < 145) {
+            } else if (rielZ > 130 && rielZ < 150) {
                 severity = "Medium";
             } else {
                 severity = "High";
