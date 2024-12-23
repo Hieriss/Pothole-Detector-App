@@ -60,6 +60,8 @@ dependencies {
     implementation(libs.firebase.ui.firestore)
     implementation(libs.firebase.ui.auth)
     implementation(libs.firebase.ui.storage)
+    implementation("com.google.firebase:firebase-appcheck-playintegrity:17.1.1")
+    implementation("com.google.android.play:integrity:1.4.0")
 
     implementation("com.google.zxing:core:3.4.1")
     implementation("com.journeyapps:zxing-android-embedded:4.2.0")

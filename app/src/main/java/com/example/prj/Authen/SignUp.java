@@ -24,6 +24,8 @@ import com.google.firebase.FirebaseException;
 import com.google.firebase.auth.PhoneAuthCredential;
 import com.google.firebase.auth.PhoneAuthOptions;
 import com.google.firebase.auth.PhoneAuthProvider;
+import com.google.firebase.appcheck.FirebaseAppCheck;
+import com.google.firebase.appcheck.playintegrity.PlayIntegrityAppCheckProviderFactory;
 
 import java.util.concurrent.TimeUnit;
 
@@ -47,6 +49,11 @@ public class SignUp extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
+        FirebaseAppCheck firebaseAppCheck = FirebaseAppCheck.getInstance();
+        firebaseAppCheck.installAppCheckProviderFactory(
+                PlayIntegrityAppCheckProviderFactory.getInstance()
+        );
 
         mAuth = FirebaseAuth.getInstance();
 
@@ -166,7 +173,8 @@ public class SignUp extends AppCompatActivity {
 
     private String formatPhoneNumber(String phoneNumber) {
         if (phoneNumber.startsWith("0")) {
-            return "+84" + phoneNumber;
+            //return "+84" + phoneNumber;
+            return "+84" + phoneNumber.substring(1);
         }
         return phoneNumber;
     }

@@ -1886,9 +1886,9 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
             String formattedDate = sdf.format(date);
             String severity;
 
-            if (rielZ > 110 && rielZ < 125) {
+            if (rielZ > 105 && rielZ < 125) {
                 severity = "Low";
-            } else if (rielZ > 125 && rielZ < 150) {
+            } else if (rielZ > 125 && rielZ < 145) {
                 severity = "Medium";
             } else {
                 severity = "High";

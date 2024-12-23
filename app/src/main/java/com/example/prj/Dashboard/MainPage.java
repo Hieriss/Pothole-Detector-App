@@ -8,11 +8,8 @@ import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.os.Environment;
 import android.util.Base64;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -26,29 +23,28 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-import com.example.prj.Authen.SignIn;
 import com.example.prj.Map.MapPage;
 import com.example.prj.R;
 import com.example.prj.Session.SessionManager;
+import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.Description;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
+import com.github.mikephil.charting.data.BarData;
+import com.github.mikephil.charting.data.BarDataSet;
+import com.github.mikephil.charting.data.BarEntry;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
+import com.github.mikephil.charting.utils.ColorTemplate;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
-import com.squareup.picasso.Picasso;
-import com.squareup.picasso.Target;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -59,13 +55,16 @@ public class MainPage extends AppCompatActivity {
 
     SessionManager sessionManager;
     private Button logoutButton, scanButton, settingButton, menuButton, notificationButton, historyButton, profileButton, mapButton;
-    private LineChart lineChart1, lineChart2;
-    private List<String> xValues1, yValues1, xValues2, yValues2;
+    private LineChart lineChart;
+    private BarChart barChart;
+    private List<String> lineXValues;
     public TextView nameTextView;
     public ImageView userImageView;
 
     public String username, usernameText;
     private boolean isImageSaved = false;
+
+    private List<String> barXValues = Arrays.asList("Low", "Medium", "High");
 
     // session
     private BroadcastReceiver logoutReceiver = new BroadcastReceiver() {
@@ -116,98 +115,93 @@ public class MainPage extends AppCompatActivity {
             nameTextView.setText(usernameText);
         }
 
-        // Linechart
-        lineChart1 = findViewById(R.id.line_chart1);
-        Description description1 = new Description();
-        description1.setText("");
-        lineChart1.setDescription(description1);
-        lineChart1.getAxisRight().setDrawLabels(false);
-        lineChart1.getAxisRight().setDrawGridLines(false);
-        xValues1 = Arrays.asList("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun");
+        // bar chart
+        barChart = findViewById(R.id.bar_chart);
+        Description barDescription = new Description();
+        barDescription.setText("");
+        barChart.setDescription(barDescription);
+        barChart.getAxisRight().setDrawLabels(false);
+        barChart.getAxisRight().setDrawGridLines(false);
 
-        XAxis xAxis1 = lineChart1.getXAxis();
-        xAxis1.setPosition(XAxis.XAxisPosition.BOTTOM);
-        xAxis1.setValueFormatter(new IndexAxisValueFormatter(xValues1));
-        xAxis1.setDrawGridLines(false);
-        xAxis1.setLabelCount(6);
+        ArrayList<BarEntry> barEntries = new ArrayList<>();
+        barEntries.add(new BarEntry(0, 2f));
+        barEntries.add(new BarEntry(1, 7f));
+        barEntries.add(new BarEntry(2, 5f));
 
-        YAxis yAxis1 = lineChart1.getAxisLeft();
-        yAxis1.setAxisMinimum(0f);
-        yAxis1.setAxisMaximum(20f);
-        yAxis1.setAxisLineWidth(1f);
-        yAxis1.setDrawGridLines(false);
-        yAxis1.setLabelCount(4);
+        XAxis barXAxis = barChart.getXAxis();
+        barXAxis.setDrawGridLines(false);
+        barXAxis.setLabelCount(3);
 
-        List<Entry> entries1 = new ArrayList<>();
-        entries1.add(new Entry(0, 0f));
-        entries1.add(new Entry(1, 7f));
-        entries1.add(new Entry(2, 5f));
-        entries1.add(new Entry(3, 12f));
-        entries1.add(new Entry(4, 10f));
-        entries1.add(new Entry(5, 3f));
-        entries1.add(new Entry(6, 18f));
+        YAxis yAxis = barChart.getAxisLeft();
+        yAxis.setAxisMinimum(0f);
+        yAxis.setAxisMaximum(20f);
+        yAxis.setAxisLineWidth(2f);
+        yAxis.setDrawGridLines(false);
+        yAxis.setAxisLineColor(getColor(R.color.black));
+        yAxis.setLabelCount(4);
 
-        LineDataSet dataSet1 = new LineDataSet(entries1, "Detected");
-        dataSet1.setColor(getColor(R.color.red));
-        dataSet1.setMode(LineDataSet.Mode.HORIZONTAL_BEZIER);
-        dataSet1.setDrawCircles(false);
-        dataSet1.setLineWidth(3f);
+        BarDataSet dataSet1 = new BarDataSet(barEntries, "Detected");
+        dataSet1.setColors(new int[]{ColorTemplate.MATERIAL_COLORS[0], ColorTemplate.MATERIAL_COLORS[1], ColorTemplate.MATERIAL_COLORS[2]});
 
-        LineData lineData1 = new LineData(dataSet1);
-        lineData1.setDrawValues(false);
+        BarData barData = new BarData(dataSet1);
+        barData.setDrawValues(false);
 
-        lineChart1.setData(lineData1);
-        lineChart1.invalidate();
-        lineChart1.setScaleEnabled(false);
-        lineChart1.setPinchZoom(false);
-        lineChart1.setDoubleTapToZoomEnabled(false);
+        barChart.getXAxis().setValueFormatter(new IndexAxisValueFormatter(barXValues));
+        barChart.getXAxis().setPosition(XAxis.XAxisPosition.BOTTOM);
+        barChart.getXAxis().setGranularity(1f);
+        barChart.getXAxis().setGranularityEnabled(true);
 
-        //-----------------------------------------
+        barChart.setData(barData);
+        barChart.invalidate();
+        barChart.setScaleEnabled(false);
+        barChart.setPinchZoom(false);
+        barChart.setDoubleTapToZoomEnabled(false);
 
-        lineChart2 = findViewById(R.id.line_chart2);
-        Description description2 = new Description();
-        description2.setText("");
-        lineChart2.setDescription(description2);
-        lineChart2.getAxisRight().setDrawLabels(false);
-        lineChart2.getAxisRight().setDrawGridLines(false);
-        xValues1 = Arrays.asList("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun");
+        // line chart
+        lineChart = findViewById(R.id.line_chart);
+        Description lineDescription = new Description();
+        lineDescription.setText("");
+        lineChart.setDescription(lineDescription);
+        lineChart.getAxisRight().setDrawLabels(false);
+        lineChart.getAxisRight().setDrawGridLines(false);
+        lineXValues = Arrays.asList("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun");
 
-        XAxis xAxis2 = lineChart2.getXAxis();
-        xAxis2.setPosition(XAxis.XAxisPosition.BOTTOM);
-        xAxis2.setValueFormatter(new IndexAxisValueFormatter(xValues1));
-        xAxis2.setDrawGridLines(false);
-        xAxis2.setLabelCount(6);
+        XAxis lineXAxis = lineChart.getXAxis();
+        lineXAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
+        lineXAxis.setValueFormatter(new IndexAxisValueFormatter(lineXValues));
+        lineXAxis.setDrawGridLines(false);
+        lineXAxis.setLabelCount(6);
 
-        YAxis yAxis2 = lineChart2.getAxisLeft();
-        yAxis2.setAxisMinimum(0f);
-        yAxis2.setAxisMaximum(20f);
-        yAxis2.setAxisLineWidth(1f);
-        yAxis2.setDrawGridLines(false);
-        yAxis2.setLabelCount(4);
+        YAxis lineYAxis = lineChart.getAxisLeft();
+        lineYAxis.setAxisMinimum(0f);
+        lineYAxis.setAxisMaximum(20f);
+        lineYAxis.setAxisLineWidth(1f);
+        lineYAxis.setDrawGridLines(false);
+        lineYAxis.setLabelCount(4);
 
-        List<Entry> entries2 = new ArrayList<>();
-        entries2.add(new Entry(0, 10f));
-        entries2.add(new Entry(1, 2f));
-        entries2.add(new Entry(2, 15f));
-        entries2.add(new Entry(3, 1f));
-        entries2.add(new Entry(4, 5f));
-        entries2.add(new Entry(5, 20f));
-        entries2.add(new Entry(6, 10f));
+        List<Entry> lineEntries = new ArrayList<>();
+        lineEntries.add(new Entry(0, 10f));
+        lineEntries.add(new Entry(1, 2f));
+        lineEntries.add(new Entry(2, 15f));
+        lineEntries.add(new Entry(3, 1f));
+        lineEntries.add(new Entry(4, 5f));
+        lineEntries.add(new Entry(5, 20f));
+        lineEntries.add(new Entry(6, 10f));
 
-        LineDataSet dataSet2 = new LineDataSet(entries2, "Detected");
-        dataSet2.setColor(getColor(R.color.cyan));
-        dataSet2.setMode(LineDataSet.Mode.HORIZONTAL_BEZIER);
-        dataSet2.setDrawCircles(false);
-        dataSet2.setLineWidth(3f);
+        LineDataSet dataSet = new LineDataSet(lineEntries, "Detected");
+        dataSet.setColor(getColor(R.color.red));
+        dataSet.setMode(LineDataSet.Mode.HORIZONTAL_BEZIER);
+        dataSet.setDrawCircles(false);
+        dataSet.setLineWidth(3f);
 
-        LineData lineData2 = new LineData(dataSet2);
-        lineData2.setDrawValues(false);
+        LineData lineData = new LineData(dataSet);
+        lineData.setDrawValues(false);
 
-        lineChart2.setData(lineData2);
-        lineChart2.invalidate();
-        lineChart2.setScaleEnabled(false);
-        lineChart2.setPinchZoom(false);
-        lineChart2.setDoubleTapToZoomEnabled(false);
+        lineChart.setData(lineData);
+        lineChart.invalidate();
+        lineChart.setScaleEnabled(false);
+        lineChart.setPinchZoom(false);
+        lineChart.setDoubleTapToZoomEnabled(false);
 
         scanButton = findViewById(R.id.scan_button);
         scanButton.setOnClickListener(new View.OnClickListener() {

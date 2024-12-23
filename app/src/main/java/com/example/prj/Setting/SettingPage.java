@@ -139,7 +139,6 @@ public class SettingPage extends AppCompatActivity {
             public void onClick(View view) {
                 Intent intent = new Intent(SettingPage.this, LogoutRequest.class);
                 startActivity(intent);
-                finish();
             }
         });
     }

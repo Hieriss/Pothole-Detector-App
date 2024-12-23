@@ -177,9 +177,14 @@ public class MapViewPothole extends AppCompatActivity {
 
                 List<PotholeModel> filteredPotholeDataList = new ArrayList<>();
                 for (PotholeModel potholeModel : potholeDataList) {
-                    String potholeDay = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(potholeModel.getTimestamp());
-                    if (potholeDay.equals(currentDay)) {
-                        filteredPotholeDataList.add(potholeModel);
+                    try {
+                        Date potholeDate = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault()).parse(potholeModel.getTimestamp());
+                        String potholeDay = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(potholeDate);
+                        if (potholeDay.equals(currentDay)) {
+                            filteredPotholeDataList.add(potholeModel);
+                        }
+                    } catch (Exception e) {
+                        Log.e(TAG, "Error parsing timestamp: " + potholeModel.getTimestamp(), e);
                     }
                 }
 
@@ -227,20 +232,16 @@ public class MapViewPothole extends AppCompatActivity {
                 database.child("user").child(username).get()
                         .addOnCompleteListener(task -> {
                             if (task.isSuccessful() && task.getResult().exists()) {
-                                PotholeCounter potholeCounter = new PotholeCounter(timestampText, severityText);
-
-                                database.child("user").child(username).child("counter").child(currentDay).setValue(potholeCounter)
+                                database.child("user").child(username).child("counter").child(currentDay).child(timestampText).setValue(severityText)
                                         .addOnSuccessListener(aVoid -> Log.d(TAG, "Data pushed successfully"))
                                         .addOnFailureListener(e -> Log.e(TAG, "Failed to push data", e));
                             } else {
                                 Log.d(TAG, "Username does not exist");
                             }
                         });
-                
-                if (position != -1 && position < potholeDataList.size()) {
-                    potholeDataList.remove(position);
-                    StorePotholes.savePotholeData(MapViewPothole.this, potholeDataList);
-                }
+
+                potholeDataList.clear();
+                StorePotholes.savePotholeData(MapViewPothole.this, potholeDataList);
 
                 Intent resultIntent = new Intent();
                 resultIntent.putExtra("POSITION", position);
