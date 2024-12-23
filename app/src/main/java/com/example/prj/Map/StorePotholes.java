@@ -96,6 +96,11 @@ public class StorePotholes {
     public static void deleteNotificationData(Context context, NotificationModel model) {
         List<NotificationModel> notificationDataList = loadNotificationData(context);
         notificationDataList.remove(model);
-        saveNotificationData(context, notificationDataList);
+        SharedPreferences sharedPreferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        Gson gson = new Gson();
+        String updatedJson = gson.toJson(notificationDataList);
+        editor.putString(KEY_NOTIFICATION_DATA, updatedJson);
+        editor.apply();
     }
 }
