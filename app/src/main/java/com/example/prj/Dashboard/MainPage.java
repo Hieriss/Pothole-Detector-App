@@ -362,6 +362,15 @@ public class MainPage extends AppCompatActivity {
 
                     barChart.setData(barData);
                     barChart.invalidate();
+
+                    barChart.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Intent intent = new Intent(MainPage.this, LogPage.class);
+                            startActivity(intent);
+                            finish();
+                        }
+                    });
                 } else {
                     barEntries.clear();
                     barEntries.add(new BarEntry(0, 0));

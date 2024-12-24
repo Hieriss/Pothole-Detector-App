@@ -417,7 +417,6 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
         }
     };
 
-    //---------------------------------------------------------------------------------
     private void fetchRoadName(Point point, final RoadNameCallback callback) {
         Geocoder geocoder = new Geocoder(this, Locale.getDefault());
         try {
