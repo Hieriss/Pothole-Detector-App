@@ -14,6 +14,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -23,6 +24,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.example.prj.Dashboard.MainPage;
+import com.example.prj.Map.MapPage;
 import com.example.prj.Profile.ProfilePage;
 import com.example.prj.R;
 import com.google.android.material.textfield.TextInputLayout;
@@ -33,7 +35,7 @@ public class SettingPage extends AppCompatActivity {
     Button homeButton, accountButton, logoutButton, deleteAccountButton, supportButton, termButton;
     TextInputLayout warnNotificationLayout, languageLayout, themeLayout;
     AutoCompleteTextView warnNotificationText, languageText, themeText;
-    String[] warnNotification = {"1 km", "5 km", "10 km"};
+    String[] warnNotification = {"30 m", "40 m", "50 m"};
     String[] language = {"English", "Tiếng Việt"};
     String[] theme = {"Light", "Dark"};
     ArrayAdapter<String> warnNotificationAdapter;
@@ -60,7 +62,7 @@ public class SettingPage extends AppCompatActivity {
                 }
             }
         };
-        registerReceiver(closeReceiver, new IntentFilter("CLOSE_SETTING_PAGE"));
+        registerReceiver(closeReceiver, new IntentFilter("CLOSE_SETTING_PAGE"), Context.RECEIVER_NOT_EXPORTED);
 
         warnNotificationLayout = findViewById(R.id.setting_warn_notification_text);
         warnNotificationText = findViewById(R.id.setting_warn_notification_text_input);
@@ -70,6 +72,14 @@ public class SettingPage extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 String item = parent.getItemAtPosition(position).toString();
+                Toast.makeText(SettingPage.this, "Distance to notifcation is changed to " + item, Toast.LENGTH_SHORT).show();
+                if (item.equals("30 m")) {
+                    MapPage.thresholdDistanceToNoti = 0.06;
+                } else if (item.equals("40 m")) {
+                    MapPage.thresholdDistanceToNoti = 0.07;
+                } else if (item.equals("50 m")) {
+                    MapPage.thresholdDistanceToNoti = 0.08;
+                }
             }
         });
 
@@ -86,7 +96,9 @@ public class SettingPage extends AppCompatActivity {
                 } else {
                     setLocale("vi");
                 }
-                recreate();
+                Intent intent = new Intent(SettingPage.this, SettingPage.class);
+                startActivity(intent);
+                finish();
             }
         });
 
@@ -103,7 +115,9 @@ public class SettingPage extends AppCompatActivity {
                 } else {
                     setTheme(false);
                 }
-                recreate();
+                Intent intent = new Intent(SettingPage.this, SettingPage.class);
+                startActivity(intent);
+                finish();
             }
         });
 

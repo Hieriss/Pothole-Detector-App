@@ -259,6 +259,10 @@ public class MainPage extends AppCompatActivity {
                     }
 
                     if (lineEntries.isEmpty()) {
+                        for (int i = 0; i < lineXValues.size(); i++) {
+                            String day = lineXValues.get(i);
+                            lineEntries.add(new Entry(i, 0));
+                        }
                         Log.d("LineChart", "No data available for the chart.");
                     } else {
                         Log.d("LineChart", "Data available for the chart: " + lineEntries.toString());
@@ -334,7 +338,14 @@ public class MainPage extends AppCompatActivity {
                     barEntries.add(new BarEntry(1, severityCount.get("Medium")));
                     barEntries.add(new BarEntry(2, severityCount.get("High")));
 
-                    Log.d("BarChart", "Data available for the chart: " + barEntries.toString());
+                    if (barEntries.isEmpty()) {
+                        for (int i = 0; i < 3; i++) {
+                            barEntries.add(new BarEntry(i, 0));
+                        }
+                        Log.d("BarChart", "No data available for the chart.");
+                    } else {
+                        Log.d("BarChart", "Data available for the chart: " + barEntries.toString());
+                    }
 
                     BarDataSet dataSet = new BarDataSet(barEntries, "Pothole Types");
                     dataSet.setColors(new int[]{ColorTemplate.MATERIAL_COLORS[0], ColorTemplate.MATERIAL_COLORS[1], ColorTemplate.MATERIAL_COLORS[2]});

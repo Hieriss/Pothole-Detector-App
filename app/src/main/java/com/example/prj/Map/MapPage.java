@@ -222,7 +222,7 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
     private static final int REQUEST_IMAGE_CAPTURE = 2;
     private static final int REQUEST_CAMERA_PERMISSION = 100;
     private Uri photoUri;
-    double thresholdDistanceToNoti = 0.06; // 70 meters
+    public static double thresholdDistanceToNoti = 0.06; // can change in setting
     boolean lowFilter = true, mediumFilter = true, highFilter = true;
     String[] dataRange = {"1 km", "5 km", "10 km"};
     AutoCompleteTextView dataRangeAutoComplete;
@@ -1837,7 +1837,7 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
                     else if (pLocation.fifth.equals("High") && !highFilter) continue;
                     if (distance < thresholdDistanceToNoti) {
                         if (isPointOnRoute(p, selectedRoute)) {
-                            Toast.makeText(this, "There is a pothole ahead!", Toast.LENGTH_SHORT).show();
+                            //Toast.makeText(this, "There is a pothole ahead!", Toast.LENGTH_SHORT).show();
                             showNotification("Pothole On Route", "There is a pothole ahead!", p);
                             potholeTracking.remove(pLocation);
                             break;
