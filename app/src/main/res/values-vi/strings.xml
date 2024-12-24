@@ -137,6 +137,14 @@
     <string name="confirm_new_password">xác nhận mật khẩu mới</string>
     <string name="confirm">Xác nhận</string>
     <string name="reports_text">Báo cáo</string>
+    <string name="peding_reports_text">Báo cáo đang chờ</string>
+    <string name="report_success">Bạn đã báo cáo thành công một ổ gà.</string>
+    <string name="reported_at">Báo cáo lúc: </string>
+    <string name="unknown">Không rõ</string>
+    <string name="severity">Độ nghiêm trọng: </string>
+    <string name="time">Thời gian: </string>
+    <string name="question_push_pothole">Bạn có muốn đẩy ổ gà này lên máy chủ không?</string>
+
 
 
     <string name="mapbox_access_token" translatable="false" tools:ignore="UnusedResources">sk.eyJ1IjoiaGllcmlzcyIsImEiOiJjbTNuZmwya3ExNnVpMmxzZG9wOGNyN24xIn0.Bnsn24Jk7ZmetYO_MxQHcA</string>

@@ -54,7 +54,7 @@
                     android:layout_centerHorizontal="true"
                     android:layout_centerVertical="true"
                     android:fontFamily="@font/grandstander_semi_bold"
-                    android:text="Pending Reports"
+                    android:text="@string/peding_reports_text"
                     style="@style/TEXT"
                     android:textSize="26sp" />
             </RelativeLayout>
