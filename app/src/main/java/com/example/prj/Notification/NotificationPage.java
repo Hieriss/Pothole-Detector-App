@@ -5,6 +5,8 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -34,6 +36,10 @@ public class NotificationPage extends AppCompatActivity {
     private NotificationAdapter adapter;
     private AppCompatButton homeButton;
     private List<NotificationModel> sensorDataList = new ArrayList<>();
+    private LinearLayout filterContainer;
+    private RelativeLayout lowButtonLayout, mediumButtonLayout, highButtonLayout;
+    private AppCompatButton lowButton, mediumButton, highButton, filterButton;
+    private int filterType = -1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,6 +64,96 @@ public class NotificationPage extends AppCompatActivity {
                 Intent intent = new Intent(NotificationPage.this, MainPage.class);
                 startActivity(intent);
                 finish();
+            }
+        });
+
+        filterContainer = findViewById(R.id.filter_container);
+        filterButton = findViewById(R.id.filter_button);
+        filterButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (!filterContainer.isShown()) {
+                    filterContainer.setVisibility(View.VISIBLE);
+                }
+                else {
+                    filterContainer.setVisibility(View.GONE);
+                }
+            }
+        });
+
+        lowButtonLayout = findViewById(R.id.low_button_layout);
+        lowButton = findViewById(R.id.low_button);
+        mediumButtonLayout = findViewById(R.id.medium_button_layout);
+        mediumButton = findViewById(R.id.medium_button);
+        highButtonLayout = findViewById(R.id.high_button_layout);
+        highButton = findViewById(R.id.high_button);
+
+        lowButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (filterType == -1) {
+                    filterType = 0;
+                    lowButtonLayout.setBackground(getResources().getDrawable(R.drawable.driving_profile_button_background_choosen));
+                    mediumButtonLayout.setBackground(getResources().getDrawable(R.drawable.driving_profile_button_background_not_choosen));
+                    highButtonLayout.setBackground(getResources().getDrawable(R.drawable.driving_profile_button_background_not_choosen));
+                }
+                else if (filterType == 0) {
+                    filterType = -1;
+                    lowButtonLayout.setBackground(getResources().getDrawable(R.drawable.driving_profile_button_background_not_choosen));
+                }
+                else {
+                    filterType = 0;
+                    lowButtonLayout.setBackground(getResources().getDrawable(R.drawable.driving_profile_button_background_choosen));
+                    mediumButtonLayout.setBackground(getResources().getDrawable(R.drawable.driving_profile_button_background_not_choosen));
+                    highButtonLayout.setBackground(getResources().getDrawable(R.drawable.driving_profile_button_background_not_choosen));
+                }
+                populateSensorData();
+            }
+        });
+
+        mediumButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (filterType == -1) {
+                    filterType = 1;
+                    lowButtonLayout.setBackground(getResources().getDrawable(R.drawable.driving_profile_button_background_not_choosen));
+                    mediumButtonLayout.setBackground(getResources().getDrawable(R.drawable.driving_profile_button_background_choosen));
+                    highButtonLayout.setBackground(getResources().getDrawable(R.drawable.driving_profile_button_background_not_choosen));
+                }
+                else if (filterType == 1) {
+                    filterType = -1;
+                    mediumButtonLayout.setBackground(getResources().getDrawable(R.drawable.driving_profile_button_background_not_choosen));
+                }
+                else {
+                    filterType = 1;
+                    lowButtonLayout.setBackground(getResources().getDrawable(R.drawable.driving_profile_button_background_not_choosen));
+                    mediumButtonLayout.setBackground(getResources().getDrawable(R.drawable.driving_profile_button_background_choosen));
+                    highButtonLayout.setBackground(getResources().getDrawable(R.drawable.driving_profile_button_background_not_choosen));
+                }
+                populateSensorData();
+            }
+        });
+
+        highButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (filterType == -1) {
+                    filterType = 2;
+                    lowButtonLayout.setBackground(getResources().getDrawable(R.drawable.driving_profile_button_background_not_choosen));
+                    mediumButtonLayout.setBackground(getResources().getDrawable(R.drawable.driving_profile_button_background_not_choosen));
+                    highButtonLayout.setBackground(getResources().getDrawable(R.drawable.driving_profile_button_background_choosen));
+                }
+                else if (filterType == 2) {
+                    filterType = -1;
+                    highButtonLayout.setBackground(getResources().getDrawable(R.drawable.driving_profile_button_background_not_choosen));
+                }
+                else {
+                    filterType = 2;
+                    lowButtonLayout.setBackground(getResources().getDrawable(R.drawable.driving_profile_button_background_not_choosen));
+                    mediumButtonLayout.setBackground(getResources().getDrawable(R.drawable.driving_profile_button_background_not_choosen));
+                    highButtonLayout.setBackground(getResources().getDrawable(R.drawable.driving_profile_button_background_choosen));
+                }
+                populateSensorData();
             }
         });
 
@@ -104,7 +200,10 @@ public class NotificationPage extends AppCompatActivity {
         // Load data from local storage
         List<NotificationModel> loadedData = StorePotholes.loadNotificationData(this);
         for (NotificationModel model : loadedData) {
-            if (!sensorDataList.contains(model)) {
+            if (filterType == -1 ||
+                    (filterType == 0 && "Low".equals(model.getSeverity())) ||
+                    (filterType == 1 && "Medium".equals(model.getSeverity())) ||
+                    (filterType == 2 && "High".equals(model.getSeverity()))) {
                 sensorDataList.add(model);
                 adapter.notifyItemInserted(sensorDataList.size() - 1);
             }

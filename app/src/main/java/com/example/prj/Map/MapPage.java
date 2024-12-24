@@ -1443,7 +1443,16 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
                 timeTextView.setText(timestamp);
                 ImageView potholeImage = dialog.findViewById(R.id.pothole_image);
                 TextView severityTextView = dialog.findViewById(R.id.severity_text_view);
-                severityTextView.setText("Severity: " + severity);
+                if (severity.equals("Low")) {
+                    severityTextView.setTextColor(getResources().getColor(R.color.green));
+                }
+                else if (severity.equals("Medium")) {
+                    severityTextView.setTextColor(getResources().getColor(R.color.yellow));
+                }
+                else if (severity.equals("High")) {
+                    severityTextView.setTextColor(getResources().getColor(R.color.red));
+                }
+                severityTextView.setText(severity);
 
                 // download image
                 downloadImage(id, potholeImage);
