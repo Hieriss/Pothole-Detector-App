@@ -187,7 +187,6 @@
                     android:clickable="true"
                     android:focusable="true"
                     android:text="" />
-
             </RelativeLayout>
         </LinearLayout>
 
