@@ -289,7 +289,22 @@ public class SignIn extends AppCompatActivity {
         String language = prefs.getString("My_Lang", "");
         SharedPreferences sharedPreferences = getSharedPreferences("MODE", Context.MODE_PRIVATE);
         boolean nightMode = sharedPreferences.getBoolean("night", false);
-        setLocale(language);
-        setThemeMode(nightMode);
+        if (isFirstTime()) {
+            setThemeMode(false);
+            setLocale("en");
+        } else {
+            setThemeMode(nightMode);
+            setLocale(language);
+        }
+    }
+    private boolean isFirstTime() {
+        SharedPreferences preferences = getSharedPreferences("AppPrefs", MODE_PRIVATE);
+        boolean firstTime = preferences.getBoolean("isFirstTime", true);
+        if (firstTime) {
+            SharedPreferences.Editor editor = preferences.edit();
+            editor.putBoolean("isFirstTime", false);
+            editor.apply();
+        }
+        return firstTime;
     }
 }

@@ -209,12 +209,6 @@ public class SettingPage extends AppCompatActivity {
         editor.putString("My_Lang", lang);
         editor.apply();
     }
-    public void loadLocale() {
-        SharedPreferences prefs = getSharedPreferences("Settings", MODE_PRIVATE);
-        String language = prefs.getString("My_Lang", "en");
-        setLocale(language);
-    }
-
     private void parseHtml() {
         new Thread(new Runnable() {
             @Override
