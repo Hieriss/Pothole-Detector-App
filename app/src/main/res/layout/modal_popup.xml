@@ -50,6 +50,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_marginStart="10dp"
             android:orientation="horizontal">
 
             <TextView
@@ -57,7 +58,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
-                android:gravity="center_horizontal"
+                android:gravity="start"
                 android:layout_weight="1"
                 android:textSize="16sp"
                 android:text="@string/time" />
@@ -77,6 +78,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_marginStart="10dp"
             android:orientation="horizontal">
 
             <TextView
@@ -84,7 +86,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
-                android:gravity="center_horizontal"
+                android:gravity="start"
                 android:layout_weight="1"
                 android:textSize="16sp"
                 android:text="@string/severity" />
@@ -104,6 +106,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_marginStart="10dp"
             android:orientation="horizontal">
 
             <TextView
@@ -111,7 +114,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
-                android:gravity="center_horizontal"
+                android:gravity="start"
                 android:layout_weight="1"
                 android:textSize="16sp"
                 android:text="@string/road" />
