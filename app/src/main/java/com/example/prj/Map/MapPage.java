@@ -526,7 +526,7 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
     private boolean isPointOnRoute(Point point, NavigationRoute route) {
         Point nearestPoint = nearestPointOfRoute(point, route);
         double distance = TurfMeasurement.distance(point, nearestPoint);
-        double thresholdDistance = 0.003; // 3 meters
+        double thresholdDistance = 0.001; // 1 meters
         return distance < thresholdDistance;
     }
 
