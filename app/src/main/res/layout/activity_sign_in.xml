@@ -5,7 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/intro_background"
+    android:background="@drawable/Intro_background"
     tools:context=".Authen.SignIn">
 
     <RelativeLayout
@@ -28,7 +28,7 @@
                     android:id="@+id/signin_appname"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="60dp"
+                    android:layout_marginStart="50dp"
                     android:layout_marginTop="100dp"
                     android:text="@string/action_sign_in1"
                     android:textAlignment="center"
