@@ -449,6 +449,13 @@ public class MainPage extends AppCompatActivity {
     };
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        fetchDataForLineChart();
+        fetchDataForBarChart();
+    }
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
         // Unregister the logout receiver
