@@ -16,6 +16,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.example.prj.R;
+import com.example.prj.Setting.SettingPage;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -56,7 +57,7 @@ public class ForgotPassword extends AppCompatActivity {
         back_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(ForgotPassword.this, SignIn.class);
+                Intent intent = new Intent(ForgotPassword.this, SettingPage.class);
                 startActivity(intent);
                 finish();
             }

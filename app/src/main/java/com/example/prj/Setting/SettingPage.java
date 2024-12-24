@@ -82,9 +82,9 @@ public class SettingPage extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 String item = parent.getItemAtPosition(position).toString();
                 if (item.equals("English")) {
-                    setLocale(SettingPage.this, "en");
+                    setLocale("en");
                 } else {
-                    setLocale(SettingPage.this, "vi");
+                    setLocale("vi");
                 }
                 recreate();
             }
@@ -179,32 +179,41 @@ public class SettingPage extends AppCompatActivity {
         editor.apply();
     }
 
-    private void setLocale(Activity activity, String lang) {
+//    private void setLocale(Activity activity, String lang) {
+//        Locale locale = new Locale(lang);
+//        Locale.setDefault(locale);
+//        Resources resources = activity.getResources();
+//        Configuration config = resources.getConfiguration();
+//        config.setLocale(locale);
+//        resources.updateConfiguration(config, resources.getDisplayMetrics());
+//
+//
+//        /*Configuration config = new Configuration();
+//        config.setLocale(locale);
+//
+//        Context context = getBaseContext().createConfigurationContext(config);
+//        getBaseContext().getResources().updateConfiguration(config, context.getResources().getDisplayMetrics());
+//
+//        clearConfigurationCache();
+//
+//        SharedPreferences.Editor editor = getSharedPreferences("Settings", MODE_PRIVATE).edit();
+//        editor.putString("My_Lang", lang);
+//        editor.apply();*/
+//    }
+    private void setLocale(String lang) {
         Locale locale = new Locale(lang);
         Locale.setDefault(locale);
-        Resources resources = activity.getResources();
-        Configuration config = resources.getConfiguration();
-        config.setLocale(locale);
-        resources.updateConfiguration(config, resources.getDisplayMetrics());
-
-
-        /*Configuration config = new Configuration();
-        config.setLocale(locale);
-
-        Context context = getBaseContext().createConfigurationContext(config);
-        getBaseContext().getResources().updateConfiguration(config, context.getResources().getDisplayMetrics());
-
-        clearConfigurationCache();
-
+        Configuration config = new Configuration();
+        config.locale = locale;
+        getBaseContext().getResources().updateConfiguration(config, getBaseContext().getResources().getDisplayMetrics());
         SharedPreferences.Editor editor = getSharedPreferences("Settings", MODE_PRIVATE).edit();
         editor.putString("My_Lang", lang);
-        editor.apply();*/
+        editor.apply();
     }
-
     public void loadLocale() {
         SharedPreferences prefs = getSharedPreferences("Settings", MODE_PRIVATE);
         String language = prefs.getString("My_Lang", "en");
-        /*setLocale(language);*/
+        setLocale(language);
     }
 
     private void clearConfigurationCache() {
