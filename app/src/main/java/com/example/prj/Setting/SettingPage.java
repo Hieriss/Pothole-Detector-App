@@ -155,7 +155,7 @@ public class SettingPage extends AppCompatActivity {
         supportButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(SettingPage.this, SupportPage.class);
+                Intent intent = new Intent(SettingPage.this, SettingPage.class);
                 startActivity(intent);
                 finish();
             }
@@ -165,7 +165,7 @@ public class SettingPage extends AppCompatActivity {
         termButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(SettingPage.this, TermsAndPoliciesPage.class);
+                Intent intent = new Intent(SettingPage.this, SettingPage.class);
                 startActivity(intent);
                 finish();
             }
