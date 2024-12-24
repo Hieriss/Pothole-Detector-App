@@ -155,7 +155,7 @@
     <string name="road">Road: </string>
     <string name="time_encountered">Time encountered: </string>
     <string name="pothole_title">You have encountered a pothole with info:</string>
-
+    <string name="severity_text">severity</string>
 
 
 

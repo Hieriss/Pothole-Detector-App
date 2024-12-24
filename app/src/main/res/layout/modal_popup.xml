@@ -47,35 +47,60 @@
             android:layout_margin="20dp"
             android:background="@drawable/no_image_found"/>
 
-        <TextView
-            android:id="@+id/time_text_view"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/grandstander_regular"
-            android:gravity="center_vertical"
-            android:text="Unknown Time"
-            android:textSize="16sp"
-            android:layout_marginTop="10dp"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
 
-        <TextView
-            android:id="@+id/severity_text_view"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/grandstander_regular"
-            android:gravity="center_vertical"
-            android:text="Severity: Not Know"
-            android:textSize="16sp"
-            android:layout_marginTop="10dp"/>
+            <TextView
+                android:id="@+id/textView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="TextView" />
 
-        <TextView
-            android:id="@+id/road_name_text_view"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/grandstander_regular"
-            android:gravity="center_vertical"
-            android:text="Unknown Road"
-            android:textSize="16sp"
-            android:layout_marginTop="10dp"/>
+            <TextView
+                android:id="@+id/time_text_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:fontFamily="@font/grandstander_regular"
+                android:gravity="center_vertical"
+                android:text="Unknown Time"
+                android:textSize="16sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/severity_text_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:fontFamily="@font/grandstander_regular"
+                android:gravity="center_vertical"
+                android:text="Severity: Not Know"
+                android:textSize="16sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/road_name_text_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:fontFamily="@font/grandstander_regular"
+                android:gravity="center_vertical"
+                android:text="Unknown Road"
+                android:textSize="16sp" />
+        </LinearLayout>
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/upload_image_button"
