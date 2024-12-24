@@ -33,7 +33,7 @@
     <string name="setting_delete">"Delete Account"</string>
     <string name="setting_map">"Map"</string>
     <string name="setting_detect_notification">"Detect Notification"</string>
-    <string name="setting_notification_title">" Notification"</string>
+    <string name="setting_notification_title">"Notification"</string>
     <string name="setting_warn_notification">"Warn Notification"</string>
     <string name="setting_support">"Support"</string>
     <string name="setting_report_bugs">"Report Bugs"</string>
@@ -116,7 +116,7 @@
     <string name="session_id_not_found">"Session ID not found"</string>
     <string name="scan_cancelled">"Scan cancelled"</string>
     <string name="scan_qr">"Scan QR code"</string>
-    <string name="menu_title">"Menu"</string>
+    <string name="menu_title">"Home"</string>
     <string name="setting_text">Setting</string>
     <string name="profile_text">Profile</string>
     <string name="notification_text">Notification</string>
@@ -137,6 +137,15 @@
     <string name="confirm_new_password">confirm new password</string>
     <string name="confirm">Confirm</string>
     <string name="reports_text">Reports</string>
+    <string name="peding_reports_text">Pending Reports</string>
+    <string name="report_success">You have successfully reported a pothole.</string>
+    <string name="reported_at">Reported at: </string>
+    <string name="unknown">Unknown</string>
+    <string name="severity">Severity: </string>
+    <string name="time">Time: </string>
+    <string name="question_push_pothole">Do you want to push this pothole to the server?</string>
+
+
 
     <string name="mapbox_access_token" translatable="false" tools:ignore="UnusedResources">sk.eyJ1IjoiaGllcmlzcyIsImEiOiJjbTNuZmwya3ExNnVpMmxzZG9wOGNyN24xIn0.Bnsn24Jk7ZmetYO_MxQHcA</string>
 </resources>

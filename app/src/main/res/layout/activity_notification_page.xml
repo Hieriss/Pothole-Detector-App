@@ -54,7 +54,7 @@
                     android:layout_centerHorizontal="true"
                     android:layout_centerVertical="true"
                     android:fontFamily="@font/grandstander_semi_bold"
-                    android:text="Notification"
+                    android:text="@string/setting_notification_title"
                     android:textColor="@color/black"
                     android:textSize="26sp" />
             </RelativeLayout>

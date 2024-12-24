@@ -64,7 +64,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
-                android:text="Time: "
+                android:text="@string/time"
                 android:textSize="16sp"
                 android:fontFamily="@font/grandstander_semi_bold" />
 
@@ -91,7 +91,7 @@
                 android:layout_marginStart="10dp"
                 android:textSize="16sp"
                 android:fontFamily="@font/grandstander_semi_bold"
-                android:text="Severity: " />
+                android:text="@string/severity" />
 
             <TextView
                 android:id="@+id/severity_text"
@@ -113,7 +113,7 @@
             android:layout_gravity="center"
             android:gravity="center"
             android:fontFamily="@font/grandstander_regular"
-            android:text="Do you want to push this pothole to the server?"
+            android:text="@string/question_push_pothole"
             android:textSize="16sp" />
 
         <LinearLayout
