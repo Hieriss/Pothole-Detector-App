@@ -1,6 +1,9 @@
 package com.example.prj.Authen;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
@@ -14,6 +17,7 @@ import android.widget.Toast;
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 
 import com.example.prj.Dashboard.MainPage;
 import com.example.prj.R;
@@ -29,6 +33,7 @@ import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
 
+import java.util.Locale;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -47,6 +52,7 @@ public class SignIn extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        loadLocale();
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_sign_in);
 
@@ -257,5 +263,33 @@ public class SignIn extends AppCompatActivity {
         super.onBackPressed();
         Intent intent = new Intent(SignIn.this, IntroPage.class);
         startActivity(intent);
+    }
+    private void setLocale(String lang) {
+        Locale locale = new Locale(lang);
+        Locale.setDefault(locale);
+        Configuration config = new Configuration();
+        config.locale = locale;
+        getBaseContext().getResources().updateConfiguration(config, getBaseContext().getResources().getDisplayMetrics());
+        SharedPreferences.Editor editor = getSharedPreferences("Settings", MODE_PRIVATE).edit();
+        editor.putString("My_Lang", lang);
+        editor.apply();
+    }
+    private void setThemeMode(boolean isNightMode) {
+        if (isNightMode) {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+        } else {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+        }
+        SharedPreferences.Editor editor = getSharedPreferences("MODE", MODE_PRIVATE).edit();
+        editor.putBoolean("night", isNightMode);
+        editor.apply();
+    }
+    public void loadLocale() {
+        SharedPreferences prefs = getSharedPreferences("Settings", MODE_PRIVATE);
+        String language = prefs.getString("My_Lang", "");
+        SharedPreferences sharedPreferences = getSharedPreferences("MODE", Context.MODE_PRIVATE);
+        boolean nightMode = sharedPreferences.getBoolean("night", false);
+        setLocale(language);
+        setThemeMode(nightMode);
     }
 }

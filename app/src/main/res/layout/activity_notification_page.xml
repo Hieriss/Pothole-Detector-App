@@ -5,7 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/main_background"
+    style="@style/background_main"
     tools:context=".Notification.NotificationPage">
 
     <LinearLayout
@@ -32,8 +32,7 @@
                     <ImageView
                         android:layout_width="20dp"
                         android:layout_height="20dp"
-                        app:srcCompat="@drawable/home"
-                        app:tint="@color/black"/>
+                        app:srcCompat="@drawable/home"/>
 
                     <androidx.appcompat.widget.AppCompatButton
                         android:id="@+id/setting_home_button"
@@ -55,7 +54,7 @@
                     android:layout_centerVertical="true"
                     android:fontFamily="@font/grandstander_semi_bold"
                     android:text="@string/setting_notification_title"
-                    android:textColor="@color/black"
+                    style="@style/TEXT"
                     android:textSize="26sp" />
             </RelativeLayout>
 

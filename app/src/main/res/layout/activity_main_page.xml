@@ -5,7 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/main_background"
+    style="@style/background_main"
     tools:context=".Dashboard.MainPage">
 
     <LinearLayout
@@ -34,7 +34,7 @@
                     android:fontFamily="@font/grandstander_semi_bold"
                     android:text="Echinoidea"
                     android:textAlignment="center"
-                    android:textColor="@color/black"
+                    style="@style/TEXT"
                     android:textSize="30sp" />
 
                 <androidx.appcompat.widget.AppCompatButton
@@ -69,8 +69,7 @@
                         android:id="@+id/imageView7"
                         android:layout_width="28dp"
                         android:layout_height="28dp"
-                        app:srcCompat="@drawable/scan"
-                        app:tint="@color/black"/>
+                        app:srcCompat="@drawable/scan" />
 
                     <androidx.appcompat.widget.AppCompatButton
                         android:id="@+id/scan_button"
@@ -92,8 +91,7 @@
                         android:id="@+id/imageView8"
                         android:layout_width="28dp"
                         android:layout_height="28dp"
-                        app:srcCompat="@drawable/menu"
-                        app:tint="@color/black"/>
+                        app:srcCompat="@drawable/menu" />
 
                     <androidx.appcompat.widget.AppCompatButton
                         android:id="@+id/menu_button"
@@ -158,6 +156,7 @@
                         android:layout_gravity="end"
                         android:fontFamily="@font/grandstander_medium"
                         android:text="@string/hello"
+                        style="@style/TEXT"
                         android:textSize="24sp" />
 
                     <TextView
@@ -167,6 +166,7 @@
                         android:ems="5"
                         android:fontFamily="@font/grandstander_medium"
                         android:text=""
+                        style="@style/TEXT"
                         android:textSize="24sp" />
                 </LinearLayout>
 
@@ -196,7 +196,6 @@
                                     android:layout_width="match_parent"
                                     android:layout_height="match_parent"
                                     android:orientation="vertical">
-
                                     <TextView
                                         android:id="@+id/chart_text1"
                                         android:layout_width="match_parent"

@@ -35,7 +35,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="20dp"
                     android:layout_marginTop="15dp"
-                    android:text="Time: "
+                    android:text="@string/time"
                     android:textSize="16sp"
                     android:fontFamily="@font/grandstander_semi_bold"
                     app:layout_constraintStart_toStartOf="parent"
@@ -47,7 +47,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
                     android:layout_marginTop="15dp"
-                    android:text="Unknown"
+                    android:text="@string/unknown"
                     android:textSize="16sp"
                     android:fontFamily="@font/grandstander_regular"
                     app:layout_constraintStart_toStartOf="parent"
@@ -68,7 +68,7 @@
                     android:layout_marginBottom="15dp"
                     android:textSize="16sp"
                     android:fontFamily="@font/grandstander_semi_bold"
-                    android:text="Severity: "
+                    android:text="@string/severity"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/textView1" />
 
@@ -81,7 +81,7 @@
                     android:layout_marginBottom="15dp"
                     android:textSize="16sp"
                     android:fontFamily="@font/grandstander_regular"
-                    android:text="Unknown"
+                    android:text="@string/unknown"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/textView1" />
 
@@ -192,7 +192,7 @@
                     android:layout_marginTop="5dp"
                     android:textSize="16sp"
                     android:fontFamily="@font/grandstander_semi_bold"
-                    android:text="View on map"
+                    android:text="@string/view_on_map"
                     />
             </RelativeLayout>
         </LinearLayout>

@@ -5,7 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/main_background"
+    style="@style/background_main"
     tools:context=".Setting.SettingPage">
 
     <LinearLayout
@@ -83,7 +83,7 @@
                         android:layout_marginStart="20dp"
                         android:fontFamily="@font/grandstander_medium"
                         android:text="@string/setting_account"
-                        android:textColor="@color/black"
+                        style="@style/TEXT"
                         android:textSize="16sp" />
 
                     <RelativeLayout
@@ -272,7 +272,7 @@
                         android:layout_marginTop="10dp"
                         android:fontFamily="@font/grandstander_medium"
                         android:text="@string/setting_notification_title"
-                        android:textColor="@color/black"
+                        style="@style/TEXT"
                         android:textSize="16sp" />
 
                     <RelativeLayout
@@ -362,7 +362,7 @@
                         android:layout_marginTop="10dp"
                         android:fontFamily="@font/grandstander_medium"
                         android:text="@string/setting_display"
-                        android:textColor="@color/black"
+                        style="@style/TEXT"
                         android:textSize="16sp" />
 
                     <RelativeLayout
@@ -515,7 +515,7 @@
                         android:layout_marginTop="10dp"
                         android:fontFamily="@font/grandstander_medium"
                         android:text="@string/setting_support_referrals"
-                        android:textColor="@color/black"
+                        style="@style/TEXT"
                         android:textSize="16sp" />
 
                     <RelativeLayout
@@ -646,7 +646,7 @@
                         android:fontFamily="@font/grandstander_regular"
                         android:text="@string/version"
                         android:textAlignment="center"
-                        android:textColor="@color/black"
+                        style="@style/TEXT"
                         android:textSize="16sp"  />
                 </LinearLayout>
             </ScrollView>

@@ -10,9 +10,20 @@
     <style name="TEXT">
         <item name="android:textColor">#000</item>
     </style>
-
+    <style name="TEXT_hint">
+        <item name="android:textColorHint">#000</item>
+        <item name="android:textColor">#000</item>
+    </style>
     <style name="bg_line">
         <item name="android:background">#000000</item>
     </style>
-
+    <style name="background_intro">
+        <item name="android:background">@drawable/intro_background</item>
+    </style>
+    <style name="background_main">
+        <item name="android:background">@drawable/main_background</item>
+    </style>
+    <style name="background_menu">
+        <item name="android:background">@drawable/menu_background</item>
+    </style>
 </resources>

@@ -9,9 +9,21 @@
     <style name="TEXT">
         <item name="android:textColor">#FFF</item>
     </style>
-
+    <style name="TEXT_hint">
+        <item name="android:textColorHint">#FFF</item>
+        <item name="android:textColor">#FFF</item>
+    </style>
     <style name="bg_line">
         <item name="android:background">#FFFFFF</item>
+    </style>
+    <style name="background_intro">
+        <item name="android:background">@drawable/intro_background_dark</item>
+    </style>
+    <style name="background_main">
+        <item name="android:background">@drawable/main_background_dark</item>
+    </style>
+    <style name="background_menu">
+        <item name="android:background">@drawable/menu_background_dark</item>
     </style>
 
 </resources>

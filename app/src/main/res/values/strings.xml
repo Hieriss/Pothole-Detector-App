@@ -144,6 +144,18 @@
     <string name="severity">Severity: </string>
     <string name="time">Time: </string>
     <string name="question_push_pothole">Do you want to push this pothole to the server?</string>
+    <string name="number_potholes">Number of Potholes</string>
+    <string name="potholes_type">Pothole Type</string>
+    <string name="low">Low</string>
+    <string name="medium">Medium</string>
+    <string name="high">High</string>
+    <string name="view_on_map">View on Map</string>
+    <string name="upload_image">Upload image</string>
+    <string name="capture_image">Capture image</string>
+    <string name="road">Road: </string>
+    <string name="time_encountered">Time encountered: </string>
+    <string name="pothole_title">You have encountered a pothole with info:</string>
+
 
 
 

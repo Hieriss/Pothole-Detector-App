@@ -144,6 +144,18 @@
     <string name="severity">Độ nghiêm trọng: </string>
     <string name="time">Thời gian: </string>
     <string name="question_push_pothole">Bạn có muốn đẩy ổ gà này lên máy chủ không?</string>
+    <string name="number_potholes">Số lượng ổ gà</string>
+    <string name="potholes_type">Loại ổ gà</string>
+    <string name="low">Nhẹ</string>
+    <string name="medium">Trung bình</string>
+    <string name="high">Nặng</string>
+    <string name="view_on_map">Xem trên map</string>
+    <string name="upload_image">Tải hình lên</string>
+    <string name="capture_image">Chụp ảnh</string>
+    <string name="road">Đường: </string>
+    <string name="time_encountered">Thời gian gặp: </string>
+    <string name="pothole_title">Bạn đã gặp phải ổ gà có thông tin:</string>
+
 
 
 

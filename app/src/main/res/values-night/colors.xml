@@ -12,4 +12,5 @@
     <color name="light_purple">#FEC5FF</color>
     <color name="user_icon_color">#FFFFFF</color>
     <color name="box_background">#000000</color>
+    <color name="chart_color">#B070BD</color>
 </resources>

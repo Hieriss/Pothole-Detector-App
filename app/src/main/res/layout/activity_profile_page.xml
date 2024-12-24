@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".Profile.ProfilePage"
-    android:background="@drawable/main_background">
+    style="@style/background_main">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -32,8 +32,7 @@
                     <ImageView
                         android:layout_width="20dp"
                         android:layout_height="20dp"
-                        app:srcCompat="@drawable/home"
-                        app:tint="@color/black"/>
+                        app:srcCompat="@drawable/home"/>
 
                     <androidx.appcompat.widget.AppCompatButton
                         android:id="@+id/setting_home_button"
@@ -55,7 +54,7 @@
                     android:fontFamily="@font/grandstander_semi_bold"
                     android:text="@string/option_profile"
                     android:textAlignment="center"
-                    android:textColor="@color/black"
+                    style="@style/TEXT"
                     android:textSize="26sp" />
             </RelativeLayout>
         </LinearLayout>
@@ -138,6 +137,7 @@
                         android:fontFamily="@font/grandstander_regular"
                         android:gravity="center_vertical"
                         android:text="@string/username2"
+                        style="@style/TEXT"
                         android:textSize="16sp" />
 
                     <TextView
@@ -150,6 +150,7 @@
                         android:layout_marginBottom="10dp"
                         android:fontFamily="@font/grandstander_regular"
                         android:text=""
+                        style="@style/TEXT"
                         android:textSize="22sp"/>
 
                     <View
@@ -171,6 +172,7 @@
                         android:fontFamily="@font/grandstander_regular"
                         android:gravity="center_vertical"
                         android:text="@string/prompt_email2"
+                        style="@style/TEXT"
                         android:textSize="16sp" />
 
                     <TextView
@@ -183,6 +185,7 @@
                         android:layout_marginBottom="10dp"
                         android:fontFamily="@font/grandstander_regular"
                         android:text=""
+                        style="@style/TEXT"
                         android:textSize="22sp"/>
 
                     <View
@@ -204,6 +207,7 @@
                         android:fontFamily="@font/grandstander_regular"
                         android:gravity="center_vertical"
                         android:text="@string/phone_number2"
+                        style="@style/TEXT"
                         android:textSize="16sp" />
 
                     <TextView
@@ -216,6 +220,7 @@
                         android:layout_marginBottom="20dp"
                         android:fontFamily="@font/grandstander_regular"
                         android:text=""
+                        style="@style/TEXT"
                         android:textSize="22sp" />
                 </LinearLayout>
         </RelativeLayout>

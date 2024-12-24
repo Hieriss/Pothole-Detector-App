@@ -5,7 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/intro_background"
+    style="@style/background_intro"
     tools:context=".Authen.IntroPage">
 
     <RelativeLayout
@@ -26,7 +26,7 @@
                 android:gravity=""
                 android:fontFamily="@font/grandstander_regular"
                 android:text="Welcome to Echinoidea!\nWe can help you by:"
-                android:textColor="@color/black"
+                style="@style/TEXT"
                 android:textSize="20sp"
                 android:textStyle="bold" />
 
@@ -39,7 +39,7 @@
                 android:textAlignment="center"
                 android:text="Provide you\nreal-time pothole\nwarnings"
                 android:fontFamily="@font/grandstander_bold"
-                android:textColor="@color/black"
+                style="@style/TEXT"
                 android:textSize="40sp"
                 android:textStyle="bold"/>
 

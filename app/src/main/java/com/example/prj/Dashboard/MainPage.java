@@ -264,7 +264,7 @@ public class MainPage extends AppCompatActivity {
                         Log.d("LineChart", "Data available for the chart: " + lineEntries.toString());
                     }
 
-                    LineDataSet dataSet = new LineDataSet(lineEntries, "Number of Potholes");
+                    LineDataSet dataSet = new LineDataSet(lineEntries, getString(R.string.number_potholes));
                     dataSet.setColor(getColor(R.color.red));
                     dataSet.setMode(LineDataSet.Mode.HORIZONTAL_BEZIER);
                     dataSet.setDrawCircles(false);
@@ -354,7 +354,7 @@ public class MainPage extends AppCompatActivity {
                         Log.d("BarChart", "Data available for the chart: " + barEntries.toString());
                     }
 
-                    BarDataSet dataSet = new BarDataSet(barEntries, "Pothole Types");
+                    BarDataSet dataSet = new BarDataSet(barEntries, getString(R.string.potholes_type));
                     dataSet.setColors(new int[]{ColorTemplate.MATERIAL_COLORS[0], ColorTemplate.MATERIAL_COLORS[1], ColorTemplate.MATERIAL_COLORS[2]});
 
                     BarData barData = new BarData(dataSet);
@@ -367,7 +367,7 @@ public class MainPage extends AppCompatActivity {
                     barEntries.add(new BarEntry(0, 0));
                     barEntries.add(new BarEntry(1, 0));
                     barEntries.add(new BarEntry(2, 0));
-                    BarDataSet dataSet = new BarDataSet(barEntries, "Pothole Types");
+                    BarDataSet dataSet = new BarDataSet(barEntries, getString(R.string.potholes_type));
                     dataSet.setColors(new int[]{ColorTemplate.MATERIAL_COLORS[0], ColorTemplate.MATERIAL_COLORS[1], ColorTemplate.MATERIAL_COLORS[2]});
 
                     BarData barData = new BarData(dataSet);
