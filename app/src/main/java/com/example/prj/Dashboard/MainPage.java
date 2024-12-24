@@ -259,10 +259,6 @@ public class MainPage extends AppCompatActivity {
                     }
 
                     if (lineEntries.isEmpty()) {
-                        for (int i = 0; i < lineXValues.size(); i++) {
-                            String day = lineXValues.get(i);
-                            lineEntries.add(new Entry(i, 0));
-                        }
                         Log.d("LineChart", "No data available for the chart.");
                     } else {
                         Log.d("LineChart", "Data available for the chart: " + lineEntries.toString());
@@ -289,6 +285,20 @@ public class MainPage extends AppCompatActivity {
                         }
                     });
                 } else {
+                    for (int i = 0; i < lineXValues.size(); i++) {
+                        lineEntries.add(new Entry(i, 0));
+                    }
+                    LineDataSet dataSet = new LineDataSet(lineEntries, "Number of Potholes");
+                    dataSet.setColor(getColor(R.color.red));
+                    dataSet.setMode(LineDataSet.Mode.HORIZONTAL_BEZIER);
+                    dataSet.setDrawCircles(false);
+                    dataSet.setLineWidth(3f);
+
+                    LineData lineData = new LineData(dataSet);
+                    lineData.setDrawValues(false);
+
+                    lineChart.setData(lineData);
+                    lineChart.invalidate();
                     Log.d("LineChart", "No snapshot data available.");
                 }
             }
@@ -339,9 +349,6 @@ public class MainPage extends AppCompatActivity {
                     barEntries.add(new BarEntry(2, severityCount.get("High")));
 
                     if (barEntries.isEmpty()) {
-                        for (int i = 0; i < 3; i++) {
-                            barEntries.add(new BarEntry(i, 0));
-                        }
                         Log.d("BarChart", "No data available for the chart.");
                     } else {
                         Log.d("BarChart", "Data available for the chart: " + barEntries.toString());
@@ -356,6 +363,17 @@ public class MainPage extends AppCompatActivity {
                     barChart.setData(barData);
                     barChart.invalidate();
                 } else {
+                    barEntries.clear();
+                    barEntries.add(new BarEntry(0, 0));
+                    barEntries.add(new BarEntry(1, 0));
+                    barEntries.add(new BarEntry(2, 0));
+                    BarDataSet dataSet = new BarDataSet(barEntries, "Pothole Types");
+                    dataSet.setColors(new int[]{ColorTemplate.MATERIAL_COLORS[0], ColorTemplate.MATERIAL_COLORS[1], ColorTemplate.MATERIAL_COLORS[2]});
+
+                    BarData barData = new BarData(dataSet);
+                    barData.setDrawValues(false);
+                    barChart.setData(barData);
+                    barChart.invalidate();
                     Log.d("BarChart", "No snapshot data available.");
                 }
             }
