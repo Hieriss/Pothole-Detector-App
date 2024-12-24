@@ -315,7 +315,6 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
     private static final float SPEED_THRESHOLD = 15f;
     private static final float DELTA_Z_THRESHOLD = 100.0f;
     public List<PotholeModel> potholeDataList = new ArrayList<>();
-    public List<NotificationModel> notificationDataList = new ArrayList<>();
 
     //--------------------------Navigation Register--------------------------------
 
@@ -760,7 +759,7 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
         mediumLayout = findViewById(R.id.medium_button_layout);
         highLayout = findViewById(R.id.high_button_layout);
         addPotholeBtn = findViewById(R.id.debug_detail_point);
-        addPotholeBtn.setVisibility(View.VISIBLE);
+        addPotholeBtn.setVisibility(View.GONE);
 
         // Navigate button
         navigateBtn = findViewById(R.id.navigate_button);
