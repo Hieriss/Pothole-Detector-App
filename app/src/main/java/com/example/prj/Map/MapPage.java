@@ -783,6 +783,13 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
             return;
         }
 
+        // Init current location
+        Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        if (lastKnownLocation != null) {
+            currentLatitude = lastKnownLocation.getLatitude();
+            currentLongitude = lastKnownLocation.getLongitude();
+        }
+
         // Request location updates
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 500L, 0.5F, this);
 
@@ -1985,7 +1992,7 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
                     pointAnnotationManager.delete(annotation);
                 }
             }
-            Double kmToRender;
+            Double kmToRender = 10.0;
             if (range.equals("1 km")) {
                 kmToRender = 1.0;
             }
@@ -2021,6 +2028,7 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
                 if (!highFilter) {
                     if (severity.equals("High")) continue;
                 }
+
                 PointAnnotationOptions pointAnnotationOptions = new PointAnnotationOptions()
                         .withTextAnchor(TextAnchor.CENTER)
                         .withIconAnchor(IconAnchor.CENTER)
