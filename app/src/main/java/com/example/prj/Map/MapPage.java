@@ -760,7 +760,7 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
         mediumLayout = findViewById(R.id.medium_button_layout);
         highLayout = findViewById(R.id.high_button_layout);
         addPotholeBtn = findViewById(R.id.debug_detail_point);
-        addPotholeBtn.setVisibility(View.GONE);
+        addPotholeBtn.setVisibility(View.VISIBLE);
 
         // Navigate button
         navigateBtn = findViewById(R.id.navigate_button);

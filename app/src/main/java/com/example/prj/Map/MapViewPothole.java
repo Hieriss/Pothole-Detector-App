@@ -178,7 +178,7 @@ public class MapViewPothole extends AppCompatActivity {
                 List<PotholeModel> filteredPotholeDataList = new ArrayList<>();
                 for (PotholeModel potholeModel : potholeDataList) {
                     try {
-                        Date potholeDate = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault()).parse(potholeModel.getTimestamp());
+                        Date potholeDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).parse(potholeModel.getTimestamp());
                         String potholeDay = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(potholeDate);
                         if (potholeDay.equals(currentDay)) {
                             filteredPotholeDataList.add(potholeModel);
