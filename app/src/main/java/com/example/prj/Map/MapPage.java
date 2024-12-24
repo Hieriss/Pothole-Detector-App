@@ -1358,10 +1358,10 @@ public class MapPage extends AppCompatActivity implements SensorEventListener, L
                         } else if (zoomLevel <= 15 && iconSize != 0.3f) {
                             iconSize = 0.3f;
                             changeIconSize(iconSize);
-                        } else if (zoomLevel > 19 && iconSize != 1.5f) {
+                        } else if (zoomLevel > 20 && iconSize != 1.5f) {
                             iconSize = 1.5f;
                             changeIconSize(iconSize);
-                        } else if (zoomLevel >= 17 && zoomLevel <= 19 && iconSize != 1.0f){
+                        } else if (iconSize != 1.0f){
                             iconSize = 1.0f;
                             changeIconSize(iconSize);
                         }

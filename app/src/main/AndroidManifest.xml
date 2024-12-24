@@ -29,11 +29,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Prj"
         tools:targetApi="31">
+
         <activity
-            android:name=".Dashboard.LogAdapter"
-            android:exported="false" />
-        <activity
-            android:name=".Dashboard.Log"
+            android:name=".Dashboard.LogPage"
             android:exported="false" />
         <activity
             android:name=".Authen.ChangePassword"
@@ -127,6 +125,7 @@
             android:exported="false"
             android:launchMode="singleTask"
             android:screenOrientation="portrait" />
+
         <activity
             android:name=".Authen.SignUp"
             android:exported="false"

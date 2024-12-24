@@ -1,87 +1,63 @@
-package com.example.prj.Notification;
+package com.example.prj.Dashboard;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
-import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.prj.Dashboard.MainPage;
-import com.example.prj.History.HistoryAdapter;
-import com.example.prj.History.HistoryPage;
-import com.example.prj.History.PotholeModel;
-import com.example.prj.Map.StorePotholes;
 import com.example.prj.R;
-import com.mapbox.geojson.Point;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class NotificationPage extends AppCompatActivity {
+public class LogPage extends AppCompatActivity {
     private RecyclerView recyclerView;
-    private NotificationAdapter adapter;
+    private LogAdapter adapter;
     private AppCompatButton homeButton;
-    private List<NotificationModel> sensorDataList = new ArrayList<>();
+    private List<LogModel> sensorDataList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_notification_page);
+        setContentView(R.layout.activity_log);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-        recyclerView = findViewById(R.id.notification_recycler);
+
+        recyclerView = findViewById(R.id.log_recycler);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        adapter = new NotificationAdapter(sensorDataList);
+        adapter = new LogAdapter(sensorDataList);
         recyclerView.setAdapter(adapter);
 
         homeButton = findViewById(R.id.setting_home_button);
         homeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(NotificationPage.this, MainPage.class);
+                Intent intent = new Intent(LogPage.this, MainPage.class);
                 startActivity(intent);
                 finish();
             }
         });
 
         populateSensorData();
-
-        // Inside onCreate method
-        ItemTouchHelper.SimpleCallback simpleCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT) {
-            @Override
-            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
-                return false;
-            }
-
-            @Override
-            public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
-                int position = viewHolder.getAdapterPosition();
-                NotificationModel model = sensorDataList.get(position);
-                sensorDataList.remove(position);
-                adapter.notifyItemRemoved(position);
-                StorePotholes.deleteNotificationData(NotificationPage.this, model);
-            }
-        };
-
-        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleCallback);
-        itemTouchHelper.attachToRecyclerView(recyclerView);
     }
 
     @Override
@@ -101,14 +77,32 @@ public class NotificationPage extends AppCompatActivity {
         sensorDataList.clear();
         adapter.notifyDataSetChanged();
 
-        // Load data from local storage
-        List<NotificationModel> loadedData = StorePotholes.loadNotificationData(this);
-        for (NotificationModel model : loadedData) {
-            if (!sensorDataList.contains(model)) {
-                sensorDataList.add(model);
-                adapter.notifyItemInserted(sensorDataList.size() - 1);
+        // Reference to Firebase Realtime Database
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("user");
+
+        databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot userSnapshot : dataSnapshot.getChildren()) {
+                    for (DataSnapshot counterSnapshot : userSnapshot.child("counter").getChildren()) {
+                        for (DataSnapshot dateSnapshot : counterSnapshot.getChildren()) {
+                            String formattedDate = dateSnapshot.getKey();
+                            String severity = dateSnapshot.getValue(String.class);
+                            LogModel logModel = new LogModel(formattedDate, severity);
+                            if (!sensorDataList.contains(logModel)) {
+                                sensorDataList.add(logModel);
+                                adapter.notifyItemInserted(sensorDataList.size() - 1);
+                            }
+                        }
+                    }
+                }
             }
-        }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                // Handle possible errors.
+            }
+        });
     }
 
     @Override

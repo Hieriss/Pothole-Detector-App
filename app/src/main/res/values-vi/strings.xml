@@ -136,7 +136,7 @@
     <string name="new_password">mật khẩu mới</string>
     <string name="confirm_new_password">xác nhận mật khẩu mới</string>
     <string name="confirm">Xác nhận</string>
-
+    <string name="reports_text">Báo cáo</string>
 
 
     <string name="mapbox_access_token" translatable="false" tools:ignore="UnusedResources">sk.eyJ1IjoiaGllcmlzcyIsImEiOiJjbTNuZmwya3ExNnVpMmxzZG9wOGNyN24xIn0.Bnsn24Jk7ZmetYO_MxQHcA</string>

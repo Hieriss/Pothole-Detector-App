@@ -21,12 +21,10 @@ import android.widget.TextView;
 import com.example.prj.R;
 
 public class LanguageSettingPage extends AppCompatActivity {
-
     Button backButton;
     Button tvButton;
     Button engButton;
     TextView settingText;
-
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -78,7 +76,7 @@ public class LanguageSettingPage extends AppCompatActivity {
     }
     public void loadLocale() {
         SharedPreferences prefs = getSharedPreferences("Settings", MODE_PRIVATE);
-        String language = prefs.getString("My_Lang", "");
+        String language = prefs.getString("My_Lang", null);
         setLocale(language);
     }
 }

@@ -281,7 +281,7 @@
                                         android:layout_weight="1"
                                         android:fontFamily="@font/grandstander_regular"
                                         android:gravity="center_vertical"
-                                        android:text="@string/history_text"
+                                        android:text="@string/reports_text"
                                         android:textSize="20sp" />
                                 </LinearLayout>
 

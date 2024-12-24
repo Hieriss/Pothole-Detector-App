@@ -27,6 +27,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.example.prj.Map.MapPage;
+import com.example.prj.Notification.NotificationPage;
 import com.example.prj.R;
 import com.example.prj.Session.SessionManager;
 import com.github.mikephil.charting.charts.BarChart;
@@ -274,6 +275,15 @@ public class MainPage extends AppCompatActivity {
 
                     lineChart.setData(lineData);
                     lineChart.invalidate();
+
+                    lineChart.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Intent intent = new Intent(MainPage.this, LogPage.class);
+                            startActivity(intent);
+                            finish();
+                        }
+                    });
                 } else {
                     Log.d("LineChart", "No snapshot data available.");
                 }
