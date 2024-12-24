@@ -8,6 +8,7 @@ import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.content.IntentFilter;
 import android.content.res.Resources;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
@@ -29,6 +30,12 @@ import com.example.prj.Profile.ProfilePage;
 import com.example.prj.R;
 import com.google.android.material.textfield.TextInputLayout;
 
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Locale;
 
 public class SettingPage extends AppCompatActivity {
@@ -155,8 +162,8 @@ public class SettingPage extends AppCompatActivity {
         supportButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(SettingPage.this, SettingPage.class);
-                startActivity(intent);
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.un.org/en/"));
+                startActivity(browserIntent);
                 finish();
             }
         });
@@ -165,8 +172,7 @@ public class SettingPage extends AppCompatActivity {
         termButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(SettingPage.this, SettingPage.class);
-                startActivity(intent);
+                parseHtml();
                 finish();
             }
         });
@@ -193,27 +199,6 @@ public class SettingPage extends AppCompatActivity {
         editor.apply();
     }
 
-//    private void setLocale(Activity activity, String lang) {
-//        Locale locale = new Locale(lang);
-//        Locale.setDefault(locale);
-//        Resources resources = activity.getResources();
-//        Configuration config = resources.getConfiguration();
-//        config.setLocale(locale);
-//        resources.updateConfiguration(config, resources.getDisplayMetrics());
-//
-//
-//        /*Configuration config = new Configuration();
-//        config.setLocale(locale);
-//
-//        Context context = getBaseContext().createConfigurationContext(config);
-//        getBaseContext().getResources().updateConfiguration(config, context.getResources().getDisplayMetrics());
-//
-//        clearConfigurationCache();
-//
-//        SharedPreferences.Editor editor = getSharedPreferences("Settings", MODE_PRIVATE).edit();
-//        editor.putString("My_Lang", lang);
-//        editor.apply();*/
-//    }
     private void setLocale(String lang) {
         Locale locale = new Locale(lang);
         Locale.setDefault(locale);
@@ -230,10 +215,38 @@ public class SettingPage extends AppCompatActivity {
         setLocale(language);
     }
 
-    private void clearConfigurationCache() {
-        Resources resources = getBaseContext().getResources();
-        Configuration configuration = resources.getConfiguration();
-        resources.updateConfiguration(configuration, resources.getDisplayMetrics());
+    private void parseHtml() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    // Open the HTML file from the assets directory
+                    InputStream inputStream = getAssets().open("term.html");
+                    Document doc = Jsoup.parse(inputStream, "UTF-8", "");
+
+                    // Get the entire HTML content
+                    final String htmlContent = doc.html();
+
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            // Start the HtmlDisplayActivity and pass the HTML content
+                            Intent intent = new Intent(SettingPage.this, HtmlDisplayActivity.class);
+                            intent.putExtra("htmlContent", htmlContent);
+                            startActivity(intent);
+                        }
+                    });
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(SettingPage.this, "Failed to parse HTML", Toast.LENGTH_LONG).show();
+                        }
+                    });
+                }
+            }
+        }).start();
     }
 
     @Override

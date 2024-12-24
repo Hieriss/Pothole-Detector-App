@@ -82,14 +82,15 @@ dependencies {
     implementation("androidx.core:core:1.9.0")
     implementation("androidx.activity:activity:1.7.0")
 
-    implementation ("com.sun.mail:android-mail:1.6.7")
-    implementation ("com.sun.mail:android-activation:1.6.7")
+    implementation("com.sun.mail:android-mail:1.6.7")
+    implementation("com.sun.mail:android-activation:1.6.7")
 
-    implementation ("com.github.bumptech.glide:glide:4.14.2")
-    annotationProcessor ("com.github.bumptech.glide:compiler:4.14.2")
-    implementation ("com.makeramen:roundedimageview:2.3.0")
-    implementation ("com.squareup.picasso:picasso:2.71828")
-    implementation ("com.google.code.gson:gson:2.8.9")
+    implementation("com.github.bumptech.glide:glide:4.14.2")
+    annotationProcessor("com.github.bumptech.glide:compiler:4.14.2")
+    implementation("com.makeramen:roundedimageview:2.3.0")
+    implementation("com.squareup.picasso:picasso:2.71828")
+    implementation("com.google.code.gson:gson:2.8.9")
+    implementation("org.jsoup:jsoup:1.15.3")
 }
 
 apply(plugin = "com.google.gms.google-services")

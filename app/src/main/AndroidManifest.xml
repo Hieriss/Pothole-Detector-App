@@ -42,7 +42,9 @@
         <activity
             android:name=".Map.MapViewPothole"
             android:exported="false" />
-
+        <activity
+            android:name=".Setting.HtmlDisplayActivity"
+            android:exported="false" />
         <meta-data
             android:name="com.mapbox.maps.location.gms.SKIP_IF_INVALID_VERSION"
             android:value="true" />
